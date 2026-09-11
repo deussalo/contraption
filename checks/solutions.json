@@ -104,5 +104,106 @@
         "stock": "ball-run"
       }
     ]
+  },
+  {
+    "parts": [
+      {
+        "id": "bellhop-crate-a",
+        "kind": "box",
+        "x": 1080,
+        "y": 612,
+        "w": 48,
+        "h": 48,
+        "angle": 0,
+        "material": "steel",
+        "fixed": false,
+        "pinned": false,
+        "locked": false,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "bellhop-crates"
+      },
+      {
+        "id": "bellhop-crate-b",
+        "kind": "box",
+        "x": 1080,
+        "y": 552,
+        "w": 48,
+        "h": 48,
+        "angle": 0,
+        "material": "steel",
+        "fixed": false,
+        "pinned": false,
+        "locked": false,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "bellhop-crates"
+      }
+    ]
+  },
+  {
+    "parts": [
+      {
+        "id": "takeaway-crate",
+        "kind": "box",
+        "x": 1080,
+        "y": 500,
+        "w": 70,
+        "h": 70,
+        "angle": 0,
+        "material": "steel",
+        "fixed": false,
+        "pinned": false,
+        "locked": false,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "takeaway-weight"
+      }
+    ]
+  },
+  {
+    "parts": [
+      {
+        "id": "night-crate-a",
+        "kind": "box",
+        "x": 1220,
+        "y": 555,
+        "w": 90,
+        "h": 90,
+        "angle": 0,
+        "material": "steel",
+        "fixed": false,
+        "pinned": false,
+        "locked": false,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "night-crates"
+      }
+    ]
+  },
+  {
+    "parts": [
+      {
+        "id": "delivery-route",
+        "kind": "ramp",
+        "x": 670,
+        "y": 520,
+        "w": 810,
+        "h": 16,
+        "angle": 0.14,
+        "material": "wood",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "delivery-ramp"
+      }
+    ]
   }
 ]

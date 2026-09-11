@@ -1,10 +1,14 @@
 import './rope.mjs';
+import './transformation.mjs';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {blankLevel,makePart,parseLevel} from '../dist/model.js';
-import {createWorld,stepWorld,connectionPoints,pathLength} from '../dist/physics.js';
+import {createWorld,stepWorld,connectionPoints,pathLength,overlaps} from '../dist/physics.js';
 import {Workshop} from '../dist/workshop.js';
 const simulate=(world,seconds)=>{for(let i=0;i<seconds*120;i++)stepWorld(world);return world;};
+const solveTime=(world,seconds=20)=>{for(let frame=1;frame<=seconds*120;frame++){stepWorld(world);if(world.won)return frame/120;}return null;};
+const overlapPairs=world=>{const pairs=[];for(let i=0;i<world.bodies.length;i++)for(let j=i+1;j<world.bodies.length;j++)if(overlaps(world.bodies[i],world.bodies[j]))pairs.push([world.bodies[i].id,world.bodies[j].id]);return pairs;};
+const insideBucket=(world,bodyId,bucketId)=>{const body=world.bodies.find(body=>body.id===bodyId),bucket=world.bodies.find(body=>body.id===bucketId);return Math.abs(body.x-bucket.x)<bucket.w/2-12&&body.y>bucket.y-bucket.h/2&&body.y<bucket.y+bucket.h/2-8;};
 const scene=(bodies,connections=[],environment={})=>({...blankLevel(),bodies,connections,environment:{width:1600,height:1000,gravity:850,pressure:0,floor:false,...environment}});
 const part=(kind,x,y,properties={})=>makePart(kind,x,y,properties);
 {
@@ -34,6 +38,12 @@ const part=(kind,x,y,properties={})=>makePart(kind,x,y,properties);
   const workshop=new Workshop(scene([part('circle',400,200,{id:'ball'})]));workshop.selected='ball';workshop.update({x:500});assert.equal(workshop.world.bodies[0].x,500);workshop.undo();assert.equal(workshop.world.bodies[0].x,400);workshop.undo(true);assert.equal(workshop.world.bodies[0].x,500);workshop.reset();assert.equal(workshop.world.bodies[0].x,500);
 }
 const pack=JSON.parse(await readFile(new URL('../dist/levels.json',import.meta.url))),solutions=JSON.parse(await readFile(new URL('./solutions.json',import.meta.url)));
+const pulleyLevels=new Map([
+  ['bellhop-express',4.95],
+  ['two-to-one-takeaway',1.0583333333333333],
+  ['pulley-gate-night-shift',1.8916666666666666],
+]);
+assert.equal(solutions.length,pack.levels.length,'Every playable level needs one reference solution');
 for(const [i,level] of pack.levels.entries()){
   assert.equal(simulate(createWorld(parseLevel(level)),20).won,false,`${level.name}: empty bin must fail`);
   const solved=parseLevel({...level,bodies:[...level.bodies,...solutions[i].parts.map(p=>part(p.kind,p.x,p.y,p))]});const world=simulate(createWorld(solved),20);assert.equal(world.won,true,`${level.name}: reference solution must win`);
@@ -43,6 +53,22 @@ for(const [i,level] of pack.levels.entries()){
     for(const [dx,da] of [[-8,0],[8,0],[0,-.03],[0,.03]]){const nearby=structuredClone(solved),ramp=nearby.bodies.find(b=>b.stock);ramp.x+=dx;ramp.angle+=da;assert.equal(simulate(createWorld(nearby),20).won,true,'Nearby ramp placement must work');}
     const reset=new Workshop(solved),first=simulate(reset.world,8);const outcome=structuredClone(first);reset.reset();assert.deepEqual(simulate(reset.world,8),outcome);
   }
+  if(pulleyLevels.has(level.id)){
+    const noRope=structuredClone(solved);noRope.connections=[];assert.equal(simulate(createWorld(noRope),20).won,false,`${level.name}: solution must need its rope`);
+    assert.deepEqual(overlapPairs(createWorld(solved)),[],`${level.name}: reference must start without overlaps`);
+    const reset=new Workshop(solved),expected=pulleyLevels.get(level.id),first=solveTime(reset.world);assert.equal(first,expected,`${level.name}: solve time changed`);reset.reset();assert.equal(solveTime(reset.world),first,`${level.name}: reset changed solve time`);
+    for(let partIndex=0;partIndex<solutions[i].parts.length;partIndex++)for(const [field,delta] of [['x',-6],['x',6],['y',-6],['y',6]]){
+      const parts=structuredClone(solutions[i].parts);parts[partIndex][field]+=delta;const nearby=parseLevel({...level,bodies:[...level.bodies,...parts.map(p=>part(p.kind,p.x,p.y,p))]}),nearbyWorld=createWorld(nearby);
+      assert.deepEqual(overlapPairs(nearbyWorld),[],`${level.name}: nearby ${parts[partIndex].id} must not overlap`);assert.notEqual(solveTime(nearbyWorld),null,`${level.name}: nearby ${parts[partIndex].id} ${field} ${delta} must win`);
+    }
+  }
+  if(level.id==='rock-delivery'){
+    const withoutRope=structuredClone(solved);withoutRope.connections=[];assert.equal(simulate(createWorld(withoutRope),12).won,false,'Rock Delivery must need its rope');
+    const unchanged=structuredClone(solved);unchanged.bodies.find(body=>body.id==='stone-zone').outputMaterial='cork';const unchangedWorld=simulate(createWorld(unchanged),12);assert.equal(unchangedWorld.won,false,'Cork must be too light');assert.equal(insideBucket(unchangedWorld,'delivery-ball','stone-bucket'),true,'Unchanged cork must reach the bucket');
+    const disabled=structuredClone(solved);disabled.bodies=disabled.bodies.filter(body=>body.id!=='stone-zone');const disabledWorld=simulate(createWorld(disabled),12);assert.equal(disabledWorld.won,false,'Disabled zone must fail');assert.equal(insideBucket(disabledWorld,'delivery-ball','stone-bucket'),true,'Ball must reach the bucket without transformation');
+    const bypass=structuredClone(solved);Object.assign(bypass.bodies.find(body=>body.stock==='delivery-ramp'),{x:670,y:350,angle:.12});const bypassWorld=simulate(createWorld(bypass),9);assert.equal(bypassWorld.won,false,'Route around zone must fail');assert.deepEqual(bypassWorld.bodies.find(body=>body.id==='delivery-ball').transformedZones,[]);assert.equal(insideBucket(bypassWorld,'delivery-ball','stone-bucket'),true,'Bypass must still reach the bucket');
+    const reset=new Workshop(solved),first=solveTime(reset.world);assert.equal(first,6.866666666666666);reset.reset();assert.equal(reset.world.bodies.find(body=>body.id==='delivery-ball').material,'cork');assert.deepEqual(reset.world.bodies.find(body=>body.id==='delivery-ball').transformedZones,[]);assert.equal(solveTime(reset.world),first,'Rock Delivery reset must preserve solve time');
+  }
   console.log(`PASS ${level.name}`);
 }
-console.log('PASS gravity, stacks, thin collisions, belt chains, ropes, switches, strict imports, undo, puzzle solutions and JSON round trips');
+console.log('PASS gravity, stacks, thin collisions, belt chains, ropes, material zones, switches, strict imports, undo, puzzle solutions and JSON round trips');

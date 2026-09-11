@@ -16,6 +16,8 @@ export function drawBody(c,b,time=0){
     else if(b.kind==='circle'){c.strokeStyle='#fff1d2';c.lineWidth=5;c.beginPath();c.moveTo(-w*.5,w*.23);c.bezierCurveTo(w*.25,w*.55,-w*.3,-w*.6,w*.5,-w*.23);c.stroke();}
     c.fillStyle='#ffffeb90';c.beginPath();c.ellipse(-w*.16,-w*.19,w*.11,w*.065,-.6,0,7);c.fill();c.restore();
     if(b.kind==='balloon'){line(c,[[-4,h/2+7],[0,h/2],[4,h/2+7],[-4,h/2+7]]);c.strokeStyle='#8b9482';c.lineWidth=1;c.beginPath();c.moveTo(0,h/2+7);c.bezierCurveTo(-10,h/2+19,8,h/2+30,0,h/2+45);c.stroke();}
+  }else if(b.kind==='material-zone'){
+    c.globalAlpha=.22;rect(c,-w/2,-h/2,w,h,MATERIALS[b.outputMaterial].color,9);c.globalAlpha=1;c.setLineDash([9,7]);c.lineWidth=2.4;rect(c,-w/2,-h/2,w,h,'#00000000',9);c.setLineDash([]);c.fillStyle=ink;c.font=`600 ${Math.max(10,Math.min(18,w/11))}px sans-serif`;c.textAlign='center';c.fillText(b.outputMaterial==='steel'?'TURN TO STONE':`TURN TO ${b.outputMaterial.toUpperCase()}`,0,5);
   }else if(['box','ramp','conveyor'].includes(b.kind)){
     rect(c,-w/2,-h/2,w,h,color,Math.min(3,h/6));c.lineWidth=1;c.strokeStyle='#75664e55';
     if(b.material==='wood'||b.material==='cork'){for(let y=-h/2+7;y<h/2-3;y+=12)for(let x=-w/2+9;x<w/2-15;x+=45)line(c,[[x,y],[x+25,y+1]]);}

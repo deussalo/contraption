@@ -1,6 +1,6 @@
 # Contraption
 
-A fullscreen illustrated physics workshop with 17 components, procedural sound, and six puzzles.
+A fullscreen illustrated physics workshop with 18 components, procedural sound, and ten puzzles.
 
 Dark mode is the default; the sun/moon control switches themes and remembers your choice.
 
@@ -9,6 +9,8 @@ Draw rectangles and circles, drag parts from the expandable bin, and connect rop
 The menu opens puzzles, environment settings, browser saves, and JSON import/export. Puzzle editor locks the existing scene; select parts and send them to the bin, set an outcome goal, then test or export the puzzle. Imported levels carry materials, locks, inventory, connections, goals, gravity, and pressure. JSON version 3 is required; v2 files fail with a version error.
 
 Ropes attach to every component at visible handles and run around the circumference of every threaded pulley. Radius sets tangent points, wrap length, and rim speed. Both rope ends and movable pulleys receive tension; fixed components anchor it, and unchecking Fixed axle lets a pulley move. Belt wheels are a separate component. Rope properties edit length, take up slack, and reverse the wrap at a chosen pulley. Crossing the authored wrap topology blocks the rope until it is rethreaded or reset; the solver never invents a full extra loop of rope in one step. This is a massless rope model without rope self-collision or pulley bearing friction.
+
+Material zones transform each moving object once. The authored output material immediately replaces density, friction, bounce, color, and impact sound without changing velocity; Reset restores the object's original material. Choose steel for Turn to Stone or cork for a Featherweight zone. `#puzzle=rock-delivery` opens the staged stone-weight pulley puzzle.
 
 `#puzzle=pulley-gate` opens the falling-weight → movable-pulley → heavy-door example. Removing the weight, removing the rope, or fixing the movable pulley makes its reference construction fail. Nearby ramp placements also solve it.
 
@@ -20,7 +22,7 @@ Serve `dist/` with any local HTTP server. No dependency installation or build st
 node --experimental-default-type=module checks/check.mjs
 ```
 
-The checks cover gravity, stable stacks, fast collisions, belt power propagation, rope tangency/radius, movable-pulley ratios, rim speed, slack, wrap crossings, switches, malformed imports, undo, JSON round trips, and both empty-bin and reference outcomes for every puzzle. Prove changes to visible controls with a browser probe on desktop and mobile, including real two-pointer touch events.
+The checks cover gravity, stable stacks, fast collisions, belt power propagation, rope tangency/radius, movable-pulley ratios, rim speed, slack, wrap crossings, material transformation and reset, switches, malformed imports, undo, JSON round trips, and both empty-bin and reference outcomes for every puzzle. Prove changes to visible controls with a browser probe on desktop and mobile, including real two-pointer touch events.
 
 ## Publish
 

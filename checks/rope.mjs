@@ -42,9 +42,9 @@ const movable=()=>routed([part('anchor','a',400,100),part('pulley','p',450,400,{
 }
 {
   for(const kind of Object.keys(PARTS).filter(kind=>kind!=='pulley')){
-    const level={...blankLevel(),bodies:[part('anchor','fixed',100,100),part(kind,'load',500,100,{fixed:false,pinned:false,on:false})],environment:{width:1600,height:1000,gravity:0,pressure:0,floor:false}};
+    const zone=kind==='material-zone',level={...blankLevel(),bodies:[part('anchor','fixed',100,100),part(kind,'load',500,100,zone?{}:{fixed:false,pinned:false,on:false})],environment:{width:1600,height:1000,gravity:0,pressure:0,floor:false}};
     const workshop=new Workshop(level);workshop.addConnection('rope','fixed','load',{ax:0,ay:0,bx:0,by:0});
-    const rope=workshop.world.connections[0],load=workshop.world.bodies[1];load.vx=120;stepWorld(workshop.world);
+    if(zone){assert.equal(workshop.world.connections.length,1,'material-zone must anchor a rope');continue;}const rope=workshop.world.connections[0],load=workshop.world.bodies[1];load.vx=120;stepWorld(workshop.world);
     assert.ok(rope.tension>0,`${kind} must receive rope tension`);assert.ok(Math.abs(load.vx)<1e-7,`${kind} must react to rope tension`);
   }
 }
