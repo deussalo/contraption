@@ -1,10 +1,16 @@
 # Contraption
 
-A fullscreen illustrated physics workshop with 15 components, procedural sound, and five puzzles.
+A fullscreen illustrated physics workshop with 17 components, procedural sound, and six puzzles.
+
+Dark mode is the default; the sun/moon control switches themes and remembers your choice.
 
 Draw rectangles and circles, drag parts from the expandable bin, and connect ropes, pulleys, belts, and switches. Free objects obey gravity. Space pauses or resumes; editing works in either state. Drag with one finger, then add a second finger to rotate and scale. Reset restores the edited starting layout.
 
-The menu opens puzzles, environment settings, browser saves, and JSON import/export. Puzzle editor locks the existing scene; select parts and send them to the bin, set an outcome goal, then test or export the puzzle. Imported levels carry materials, locks, inventory, connections, goals, gravity, and pressure. JSON version 2 is required.
+The menu opens puzzles, environment settings, browser saves, and JSON import/export. Puzzle editor locks the existing scene; select parts and send them to the bin, set an outcome goal, then test or export the puzzle. Imported levels carry materials, locks, inventory, connections, goals, gravity, and pressure. JSON version 3 is required; v2 files fail with a version error.
+
+Ropes attach at visible handles and run around the circumference of every threaded pulley. Radius sets tangent points, wrap length, and rim speed. Both rope ends and movable pulleys receive tension; uncheck Fixed axle to let a pulley move. Belt wheels are a separate component. Rope properties edit length, take up slack, and reverse the wrap at a chosen pulley. Crossing the authored wrap topology blocks the rope until it is rethreaded or reset; the solver never invents a full extra loop of rope in one step. This is a massless rope model without rope self-collision or pulley bearing friction.
+
+`#puzzle=pulley-gate` opens the falling-weight → movable-pulley → heavy-door example. Removing the weight, removing the rope, or fixing the movable pulley makes its reference construction fail. Nearby ramp placements also solve it.
 
 ## Development
 
@@ -14,7 +20,7 @@ Serve `dist/` with any local HTTP server. No dependency installation or build st
 node --experimental-default-type=module checks/check.mjs
 ```
 
-The checks cover gravity, stable stacks, fast collisions, belt power propagation, ropes, switches, malformed imports, undo, JSON round trips, and both empty-bin and reference outcomes for every puzzle. Prove changes to visible controls with a browser probe on desktop and mobile, including real two-pointer touch events.
+The checks cover gravity, stable stacks, fast collisions, belt power propagation, rope tangency/radius, movable-pulley ratios, rim speed, slack, wrap crossings, switches, malformed imports, undo, JSON round trips, and both empty-bin and reference outcomes for every puzzle. Prove changes to visible controls with a browser probe on desktop and mobile, including real two-pointer touch events.
 
 ## Publish
 

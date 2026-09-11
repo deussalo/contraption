@@ -1,3 +1,4 @@
+import {ropeWrap,ropeGeometry} from './rope.js';
 export const TAU=Math.PI*2;
 export const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 export const MATERIALS={
@@ -18,6 +19,8 @@ export const PARTS={
   fan:{name:'Fan',shape:'box',w:70,h:70,material:'steel',fixed:true},
   bell:{name:'Bell',shape:'circle',w:62,h:62,material:'steel',fixed:true,sensor:true},
   bucket:{name:'Bucket',shape:'bucket',w:130,h:110,material:'steel',fixed:true},
+  anchor:{name:'Anchor',shape:'circle',w:24,h:24,material:'steel',fixed:true},
+  wheel:{name:'Belt wheel',shape:'circle',w:62,h:62,material:'wood',pinned:true},
   pulley:{name:'Pulley',shape:'circle',w:62,h:62,material:'wood',pinned:true},
   motor:{name:'Motor',shape:'circle',w:78,h:78,material:'steel',pinned:true},
   conveyor:{name:'Conveyor',shape:'box',w:220,h:22,material:'rubber',fixed:true},
@@ -33,7 +36,7 @@ export function makePart(kind,x,y,overrides={}){
 }
 const DESIGN_KEYS=['id','kind','x','y','w','h','angle','material','fixed','pinned','locked','power','direction','on','stock'];
 export function designPart(body){return Object.fromEntries(DESIGN_KEYS.filter(key=>body[key]!==undefined).map(key=>[key,body[key]]));}
-export function blankLevel(){return {format:'contraption',version:2,name:'Workshop',mode:'sandbox',environment:{...ENVIRONMENT},bodies:[],connections:[],inventory:[],goal:null};}
+export function blankLevel(){return {format:'contraption',version:3,name:'Workshop',mode:'sandbox',environment:{...ENVIRONMENT},bodies:[],connections:[],inventory:[],goal:null};}
 export function starterLevel(){
   const level=blankLevel();
   level.bodies=[makePart('circle',290,130,{w:56,h:56}),makePart('ramp',340,330,{angle:.19,w:370}),makePart('ramp',760,480,{angle:.2,w:340}),makePart('ramp',1090,625,{angle:.19,w:260}),makePart('bell',1395,845),...Array.from({length:4},(_,i)=>makePart('box',1200+i*45,880,{w:22,h:100,material:['wood','cork','rubber','wood'][i]})),makePart('basketball',670,145),makePart('box',760,810,{w:170,h:40,angle:.08}),makePart('box',780,750,{w:50,h:50}),makePart('bucket',330,873)];
@@ -56,7 +59,7 @@ function parsePart(source,ids,prototype=false){
   return p;
 }
 export function parseLevel(source){
-  if(!source||source.format!=='contraption'||source.version!==2)throw Error('This file is not a Contraption v2 level.');
+  if(!source||source.format!=='contraption'||source.version!==3)throw Error('This file is not a Contraption v3 level.');
   if(!Array.isArray(source.bodies)||source.bodies.length>100||!Array.isArray(source.connections)||source.connections.length>100)throw Error('A level can contain up to 100 objects and 100 connections.');
   const env=source.environment??{},level=blankLevel(),ids=new Set();
   level.name=typeof source.name==='string'?source.name.slice(0,80):'Imported level';
@@ -68,8 +71,16 @@ export function parseLevel(source){
     if(!c||!['rope','belt','wire'].includes(c.kind)||typeof c.id!=='string'||!c.id.length||ids.has(c.id)||!bodies.has(c.a)||!bodies.has(c.b)||c.a===c.b)throw Error('Invalid connection endpoints.');
     ids.add(c.id);const joint={id:c.id,kind:c.kind,a:c.a,b:c.b,length:number(c.length??100,'Connection length',1,10000),via:[],ax:number(c.ax??0,'Anchor X',-1200,1200),ay:number(c.ay??0,'Anchor Y',-1200,1200),bx:number(c.bx??0,'Anchor X',-1200,1200),by:number(c.by??0,'Anchor Y',-1200,1200)};
     if(c.via!==undefined){if(!Array.isArray(c.via)||c.via.length>8||c.via.some(id=>!level.bodies.some(p=>p.id===id&&p.kind==='pulley')))throw Error('Ropes must route through valid pulleys.');joint.via=[...c.via];}
+    if(joint.kind==='rope'){
+      if([c.a,c.b].some(id=>bodies.get(id).kind==='pulley'))throw Error('Thread a pulley in the middle of a rope; attach the ends to loads or anchors.');
+      if(new Set(joint.via).size!==joint.via.length)throw Error('A rope can pass through each pulley once.');
+      joint.wrap=c.wrap??ropeWrap(level.bodies,joint);
+      if(!Array.isArray(joint.wrap)||joint.wrap.length!==joint.via.length||joint.wrap.some(s=>s!==1&&s!==-1))throw Error('Each pulley needs a clockwise or counterclockwise rope route.');
+      joint.wrap=[...joint.wrap];
+      if(!ropeGeometry(level.bodies,joint).valid)throw Error('A rope anchor is inside a pulley or the pulleys are too close.');
+    }
     if(joint.kind==='belt'){
-      const ends=[c.a,c.b].map(id=>bodies.get(id));if(ends.some(p=>!['motor','pulley','conveyor'].includes(p.kind)))throw Error('Belts connect motors, pulleys, and conveyors.');
+      const ends=[c.a,c.b].map(id=>bodies.get(id));if(ends.some(p=>!['motor','wheel','conveyor'].includes(p.kind)))throw Error('Belts connect motors, belt wheels, and conveyors.');
       if(Math.hypot(ends[0].x-ends[1].x,ends[0].y-ends[1].y)>650)throw Error('A belt cannot span more than 650 units.');
     }
     if(joint.kind==='wire'&&(bodies.get(c.a).kind!=='switch'||!['fan','motor','conveyor','rocket'].includes(bodies.get(c.b).kind)))throw Error('Wires connect a switch to a device.');

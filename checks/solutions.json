@@ -87,5 +87,22 @@
         "stock": "lever"
       }
     ]
+  },
+  {
+    "parts": [
+      {
+        "id": "solution-ball-run",
+        "kind": "ramp",
+        "x": 820,
+        "y": 760,
+        "w": 380,
+        "h": 16,
+        "angle": 0.12,
+        "material": "wood",
+        "fixed": true,
+        "locked": false,
+        "stock": "ball-run"
+      }
+    ]
   }
 ]

@@ -1,17 +1,15 @@
 import {PARTS,MATERIALS,clamp} from './model.js';
-const dot=(a,b)=>a.x*b.x+a.y*b.y,cross=(a,b)=>a.x*b.y-a.y*b.x;
-const sub=(a,b)=>({x:a.x-b.x,y:a.y-b.y}),add=(a,b)=>({x:a.x+b.x,y:a.y+b.y}),mul=(a,n)=>({x:a.x*n,y:a.y*n});
-const norm=v=>{const length=Math.hypot(v.x,v.y);return length>1e-8?mul(v,1/length):{x:1,y:0};};
-export const rotate=(x,y,a)=>({x:x*Math.cos(a)-y*Math.sin(a),y:x*Math.sin(a)+y*Math.cos(a)});
-export const localPoint=(body,x,y)=>rotate(x-body.x,y-body.y,-body.angle);
-export const worldPoint=(body,x=0,y=0)=>add(body,rotate(x,y,body.angle));
+import {dot,cross,sub,add,mul,norm,rotate,localPoint,worldPoint} from './vectors.js';
+import {ropeGeometry,ropeWrap,ropePolyline,prepareRopes,solveRopeVelocity,solveRopePosition,finishRopes} from './rope.js';
+export {rotate,localPoint,worldPoint} from './vectors.js';
+export {ropeGeometry,ropeWrap} from './rope.js';
 export function setMass(b){
   const material=MATERIALS[b.material],circle=PARTS[b.kind].shape==='circle',area=circle?Math.PI*b.w*b.w/4:b.w*b.h;
   b.mass=area*material.density/1800;b.inertia=circle?b.mass*b.w*b.w/8:b.mass*(b.w*b.w+b.h*b.h)/12;
   b.invMass=b.fixed||b.pinned||b.held?0:1/b.mass;b.invI=b.fixed||b.held?0:1/b.inertia;
   return b;
 }
-export function createBody(p){return setMass({...structuredClone(p),vx:0,vy:0,omega:0,state:p.kind==='switch'?'off':p.on?'on':'off',active:p.on,held:false,exited:null,lastImpact:-10});}
+export function createBody(p){return setMass({...structuredClone(p),vx:0,vy:0,omega:0,sheaveAngle:0,state:p.kind==='switch'?'off':p.on?'on':'off',active:p.on,held:false,exited:null,lastImpact:-10});}
 function fixture(b,x=0,y=0,w=b.w,h=b.h,shape=PARTS[b.kind].shape){const center=worldPoint(b,x,y);return {body:b,x:center.x,y:center.y,w,h,angle:b.angle,shape};}
 function fixtures(b){
   if(PARTS[b.kind].shape!=='bucket')return[fixture(b)];
@@ -86,18 +84,11 @@ function solvePosition(c){
   }
 }
 export function connectionPoints(world,c){
+  if(c.kind==='rope')return ropePolyline(ropeGeometry(world.bodies,c));
   const a=world.bodies.find(b=>b.id===c.a),b=world.bodies.find(b=>b.id===c.b);if(!a||!b)return[];
-  return[worldPoint(a,c.ax,c.ay),...(c.via??[]).map(id=>world.bodies.find(p=>p.id===id)).filter(Boolean).map(p=>({x:p.x,y:p.y})),worldPoint(b,c.bx,c.by)];
+  return[worldPoint(a,c.ax,c.ay),worldPoint(b,c.bx,c.by)];
 }
 export function pathLength(points){return points.slice(1).reduce((sum,p,i)=>sum+Math.hypot(p.x-points[i].x,p.y-points[i].y),0);}
-function solveRopes(world,position=false){
-  for(const c of world.connections){if(c.kind!=='rope')continue;const points=connectionPoints(world,c);if(points.length<2)continue;const length=pathLength(points),a=world.bodies.find(b=>b.id===c.a),b=world.bodies.find(b=>b.id===c.b);
-    const na=norm(sub(points[0],points[1])),nb=norm(sub(points.at(-1),points.at(-2))),ra=sub(points[0],a),rb=sub(points.at(-1),b),k=a.invMass+b.invMass+cross(ra,na)**2*a.invI+cross(rb,nb)**2*b.invI;
-    if(k<1e-9||length<c.length-.1)continue;
-    if(position){const amount=Math.min(20,Math.max(0,length-c.length))*.5/k;for(const [body,r,n] of [[a,ra,na],[b,rb,nb]]){body.x-=n.x*amount*body.invMass;body.y-=n.y*amount*body.invMass;body.angle-=cross(r,n)*amount*body.invI;}}
-    else{const speed=dot(velocity(a,ra),na)+dot(velocity(b,rb),nb),amount=Math.max(0,speed/k);impulse(a,mul(na,amount),ra,-1);impulse(b,mul(nb,amount),rb,-1);}
-  }
-}
 function emit(world,b,kind,strength){if(world.time-b.lastImpact<.12||strength<35)return;b.lastImpact=world.time;world.events.push({kind,x:b.x,y:b.y,strength,time:world.time});world.reactions++;}
 function updateDevices(world,dt){
   const wired=new Set(world.connections.filter(c=>c.kind==='wire').map(c=>c.b));
@@ -136,6 +127,7 @@ function goalProgress(world){
 }
 export function createWorld(level){
   const world={bodies:level.bodies.map(createBody),connections:structuredClone(level.connections),environment:{...level.environment},goal:structuredClone(level.goal),time:0,reactions:0,events:[],goalHeld:0,won:false,floor:null};
+  for(const c of world.connections)if(c.kind==='rope'){c.wrap??=ropeWrap(world.bodies,c);c.tension=0;c.routeCrossed=false;c.blocked=false;c.arcSweeps=ropeGeometry(world.bodies,c).arcs.map(arc=>arc.delta);}
   if(level.environment.floor)world.floor=createBody({id:'__ground',kind:'ramp',x:level.environment.width/2,y:level.environment.height-40,w:level.environment.width*4,h:40,angle:0,material:'wood',fixed:true,pinned:false,locked:true,power:1,direction:1,on:true});
   return world;
 }
@@ -146,16 +138,17 @@ function tick(world,dt){
     if(b.invI){b.omega=clamp(b.omega,-35,35);b.angle+=b.omega*dt;b.omega*=Math.exp(-dt*.015);}
     if(b.x+b.w/2<0)b.exited='left';else if(b.x-b.w/2>world.environment.width)b.exited='right';else if(b.y+b.h/2<0)b.exited='top';else if(b.y-b.h/2>world.environment.height)b.exited='bottom';
   }
-  const contacts=contactPairs(world);
+  const contacts=contactPairs(world),ropes=prepareRopes(world,dt);
   const cached=world.cachedContacts??[],used=new Set();
   for(const c of contacts)for(const p of c.points){
     const local=localPoint(c.a,p.x,p.y),index=cached.findIndex((old,i)=>!used.has(i)&&old.a===c.a.id&&old.b===c.b.id&&dot(old.n,c.n)>.95&&Math.hypot(local.x-old.x,local.y-old.y)<6);
     if(index<0)continue;used.add(index);const old=cached[index],ratio=dt/(world.cachedDt??dt);p.jn=old.jn*ratio;p.jt=old.jt*ratio;
     const j=add(mul(c.n,p.jn),mul(c.t,p.jt));impulse(c.a,j,p.ra,-1);impulse(c.b,j,p.rb,1);
   }
-  for(let i=0;i<12;i++){for(const c of contacts)solveVelocity(c);solveRopes(world);}
+  for(let i=0;i<12;i++){for(const c of contacts)solveVelocity(c);solveRopeVelocity(ropes);}
   world.cachedContacts=contacts.flatMap(c=>c.points.map(p=>({...localPoint(c.a,p.x,p.y),a:c.a.id,b:c.b.id,n:c.n,jn:p.jn,jt:p.jt})));world.cachedDt=dt;
-  for(let i=0;i<3;i++){for(const c of contactPairs(world,true))solvePosition(c);solveRopes(world,true);}
+  for(let i=0;i<3;i++){for(const c of contactPairs(world,true))solvePosition(c);solveRopePosition(world);}
+  finishRopes(ropes,dt);
   for(const c of contacts){const strength=Math.max(...c.points.map(p=>p.speed));if(strength>35){const b=c.a.fixed?c.b:c.a,kind=c.a.kind==='trampoline'||c.b.kind==='trampoline'?'trampoline':b.material;emit(world,b,kind,strength);}}
   if(world.goal&&!world.won){const progress=goalProgress(world);world.goalHeld=progress.count>=progress.needed?world.goalHeld+dt:0;if(progress.count>=progress.needed&&world.goalHeld>=world.goal.delay){world.won=true;world.events.push({kind:'goal',x:world.goal.x,y:world.goal.y,strength:300,time:world.time});}}
 }
