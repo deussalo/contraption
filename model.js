@@ -25,6 +25,7 @@ export const PARTS={
   motor:{name:'Motor',shape:'circle',w:78,h:78,material:'steel',pinned:true},
   conveyor:{name:'Conveyor',shape:'box',w:220,h:22,material:'rubber',fixed:true},
   switch:{name:'Switch',shape:'box',w:42,h:22,material:'rubber',fixed:true,sensor:true,on:false},
+  'material-zone':{name:'Material zone',shape:'box',w:220,h:160,material:'steel',fixed:true,sensor:true,outputMaterial:'steel'},
   rocket:{name:'Rocket',shape:'box',w:32,h:72,material:'wood',on:false},
 };
 export const ENVIRONMENT={width:1600,height:1000,gravity:850,pressure:1,floor:true};
@@ -32,9 +33,9 @@ export const uid=()=>crypto.randomUUID();
 export function makePart(kind,x,y,overrides={}){
   if(!Object.hasOwn(PARTS,kind))throw Error('Unknown component.');
   const spec=PARTS[kind];
-  return {id:uid(),kind,x,y,w:spec.w,h:spec.h,angle:0,material:spec.material,fixed:!!spec.fixed,pinned:!!spec.pinned,locked:false,power:1,direction:1,on:spec.on!==false,...overrides};
+  return {id:uid(),kind,x,y,w:spec.w,h:spec.h,angle:0,material:spec.material,...(spec.outputMaterial?{outputMaterial:spec.outputMaterial}:{}),fixed:!!spec.fixed,pinned:!!spec.pinned,locked:false,power:1,direction:1,on:spec.on!==false,...overrides};
 }
-const DESIGN_KEYS=['id','kind','x','y','w','h','angle','material','fixed','pinned','locked','power','direction','on','stock'];
+const DESIGN_KEYS=['id','kind','x','y','w','h','angle','material','outputMaterial','fixed','pinned','locked','power','direction','on','stock'];
 export function designPart(body){return Object.fromEntries(DESIGN_KEYS.filter(key=>body[key]!==undefined).map(key=>[key,body[key]]));}
 export function blankLevel(){return {format:'contraption',version:3,name:'Workshop',mode:'sandbox',environment:{...ENVIRONMENT},bodies:[],connections:[],inventory:[],goal:null};}
 export function starterLevel(){
@@ -52,6 +53,10 @@ function parsePart(source,ids,prototype=false){
   if(PARTS[p.kind].shape==='circle')p.h=p.w;
   p.angle=number(source.angle??0,'Angle',-100000,100000);
   if(source.material!==undefined&&!Object.hasOwn(MATERIALS,source.material))throw Error('Invalid material.');p.material=source.material??p.material;
+  if(p.kind==='material-zone'){
+    if(source.outputMaterial!==undefined&&!Object.hasOwn(MATERIALS,source.outputMaterial))throw Error('Unknown output material.');p.outputMaterial=source.outputMaterial??p.outputMaterial;
+    if(source.fixed===false||source.pinned===true)throw Error('Material zones must be fixed.');p.fixed=true;p.pinned=false;
+  }else if(source.outputMaterial!==undefined)throw Error('Only material zones have an output material.');
   for(const k of ['fixed','pinned','locked','on'])if(source[k]!==undefined){if(typeof source[k]!=='boolean')throw Error(`Invalid ${k} setting.`);p[k]=source[k];}
   p.power=number(source.power??1,'Power',0,5);p.direction=source.direction===-1?-1:1;
   if(source.stock!==undefined){if(typeof source.stock!=='string')throw Error('Invalid inventory reference.');p.stock=source.stock;}

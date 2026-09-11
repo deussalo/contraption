@@ -1,4 +1,4 @@
-import {PARTS,uid,makePart,parseLevel,designPart} from './model.js';
+import {PARTS,MATERIALS,uid,makePart,parseLevel,designPart} from './model.js';
 import {createWorld,createBody,setMass,overlaps,connectionPoints,pathLength,ropeGeometry,ropeWrap} from './physics.js';
 export class Workshop{
   constructor(level,running=false){this.history=[];this.future=[];this.selected=null;this.load(level,running);}
@@ -24,7 +24,7 @@ export class Workshop{
   canPlace(body){if(PARTS[body.kind].sensor)return true;return !this.world.bodies.some(other=>other.id!==body.id&&!PARTS[other.kind].sensor&&other.state!=='popped'&&overlaps(body,other,2))&&!(this.world.floor&&overlaps(body,this.world.floor,2));}
   insert(body){this.level.bodies.push(designPart(body));this.world.bodies.push(body);this.selected=body.id;this.changed=true;}
   move(body,change){
-    if(!this.editable(body))throw Error('This object is locked.');Object.assign(body,change);setMass(body);for(const c of this.world.connections)if(c.kind==='rope'&&(c.a===body.id||c.b===body.id||c.via.includes(body.id))){delete c.arcSweeps;c.routeCrossed=false;c.blocked=false;}Object.assign(this.level.bodies.find(p=>p.id===body.id),designPart(body));this.world.cachedContacts=[];this.changed=true;
+    if(!this.editable(body))throw Error('This object is locked.');if(body.kind==='material-zone'&&(change.fixed===false||change.pinned===true))throw Error('Material zones must be fixed.');if(change.outputMaterial!==undefined&&!Object.hasOwn(MATERIALS,change.outputMaterial))throw Error('Unknown output material.');Object.assign(body,change);setMass(body);for(const c of this.world.connections)if(c.kind==='rope'&&(c.a===body.id||c.b===body.id||c.via.includes(body.id))){delete c.arcSweeps;c.routeCrossed=false;c.blocked=false;}Object.assign(this.level.bodies.find(p=>p.id===body.id),designPart(body));this.world.cachedContacts=[];this.changed=true;
   }
   update(change){const body=this.body();if(!body)return;this.transaction(()=>{this.move(body,change);if(!this.canPlace(body))throw Error('Objects cannot overlap.');});}
   remove(){

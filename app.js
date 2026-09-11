@@ -38,12 +38,13 @@ function propertySync(){
   const b=workshop.body();$('inspector').hidden=!b;if(!b)return;
   $('pinned-name').textContent=b.kind==='pulley'?'Fixed axle':'Pivot';
   $('part-name').textContent=PARTS[b.kind].name+(workshop.level.mode==='puzzle'&&b.locked?' · locked':'');
-  const values={material:b.material,angle:Math.round(((b.angle*180/Math.PI+180)%360+360)%360-180),width:Math.round(b.w),height:Math.round(b.h),power:b.power};
+  const values={material:b.material,'output-material':b.outputMaterial,angle:Math.round(((b.angle*180/Math.PI+180)%360+360)%360-180),width:Math.round(b.w),height:Math.round(b.h),power:b.power};
   for(const [id,value] of Object.entries(values))if(document.activeElement!==$(id))$(id).value=value;
   for(const field of ['fixed','pinned','locked','on'])$(field).checked=!!b[field];
-  $('power-row').hidden=!['fan','motor','conveyor','rocket','trampoline'].includes(b.kind);$('on-row').hidden=!['fan','motor','conveyor','rocket'].includes(b.kind);$('locked-label').hidden=workshop.level.mode!=='editor';$('to-bin').hidden=workshop.level.mode!=='editor';
+  $('output-material-row').hidden=b.kind!=='material-zone';$('power-row').hidden=!['fan','motor','conveyor','rocket','trampoline'].includes(b.kind);$('on-row').hidden=!['fan','motor','conveyor','rocket'].includes(b.kind);$('locked-label').hidden=workshop.level.mode!=='editor';$('to-bin').hidden=workshop.level.mode!=='editor';
   for(const input of $('inspector').querySelectorAll('input,select,button:not(#close-inspector)'))input.disabled=!workshop.editable(b);
   $('height').disabled=!workshop.editable(b)||PARTS[b.kind].shape==='circle';
+  if(b.kind==='material-zone')for(const id of ['fixed','pinned'])$(id).disabled=true;
   if(workshop.level.mode==='puzzle'){for(const id of ['material','power','fixed','pinned','on'])$(id).disabled=true;}
 }
 function sync(){
@@ -96,7 +97,7 @@ async function importFile(file){
 }
 function saveBrowser(){try{localStorage.setItem('contraption.saved.v3',JSON.stringify(workshop.level));toast('Level saved in this browser');}catch{toast('Saving failed. Export a JSON file instead.');}closePopovers();}
 function loadBrowser(){const raw=localStorage.getItem('contraption.saved.v3');if(!raw)throw Error('No saved level in this browser.');replaceLevel(parseLevel(JSON.parse(raw)),false);}
-function burst(event){const count=event.kind==='goal'?60:event.kind==='pop'?20:4;for(let i=0;i<count;i++)particles.push({x:event.x,y:event.y,vx:(Math.random()-.5)*(count>10?400:100),vy:-Math.random()*(count>10?500:100),life:count>10?2:.35,maxLife:count>10?2:.35,size:count>10?6:3,color:['#c79676','#a3b88a','#dcc471','#ad9cbd'][i%4]});}
+function burst(event){const count=event.kind==='goal'?60:event.kind==='transform'?28:event.kind==='pop'?20:4,palette=event.kind==='transform'?[MATERIALS[event.material].color,'#faf9eb','#dcc471']:['#c79676','#a3b88a','#dcc471','#ad9cbd'];for(let i=0;i<count;i++)particles.push({x:event.x,y:event.y,vx:(Math.random()-.5)*(count>10?400:100),vy:-Math.random()*(count>10?500:100),life:count>10?2:.35,maxLife:count>10?2:.35,size:count>10?6:3,color:palette[i%palette.length]});}
 function consume(events){for(const event of events){sound.play(event);burst(event);}}
 function frame(now){
   const dt=Math.min((now-lastFrame)/1000,.06)||0;lastFrame=now;
@@ -120,7 +121,7 @@ $('rope-reverse').addEventListener('click',()=>act(()=>{const c=workshop.world.c
 $('sound').addEventListener('click',async()=>{sound.enabled=!sound.enabled;setIcon($('sound'),sound.enabled?'sound':'mute');$('sound').setAttribute('aria-pressed',String(sound.enabled));if(sound.enabled)try{await sound.unlock();sound.tone(450,.08,'sine',.035);}catch(error){sound.enabled=false;toast(error.message);}});
 $('volume').addEventListener('input',()=>{sound.volume=Number($('volume').value);});
 $('fullscreen').addEventListener('click',async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{toast('Full screen is unavailable here.');}});
-for(const [id,field,convert] of [['material','material',String],['angle','angle',v=>Number(v)*Math.PI/180],['width','w',Number],['height','h',Number],['power','power',Number]])$(id).addEventListener('change',()=>act(()=>{const b=workshop.body();if(!b)return;let value=convert($(id).value);if(typeof value==='number'&&!Number.isFinite(value))throw Error('Enter a valid number.');if(field==='w'||field==='h')value=clamp(value,12,1200);const change={[field]:value};if(PARTS[b.kind].shape==='circle'&&field==='w')change.h=value;workshop.update(change);}));
+for(const [id,field,convert] of [['material','material',String],['output-material','outputMaterial',String],['angle','angle',v=>Number(v)*Math.PI/180],['width','w',Number],['height','h',Number],['power','power',Number]])$(id).addEventListener('change',()=>act(()=>{const b=workshop.body();if(!b)return;let value=convert($(id).value);if(typeof value==='number'&&!Number.isFinite(value))throw Error('Enter a valid number.');if(field==='w'||field==='h')value=clamp(value,12,1200);const change={[field]:value};if(PARTS[b.kind].shape==='circle'&&field==='w')change.h=value;workshop.update(change);}));
 for(const id of ['fixed','pinned','locked','on'])$(id).addEventListener('change',()=>act(()=>workshop.update({[id]:$(id).checked})));
 for(const id of ['gravity','pressure'])$(id).addEventListener('change',()=>act(()=>workshop.setEnvironment({[id]:Number($(id).value)})));
 $('ground').addEventListener('change',()=>act(()=>workshop.setEnvironment({floor:$('ground').checked})));$('snap').addEventListener('change',()=>{view.snap=$('snap').checked;});

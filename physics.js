@@ -9,7 +9,7 @@ export function setMass(b){
   b.invMass=b.fixed||b.pinned||b.held?0:1/b.mass;b.invI=b.fixed||b.held?0:1/b.inertia;
   return b;
 }
-export function createBody(p){return setMass({...structuredClone(p),vx:0,vy:0,omega:0,sheaveAngle:0,state:p.kind==='switch'?'off':p.on?'on':'off',active:p.on,held:false,exited:null,lastImpact:-10});}
+export function createBody(p){return setMass({...structuredClone(p),vx:0,vy:0,omega:0,sheaveAngle:0,state:p.kind==='switch'?'off':p.on?'on':'off',active:p.on,held:false,exited:null,lastImpact:-10,transformedZones:[]});}
 function fixture(b,x=0,y=0,w=b.w,h=b.h,shape=PARTS[b.kind].shape){const center=worldPoint(b,x,y);return {body:b,x:center.x,y:center.y,w,h,angle:b.angle,shape};}
 function fixtures(b){
   if(PARTS[b.kind].shape!=='bucket')return[fixture(b)];
@@ -112,7 +112,11 @@ function updateDevices(world,dt){
   for(const fan of world.bodies.filter(b=>b.kind==='fan'&&b.active))for(const b of world.bodies){if(!b.invMass)continue;
     const relative=localPoint(fan,b.x,b.y);if(relative.x>0&&relative.x<360&&Math.abs(relative.y)<fan.h/2+relative.x*.3){const strength=950*fan.power*(1-relative.x/420)/Math.max(.15,Math.sqrt(b.mass)),direction=rotate(1,0,fan.angle);b.vx+=direction.x*strength*dt;b.vy+=direction.y*strength*dt;}
   }
-  for(const sensor of world.bodies.filter(b=>PARTS[b.kind].sensor))for(const b of world.bodies){
+  for(const sensor of world.bodies.filter(b=>b.kind==='material-zone'))for(const b of world.bodies){
+    if(!b.invMass||b.held||b===sensor||b.transformedZones.includes(sensor.id)||!pointInside(sensor,b.x,b.y))continue;
+    b.material=sensor.outputMaterial;b.transformedZones.push(sensor.id);setMass(b);world.cachedContacts=[];world.reactions++;world.events.push({kind:'transform',material:b.material,x:b.x,y:b.y,strength:500,time:world.time});
+  }
+  for(const sensor of world.bodies.filter(b=>PARTS[b.kind].sensor&&b.kind!=='material-zone'))for(const b of world.bodies){
     if(!b.invMass||b.held||b===sensor||!overlaps(sensor,b,0))continue;
     if(sensor.kind==='bell'&&sensor.state!=='rung'){sensor.state='rung';emit(world,sensor,'bell',300);}
     if(sensor.kind==='switch'&&sensor.state!=='on'){sensor.state='on';emit(world,sensor,'switch',100);}

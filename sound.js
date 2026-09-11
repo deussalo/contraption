@@ -10,6 +10,7 @@ export class WorkshopSound{
     const volume=Math.min(.14,.015+e.strength/5000);
     if(e.kind==='bell'||e.kind==='goal'){for(const [f,v] of [[784,.11],[1568,.035],[2180,.015]])this.tone(f,1.5,'sine',v,f,e.x);}
     else if(e.kind==='trampoline')this.tone(100,.35,'sine',.11,700,e.x);
+    else if(e.kind==='transform'){const stone=e.material==='steel';this.tone(stone?150:520,.45,stone?'square':'sine',.1,stone?45:900,e.x);this.tone(stone?920:1180,.22,'sine',.045,stone?180:1600,e.x);}
     else if(e.kind==='steel'){this.tone(720,.2,'sine',volume,450,e.x);this.tone(1640,.13,'sine',volume*.22,1300,e.x);}
     else if(e.kind==='rubber')this.tone(200,.15,'sine',volume,55,e.x);
     else if(e.kind==='pop')this.tone(430,.08,'sawtooth',volume,30,e.x);
