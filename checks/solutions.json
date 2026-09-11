@@ -1,0 +1,91 @@
+[
+  {
+    "parts": [
+      {
+        "id": "solution-turning-ramp",
+        "kind": "ramp",
+        "x": 500,
+        "y": 350,
+        "w": 500,
+        "h": 16,
+        "angle": 0.22,
+        "material": "wood",
+        "fixed": true,
+        "locked": false,
+        "stock": "turning-ramp"
+      }
+    ]
+  },
+  {
+    "parts": [
+      {
+        "id": "solution-catch-ramp",
+        "kind": "ramp",
+        "x": 620,
+        "y": 480,
+        "w": 400,
+        "h": 16,
+        "angle": 0.25,
+        "material": "wood",
+        "fixed": true,
+        "locked": false,
+        "stock": "catch-ramp"
+      }
+    ]
+  },
+  {
+    "parts": [
+      {
+        "id": "solution-springboard",
+        "kind": "trampoline",
+        "x": 800,
+        "y": 790,
+        "w": 120,
+        "h": 18,
+        "angle": 0,
+        "material": "rubber",
+        "fixed": true,
+        "locked": false,
+        "power": 1.25,
+        "stock": "springboard"
+      }
+    ]
+  },
+  {
+    "parts": [
+      {
+        "id": "solution-breeze",
+        "kind": "fan",
+        "x": 350,
+        "y": 650,
+        "w": 70,
+        "h": 70,
+        "angle": 0,
+        "material": "steel",
+        "fixed": true,
+        "locked": false,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "breeze"
+      }
+    ]
+  },
+  {
+    "parts": [
+      {
+        "id": "solution-lever",
+        "kind": "box",
+        "x": 800,
+        "y": 795,
+        "w": 500,
+        "h": 24,
+        "angle": 0,
+        "material": "wood",
+        "fixed": false,
+        "locked": false,
+        "stock": "lever"
+      }
+    ]
+  }
+]

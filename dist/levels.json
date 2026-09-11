@@ -1,0 +1,354 @@
+{
+  "format": "contraption-level-pack",
+  "version": 2,
+  "levels": [
+    {
+      "id": "first-turn",
+      "name": "First turn",
+      "bodies": [
+        {
+          "id": "traveller",
+          "kind": "circle",
+          "x": 350,
+          "y": 100,
+          "w": 50,
+          "h": 50,
+          "angle": 0,
+          "material": "steel",
+          "fixed": false,
+          "locked": true
+        },
+        {
+          "id": "landing",
+          "kind": "ramp",
+          "x": 1000,
+          "y": 840,
+          "w": 540,
+          "h": 16,
+          "angle": 0,
+          "material": "wood",
+          "fixed": true,
+          "locked": true
+        }
+      ],
+      "goal": {
+        "kind": "region",
+        "target": "traveller",
+        "x": 970,
+        "y": 695,
+        "w": 480,
+        "h": 230,
+        "count": 1,
+        "delay": 0
+      },
+      "inventory": [
+        {
+          "id": "turning-ramp",
+          "part": {
+            "kind": "ramp",
+            "w": 500,
+            "h": 16,
+            "material": "wood",
+            "fixed": true
+          },
+          "quantity": 1
+        }
+      ],
+      "format": "contraption",
+      "version": 2,
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 1,
+        "floor": true
+      },
+      "connections": []
+    },
+    {
+      "id": "catch-of-the-day",
+      "name": "Catch of the day",
+      "bodies": [
+        {
+          "id": "catch-ball",
+          "kind": "bowling",
+          "x": 500,
+          "y": 100,
+          "w": 52,
+          "h": 52,
+          "angle": 0,
+          "material": "steel",
+          "fixed": false,
+          "locked": true
+        },
+        {
+          "id": "catcher",
+          "kind": "bucket",
+          "x": 1110,
+          "y": 850,
+          "w": 230,
+          "h": 140,
+          "angle": 0,
+          "material": "wood",
+          "fixed": true,
+          "locked": true
+        }
+      ],
+      "goal": {
+        "kind": "region",
+        "target": "catch-ball",
+        "x": 1110,
+        "y": 862.5,
+        "w": 180,
+        "h": 75,
+        "count": 1,
+        "delay": 0.35
+      },
+      "inventory": [
+        {
+          "id": "catch-ramp",
+          "part": {
+            "kind": "ramp",
+            "w": 400,
+            "h": 16,
+            "material": "wood",
+            "fixed": true
+          },
+          "quantity": 1
+        }
+      ],
+      "format": "contraption",
+      "version": 2,
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 1,
+        "floor": true
+      },
+      "connections": []
+    },
+    {
+      "id": "second-wind",
+      "name": "Second wind",
+      "bodies": [
+        {
+          "id": "jumper",
+          "kind": "circle",
+          "x": 800,
+          "y": 560,
+          "w": 50,
+          "h": 50,
+          "angle": 0,
+          "material": "steel",
+          "fixed": false,
+          "locked": true
+        },
+        {
+          "id": "left-guide",
+          "kind": "ramp",
+          "x": 630,
+          "y": 540,
+          "w": 580,
+          "h": 16,
+          "angle": 1.5707963267948966,
+          "material": "wood",
+          "fixed": true,
+          "locked": true
+        },
+        {
+          "id": "right-guide",
+          "kind": "ramp",
+          "x": 970,
+          "y": 540,
+          "w": 580,
+          "h": 16,
+          "angle": 1.5707963267948966,
+          "material": "wood",
+          "fixed": true,
+          "locked": true
+        }
+      ],
+      "goal": {
+        "kind": "region",
+        "target": "jumper",
+        "x": 800,
+        "y": 420,
+        "w": 170,
+        "h": 160,
+        "count": 1,
+        "delay": 0
+      },
+      "inventory": [
+        {
+          "id": "springboard",
+          "part": {
+            "kind": "trampoline",
+            "w": 120,
+            "h": 18,
+            "material": "rubber",
+            "fixed": true,
+            "power": 1.25
+          },
+          "quantity": 1
+        }
+      ],
+      "format": "contraption",
+      "version": 2,
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 1,
+        "floor": true
+      },
+      "connections": []
+    },
+    {
+      "id": "air-mail",
+      "name": "Air mail",
+      "bodies": [
+        {
+          "id": "letter",
+          "kind": "balloon",
+          "x": 460,
+          "y": 760,
+          "w": 60,
+          "h": 60,
+          "angle": 0,
+          "material": "helium",
+          "fixed": false,
+          "locked": true
+        },
+        {
+          "id": "mail-stop",
+          "kind": "ramp",
+          "x": 1250,
+          "y": 375,
+          "w": 550,
+          "h": 16,
+          "angle": 1.5707963267948966,
+          "material": "wood",
+          "fixed": true,
+          "locked": true
+        }
+      ],
+      "goal": {
+        "kind": "region",
+        "target": "letter",
+        "x": 965,
+        "y": 400,
+        "w": 490,
+        "h": 560,
+        "count": 1,
+        "delay": 0
+      },
+      "inventory": [
+        {
+          "id": "breeze",
+          "part": {
+            "kind": "fan",
+            "w": 70,
+            "h": 70,
+            "material": "steel",
+            "fixed": true,
+            "power": 1,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        }
+      ],
+      "format": "contraption",
+      "version": 2,
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 1.8,
+        "floor": true
+      },
+      "connections": []
+    },
+    {
+      "id": "heavy-lifting",
+      "name": "Heavy lifting",
+      "bodies": [
+        {
+          "id": "weight",
+          "kind": "bowling",
+          "x": 600,
+          "y": 550,
+          "w": 52,
+          "h": 52,
+          "angle": 0,
+          "material": "steel",
+          "fixed": false,
+          "locked": true
+        },
+        {
+          "id": "passenger",
+          "kind": "basketball",
+          "x": 990,
+          "y": 750,
+          "w": 56,
+          "h": 56,
+          "angle": 0,
+          "material": "rubber",
+          "fixed": false,
+          "locked": true
+        },
+        {
+          "id": "fulcrum",
+          "kind": "box",
+          "x": 800,
+          "y": 875,
+          "w": 40,
+          "h": 130,
+          "angle": 0,
+          "material": "steel",
+          "fixed": true,
+          "locked": true
+        }
+      ],
+      "goal": {
+        "kind": "region",
+        "target": "passenger",
+        "x": 1140,
+        "y": 325,
+        "w": 480,
+        "h": 350,
+        "count": 1,
+        "delay": 0
+      },
+      "inventory": [
+        {
+          "id": "lever",
+          "part": {
+            "kind": "box",
+            "w": 500,
+            "h": 24,
+            "material": "wood",
+            "fixed": false
+          },
+          "quantity": 1
+        }
+      ],
+      "format": "contraption",
+      "version": 2,
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 1,
+        "floor": true
+      },
+      "connections": []
+    }
+  ]
+}

@@ -1,31 +1,28 @@
 # Contraption
 
-An illustrated Rube Goldberg workshop with ten components, procedural sound, and a 120 Hz physics simulation.
+A fullscreen illustrated physics workshop with 15 components, procedural sound, and five puzzles.
 
-Drag parts from the tray, press Space to run or pause, and edit the machine while paused. Resume preserves the current time and momentum. Reset uses your edited starting layout. Undo and redo also restore paused simulations.
+Draw rectangles and circles, drag parts from the expandable bin, and connect ropes, pulleys, belts, and switches. Free objects obey gravity. Space pauses or resumes; editing works in either state. Drag with one finger, then add a second finger to rotate and scale. Reset restores the edited starting layout.
+
+The menu opens puzzles, environment settings, browser saves, and JSON import/export. Puzzle editor locks the existing scene; select parts and send them to the bin, set an outcome goal, then test or export the puzzle. Imported levels carry materials, locks, inventory, connections, goals, gravity, and pressure. JSON version 2 is required.
 
 ## Development
 
-Serve `dist/` with any local HTTP server. There are no packages to install and no build step.
+Serve `dist/` with any local HTTP server. No dependency installation or build step is needed.
 
-- `dist/app.js`: editor, playback, local saving, and browser tools
-- `dist/physics.js`: collision detection and simulation
-- `dist/parts.js`: component definitions and example machines
-- `dist/draw.js`: canvas rendering
-- `dist/sound.js`: procedural audio
-- `dist/style.css`: responsive workshop layout
+```sh
+node --experimental-default-type=module checks/check.mjs
+```
 
-## GitHub Pages
+The checks cover gravity, stable stacks, fast collisions, belt power propagation, ropes, switches, malformed imports, undo, JSON round trips, and both empty-bin and reference outcomes for every puzzle. Prove changes to visible controls with a browser probe on desktop and mobile, including real two-pointer touch events.
 
-Source lives on `main`; GitHub Pages serves the root of `gh-pages`.
+## Publish
 
-After committing changes:
+Source lives on `main`; GitHub Pages serves `gh-pages`.
 
 ```sh
 git push origin main
 git subtree push --prefix=dist origin gh-pages
 ```
 
-Check a run → pause → edit → undo/redo → resume sequence in the browser before publishing. Confirm all three examples still ring their bells.
-
-Machines are saved in the current browser, separately for each site address.
+The existing ChatGPT Site is recorded in `.openai/hosting.json`. Push the same committed source and package `dist/` through Sites hosting. Browser saves are separate for each site address; use JSON files to transfer levels.
