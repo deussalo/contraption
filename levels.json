@@ -1536,6 +1536,93 @@
         "edge": "right",
         "state": "rung"
       }
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "id": "rubber-stamp",
+      "name": "Rubber Stamp",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 0.4,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "stamp-ball",
+          "kind": "bowling",
+          "x": 280,
+          "y": 170,
+          "w": 58,
+          "h": 58,
+          "material": "steel",
+          "locked": true
+        },
+        {
+          "id": "rubber-zone",
+          "kind": "material-zone",
+          "x": 650,
+          "y": 490,
+          "w": 230,
+          "h": 190,
+          "material": "steel",
+          "outputMaterial": "rubber",
+          "fixed": true,
+          "locked": true
+        },
+        {
+          "id": "bounce-plate",
+          "kind": "ramp",
+          "x": 1060,
+          "y": 820,
+          "w": 360,
+          "h": 22,
+          "material": "wood",
+          "fixed": true,
+          "locked": true
+        },
+        {
+          "id": "stamp-bell",
+          "kind": "bell",
+          "x": 1375,
+          "y": 635,
+          "w": 74,
+          "h": 74,
+          "material": "steel",
+          "fixed": true,
+          "locked": true
+        }
+      ],
+      "connections": [],
+      "inventory": [
+        {
+          "id": "stamp-route",
+          "part": {
+            "kind": "ramp",
+            "w": 760,
+            "h": 16,
+            "angle": 0.12,
+            "material": "wood",
+            "fixed": true
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "state",
+        "target": "stamp-bell",
+        "count": 1,
+        "delay": 0,
+        "x": 1375,
+        "y": 635,
+        "w": 130,
+        "h": 130,
+        "edge": "right",
+        "state": "rung"
+      }
     }
   ]
 }
