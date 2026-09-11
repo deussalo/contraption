@@ -1,6 +1,6 @@
 {
   "format": "contraption-level-pack",
-  "version": 2,
+  "version": 3,
   "levels": [
     {
       "id": "first-turn",
@@ -55,7 +55,7 @@
         }
       ],
       "format": "contraption",
-      "version": 2,
+      "version": 3,
       "mode": "puzzle",
       "environment": {
         "width": 1600,
@@ -119,7 +119,7 @@
         }
       ],
       "format": "contraption",
-      "version": 2,
+      "version": 3,
       "mode": "puzzle",
       "environment": {
         "width": 1600,
@@ -196,7 +196,7 @@
         }
       ],
       "format": "contraption",
-      "version": 2,
+      "version": 3,
       "mode": "puzzle",
       "environment": {
         "width": 1600,
@@ -263,7 +263,7 @@
         }
       ],
       "format": "contraption",
-      "version": 2,
+      "version": 3,
       "mode": "puzzle",
       "environment": {
         "width": 1600,
@@ -339,7 +339,7 @@
         }
       ],
       "format": "contraption",
-      "version": 2,
+      "version": 3,
       "mode": "puzzle",
       "environment": {
         "width": 1600,
@@ -349,6 +349,160 @@
         "floor": true
       },
       "connections": []
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "name": "Pulley gate",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 1,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "locked-ball",
+          "kind": "circle",
+          "x": 690,
+          "y": 700,
+          "w": 46,
+          "material": "rubber",
+          "locked": true
+        },
+        {
+          "id": "anchor",
+          "kind": "anchor",
+          "x": 480,
+          "y": 180,
+          "w": 24,
+          "h": 24,
+          "fixed": true,
+          "locked": true
+        },
+        {
+          "id": "drop-weight",
+          "kind": "box",
+          "x": 560,
+          "y": 50,
+          "w": 120,
+          "h": 220,
+          "material": "steel",
+          "locked": true
+        },
+        {
+          "id": "movable-pulley",
+          "kind": "pulley",
+          "x": 550,
+          "y": 350,
+          "w": 80,
+          "h": 80,
+          "material": "wood",
+          "pinned": false,
+          "locked": true
+        },
+        {
+          "id": "guide-a",
+          "kind": "pulley",
+          "x": 680,
+          "y": 180,
+          "w": 72,
+          "h": 72,
+          "material": "wood",
+          "pinned": true,
+          "fixed": true,
+          "locked": true
+        },
+        {
+          "id": "guide-b",
+          "kind": "pulley",
+          "x": 1050,
+          "y": 180,
+          "w": 72,
+          "h": 72,
+          "material": "wood",
+          "pinned": true,
+          "fixed": true,
+          "locked": true
+        },
+        {
+          "id": "door",
+          "kind": "box",
+          "x": 1050,
+          "y": 820,
+          "w": 50,
+          "h": 220,
+          "material": "steel",
+          "locked": true
+        },
+        {
+          "id": "door-rail-left",
+          "kind": "ramp",
+          "x": 970,
+          "y": 350,
+          "w": 18,
+          "h": 260,
+          "material": "wood",
+          "fixed": true,
+          "locked": true
+        },
+        {
+          "id": "door-rail-right",
+          "kind": "ramp",
+          "x": 1130,
+          "y": 350,
+          "w": 18,
+          "h": 260,
+          "material": "wood",
+          "fixed": true,
+          "locked": true
+        }
+      ],
+      "connections": [
+        {
+          "id": "lift-rope",
+          "kind": "rope",
+          "a": "anchor",
+          "b": "door",
+          "via": [
+            "movable-pulley",
+            "guide-a",
+            "guide-b"
+          ],
+          "length": 1611.632929559249,
+          "wrap": [
+            -1,
+            1,
+            1
+          ]
+        }
+      ],
+      "goal": {
+        "kind": "region",
+        "target": "locked-ball",
+        "x": 1200,
+        "y": 850,
+        "w": 240,
+        "h": 180,
+        "count": 1,
+        "delay": 0.15
+      },
+      "inventory": [
+        {
+          "id": "ball-run",
+          "part": {
+            "kind": "ramp",
+            "w": 380,
+            "h": 16,
+            "material": "wood",
+            "fixed": true
+          },
+          "quantity": 1
+        }
+      ],
+      "id": "pulley-gate"
     }
   ]
 }

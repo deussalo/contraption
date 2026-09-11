@@ -5,6 +5,8 @@ import {Gestures} from './gestures.js';
 import {drawBody,drawScene} from './draw.js';
 import {initIcons,setIcon,icon} from './icons.js';
 import {WorkshopSound} from './sound.js';
+import {ropeGeometry} from './rope.js';
+import {setTheme,themeName} from './theme.js';
 const $=id=>document.getElementById(id),canvas=$('canvas'),paint=canvas.getContext('2d'),sound=new WorkshopSound();
 const workshop=new Workshop(starterLevel(),true),camera={x:0,y:0,scale:1},viewport={w:innerWidth,h:innerHeight,dpr:Math.min(devicePixelRatio||1,2)};
 let puzzles=[],activePuzzle=-1,editorReturn=null,toastTimer=0,accumulator=0,lastFrame=0,particles=[],trayDrag=null,lastProgress='',shownWin=false;
@@ -20,9 +22,21 @@ function popover(id){for(const other of ['menu','environment'])if(other!==id)$(o
 function closePopovers(){for(const id of ['menu','environment'])$(id).hidden=true;$('menu-button').setAttribute('aria-expanded','false');$('environment-button').setAttribute('aria-expanded','false');}
 function setTool(tool,stock){gestures.setTool(tool,stock);if(!['select','pan'].includes(tool))workshop.selected=null;sync();}
 function toggleParts(){const open=$('parts-tray').hidden;$('parts-tray').hidden=!open;$('parts-button').setAttribute('aria-expanded',String(open));setIcon($('parts-button'),open?'minus':'plus');}
-function syncConnection(){const c=gestures.connection;$('connection-hint').hidden=!c;$('connection-hint').textContent=c?(c.kind==='rope'?'Choose another object · Pulley to route · Esc to cancel':c.kind==='belt'?'Choose a wheel or conveyor · Esc to cancel':'Choose a device · Esc to cancel'):'';}
+function syncConnection(){const c=gestures.connection;$('connection-hint').hidden=!c;$('connection-hint').textContent=c?(c.kind==='rope'?'Thread pulleys → finish at a load or anchor · Esc to cancel':c.kind==='belt'?'Choose a wheel or conveyor · Esc to cancel':'Choose a device · Esc to cancel'):'';}
+function ropePropertySync(){
+  const c=workshop.world.connections.find(c=>c.id===workshop.selected&&c.kind==='rope');$('rope-inspector').hidden=!c;if(!c)return;
+  if(document.activeElement!==$('rope-length'))$('rope-length').value=Math.round(c.length*10)/10;
+  $('rope-guides').textContent=`${c.via.length} ${c.via.length===1?'pulley':'pulleys'}`;
+  const signature=c.via.join('|');if($('rope-guide').dataset.signature!==signature){$('rope-guide').dataset.signature=signature;$('rope-guide').replaceChildren();c.via.forEach((id,i)=>{const option=document.createElement('option');option.value=i;option.textContent=`Pulley ${i+1}`;$('rope-guide').append(option);});}
+  $('rope-wrap-label').hidden=!c.via.length;
+  const locked=workshop.level.mode==='puzzle'&&[c.a,c.b].every(id=>workshop.level.bodies.find(b=>b.id===id)?.locked);
+  for(const id of ['rope-length','rope-fit','rope-delete','rope-reverse'])$(id).disabled=locked;
+  $('rope-reverse').disabled=locked||!c.via.length;
+}
 function propertySync(){
+  ropePropertySync();
   const b=workshop.body();$('inspector').hidden=!b;if(!b)return;
+  $('pinned-name').textContent=b.kind==='pulley'?'Fixed axle':'Pivot';
   $('part-name').textContent=PARTS[b.kind].name+(workshop.level.mode==='puzzle'&&b.locked?' · locked':'');
   const values={material:b.material,angle:Math.round(((b.angle*180/Math.PI+180)%360+360)%360-180),width:Math.round(b.w),height:Math.round(b.h),power:b.power};
   for(const [id,value] of Object.entries(values))if(document.activeElement!==$(id))$(id).value=value;
@@ -80,8 +94,8 @@ function exportFile(name){
 async function importFile(file){
   if(!file)return;if(file.size>1024*1024)throw Error('Level files must be smaller than 1 MB.');const imported=parseLevel(JSON.parse(await file.text()));replaceLevel(imported,false);activePuzzle=-1;toast('Level imported');
 }
-function saveBrowser(){try{localStorage.setItem('contraption.saved.v2',JSON.stringify(workshop.level));toast('Level saved in this browser');}catch{toast('Saving failed. Export a JSON file instead.');}closePopovers();}
-function loadBrowser(){const raw=localStorage.getItem('contraption.saved.v2');if(!raw)throw Error('No saved level in this browser.');replaceLevel(parseLevel(JSON.parse(raw)),false);}
+function saveBrowser(){try{localStorage.setItem('contraption.saved.v3',JSON.stringify(workshop.level));toast('Level saved in this browser');}catch{toast('Saving failed. Export a JSON file instead.');}closePopovers();}
+function loadBrowser(){const raw=localStorage.getItem('contraption.saved.v3');if(!raw)throw Error('No saved level in this browser.');replaceLevel(parseLevel(JSON.parse(raw)),false);}
 function burst(event){const count=event.kind==='goal'?60:event.kind==='pop'?20:4;for(let i=0;i<count;i++)particles.push({x:event.x,y:event.y,vx:(Math.random()-.5)*(count>10?400:100),vy:-Math.random()*(count>10?500:100),life:count>10?2:.35,maxLife:count>10?2:.35,size:count>10?6:3,color:['#c79676','#a3b88a','#dcc471','#ad9cbd'][i%4]});}
 function consume(events){for(const event of events){sound.play(event);burst(event);}}
 function frame(now){
@@ -90,12 +104,19 @@ function frame(now){
   sound.update(workshop.world,workshop.running);$('timer').value=workshop.world.time.toFixed(1)+'s';syncGoal();
   if(workshop.world.won&&!shownWin){shownWin=true;$('win').hidden=false;if(activePuzzle>=0)try{localStorage.setItem('contraption.complete.'+puzzles[activePuzzle].name,'1');}catch{toast('Progress could not be saved.');}}
   if(!workshop.world.won&&shownWin){shownWin=false;$('win').hidden=true;}
+  if(!$('rope-inspector').hidden){const c=workshop.world.connections.find(c=>c.id===workshop.selected);$('rope-tension').value=c?.routeCrossed?'Rethread or reset':c?.blocked?'Blocked route':c?.tension>1?'Under tension':c&&ropeGeometry(workshop.world.bodies,c).length>=c.length-.1?'Taut':'Slack';}
   if(workshop.changed)sync();
-  drawScene(paint,workshop.world,camera,viewport,{selected:workshop.selected,invalid:trayDrag?.ghost?!workshop.canPlace(trayDrag.ghost):gestures.invalid,puzzle:workshop.level.mode==='puzzle',ghost:trayDrag?.ghost??gestures.ghost,region:gestures.region,connection:gestures.previewConnection(),particles});requestAnimationFrame(frame);
+  drawScene(paint,workshop.world,camera,viewport,{selected:workshop.selected,invalid:trayDrag?.ghost?!workshop.canPlace(trayDrag.ghost):gestures.invalid,puzzle:workshop.level.mode==='puzzle',ghost:trayDrag?.ghost??gestures.ghost,region:gestures.region,connection:gestures.previewConnection(),particles,attachments:gestures.tool==='rope'});requestAnimationFrame(frame);
 }
-initIcons();resize();fit();sync();requestAnimationFrame(frame);addEventListener('resize',()=>{resize();fit();});
+initIcons();try{setTheme(localStorage.getItem('contraption.theme')==='light'?'light':'dark');}catch{setTheme('dark');}setIcon($('theme'),themeName()==='dark'?'sun':'moon');resize();fit();sync();requestAnimationFrame(frame);addEventListener('resize',()=>{resize();fit();});
 canvas.addEventListener('pointerdown',()=>{closePopovers();if(sound.enabled&&!sound.audio)sound.unlock().catch(error=>{sound.enabled=false;setIcon($('sound'),'mute');toast(error.message);});});
 for(const [id,action] of Object.entries({play:toggleRun,reset:()=>{gestures.cancel();workshop.reset();particles=[];accumulator=0;},step:()=>{if(!workshop.running)consume(stepWorld(workshop.world,1/60));},undo:()=>{gestures.cancel();workshop.undo();},redo:()=>{gestures.cancel();workshop.undo(true);},'zoom-in':()=>zoomAt(1.2),'zoom-out':()=>zoomAt(1/1.2),fit,'menu-button':()=>popover('menu'),'environment-button':()=>popover('environment'),'parts-button':toggleParts,'close-inspector':()=>{workshop.selected=null;},duplicate:()=>workshop.duplicate(),delete:()=>workshop.remove(),'to-bin':()=>workshop.toBin(),flip:()=>{const b=workshop.body();if(b)workshop.update({angle:b.angle+Math.PI,direction:-b.direction});},'new-workshop':()=>{activePuzzle=-1;replaceLevel(blankLevel(),true);},'author-button':author,'test-puzzle':testPuzzle,'edit-puzzle':editPuzzle,'goal-button':goalDialog,'goal-badge':goalDialog,'save-file':exportDialog,'import-file':()=>{closePopovers();$('file-input').click();},'save-browser':saveBrowser,'load-browser':loadBrowser,'shortcuts-button':()=>{closePopovers();$('controls-dialog').showModal();},'close-win':()=>{$('win').hidden=true;},'next-puzzle':()=>openPuzzle((activePuzzle+1)%Math.max(1,puzzles.length))}))$(id).addEventListener('click',()=>act(action));
+$('theme').addEventListener('click',()=>{const name=themeName()==='dark'?'light':'dark';setTheme(name);setIcon($('theme'),name==='dark'?'sun':'moon');$('theme').setAttribute('aria-label',`Switch to ${name==='dark'?'light':'dark'} mode`);$('theme').title=name==='dark'?'Light mode':'Dark mode';try{localStorage.setItem('contraption.theme',name);}catch{toast('Theme changed; this browser cannot save the preference.');}});
+$('close-rope').addEventListener('click',()=>act(()=>{workshop.selected=null;}));
+$('rope-delete').addEventListener('click',()=>act(()=>workshop.remove()));
+$('rope-length').addEventListener('change',()=>act(()=>workshop.updateRope({length:Number($('rope-length').value)})));
+$('rope-fit').addEventListener('click',()=>act(()=>{const c=workshop.world.connections.find(c=>c.id===workshop.selected);if(c)workshop.updateRope({length:ropeGeometry(workshop.world.bodies,c).length});}));
+$('rope-reverse').addEventListener('click',()=>act(()=>{const c=workshop.world.connections.find(c=>c.id===workshop.selected);if(!c)return;const wrap=[...c.wrap];wrap[Number($('rope-guide').value)]*=-1;workshop.updateRope({wrap,length:ropeGeometry(workshop.world.bodies,{...c,wrap}).length});}));
 $('sound').addEventListener('click',async()=>{sound.enabled=!sound.enabled;setIcon($('sound'),sound.enabled?'sound':'mute');$('sound').setAttribute('aria-pressed',String(sound.enabled));if(sound.enabled)try{await sound.unlock();sound.tone(450,.08,'sine',.035);}catch(error){sound.enabled=false;toast(error.message);}});
 $('volume').addEventListener('input',()=>{sound.volume=Number($('volume').value);});
 $('fullscreen').addEventListener('click',async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{toast('Full screen is unavailable here.');}});
@@ -123,10 +144,10 @@ document.addEventListener('keydown',e=>{
   if(key==='delete'||key==='backspace'){e.preventDefault();act(()=>workshop.remove());}if(key==='d')act(()=>workshop.duplicate());
   if(key.startsWith('arrow')){const b=workshop.body();if(!b)return;e.preventDefault();const step=e.shiftKey?1:10;act(()=>workshop.update({x:b.x+(key==='arrowright'?step:key==='arrowleft'?-step:0),y:b.y+(key==='arrowdown'?step:key==='arrowup'?-step:0)}));}
 });
-try{const response=await fetch('./levels.json');if(!response.ok)throw Error('Puzzle library failed to load.');const pack=await response.json();puzzles=pack.levels.map(parseLevel);}catch(error){toast(error.message);}
+try{const response=await fetch('./levels.json');if(!response.ok)throw Error('Puzzle library failed to load.');const pack=await response.json();puzzles=pack.levels.map(parseLevel);const requested=new URLSearchParams(location.hash.slice(1)).get('puzzle'),index=pack.levels.findIndex(p=>p.id===requested);if(index>=0)openPuzzle(index);}catch(error){toast(error.message);}
 const registry=document.modelContext;
 if(registry?.registerTool){const lifecycle=new AbortController(),tools=[
 {name:'read_level',description:'Read the current construction, live physical bodies, inventory, and simulation state.',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:true},execute:()=>({level:structuredClone(workshop.level),bodies:structuredClone(workshop.world.bodies),running:workshop.running,time:workshop.world.time,selected:workshop.selected,goal:goalProgress(workshop.world),inventory:workshop.level.inventory.map(e=>({id:e.id,remaining:workshop.remaining(e)}))})},
-{name:'import_level',description:'Validate and load a complete Contraption v2 JSON level. Replaces the canvas; Undo restores it.',inputSchema:{type:'object',properties:{level:{type:'object'}},required:['level'],additionalProperties:false},annotations:{readOnlyHint:false},execute:input=>{const level=parseLevel(input.level);replaceLevel(level,false);return{name:level.name,objects:level.bodies.length,mode:level.mode};}},
+{name:'import_level',description:'Validate and load a complete Contraption v3 JSON level. Replaces the canvas; Undo restores it.',inputSchema:{type:'object',properties:{level:{type:'object'}},required:['level'],additionalProperties:false},annotations:{readOnlyHint:false},execute:input=>{const level=parseLevel(input.level);replaceLevel(level,false);return{name:level.name,objects:level.bodies.length,mode:level.mode};}},
 {name:'control_simulation',description:'Play, pause, reset, undo, redo, or advance one frame.',inputSchema:{type:'object',properties:{action:{type:'string',enum:['play','pause','reset','undo','redo','step']}},required:['action'],additionalProperties:false},annotations:{readOnlyHint:false},execute:input=>{if(!['play','pause','reset','undo','redo','step'].includes(input.action))throw Error('Unknown simulation action.');if(input.action==='play')workshop.running=true;if(input.action==='pause')workshop.running=false;if(input.action==='reset')workshop.reset();if(input.action==='undo')workshop.undo();if(input.action==='redo')workshop.undo(true);if(input.action==='step'){workshop.running=false;consume(stepWorld(workshop.world,1/60));}sync();return{running:workshop.running,time:workshop.world.time};}}
 ];for(const tool of tools)try{Promise.resolve(registry.registerTool(tool,{signal:lifecycle.signal})).catch(error=>console.warn('Browser tool unavailable:',error.message));}catch(error){console.warn('Browser tool unavailable:',error.message);}addEventListener('pagehide',()=>lifecycle.abort(),{once:true});}

@@ -1,6 +1,7 @@
 import {PARTS,clamp,designPart} from './model.js';
 import {localPoint,worldPoint,setMass,pointInside,connectionPoints} from './physics.js';
 import {selectionHandles} from './draw.js';
+import {nearestAttachment} from './rope.js';
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),angle=(a,b)=>Math.atan2(b.y-a.y,b.x-a.x),mid=(a,b)=>({x:(a.x+b.x)/2,y:(a.y+b.y)/2});
 export class Gestures{
   constructor(canvas,workshop,view){this.canvas=canvas;this.workshop=workshop;this.view=view;this.pointers=new Map();this.drag=null;this.ghost=null;this.region=null;this.connection=null;this.pendingGoal=null;this.tool='select';this.stock=null;this.invalid=false;
@@ -64,9 +65,9 @@ export class Gestures{
   }
   connect(point){
     const b=this.hit(point);if(!b)return;
-    if(!this.connection){if(this.tool==='wire'&&b.kind!=='switch'){this.view.toast('Start a wire at a switch.');return;}const a=localPoint(b,point.x,point.y);this.connection={kind:this.tool,a:b.id,ax:a.x,ay:a.y,via:[]};this.view.syncConnection();return;}
-    const c=this.connection;if(b.kind==='pulley'&&c.kind==='rope'&&b.id!==c.a&&!c.via.includes(b.id)){c.via.push(b.id);this.view.syncConnection();return;}
-    const anchor=localPoint(b,point.x,point.y);try{this.workshop.addConnection(c.kind,c.a,b.id,{ax:c.ax,ay:c.ay,bx:anchor.x,by:anchor.y},c.via);this.connection=null;this.view.sync();}catch(error){this.view.toast(error.message);}
+    if(!this.connection){if(this.tool==='rope'&&b.kind==='pulley'){this.view.toast('Start at a load or anchor, then thread the pulley.');return;}if(this.tool==='wire'&&b.kind!=='switch'){this.view.toast('Start a wire at a switch.');return;}const a=this.tool==='rope'?nearestAttachment(b,point):localPoint(b,point.x,point.y);this.connection={kind:this.tool,a:b.id,ax:a.x,ay:a.y,via:[]};this.view.syncConnection();return;}
+    const c=this.connection;if(b.kind==='pulley'&&c.kind==='rope'){if(c.via.includes(b.id))this.view.toast('This pulley is already threaded.');else if(c.via.length===8)this.view.toast('A rope can thread eight pulleys.');else c.via.push(b.id);this.view.syncConnection();return;}
+    const anchor=c.kind==='rope'?nearestAttachment(b,point):localPoint(b,point.x,point.y);try{this.workshop.addConnection(c.kind,c.a,b.id,{ax:c.ax,ay:c.ay,bx:anchor.x,by:anchor.y},c.via);this.connection=null;this.view.sync();}catch(error){this.view.toast(error.message);}
   }
   previewConnection(){if(!this.connection)return null;const c=this.connection,a=this.workshop.world.bodies.find(b=>b.id===c.a);if(!a)return null;return{kind:c.kind,points:[worldPoint(a,c.ax,c.ay),...c.via.map(id=>this.workshop.world.bodies.find(b=>b.id===id)),this.lastPoint??a]};}
 }
