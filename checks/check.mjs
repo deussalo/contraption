@@ -2,12 +2,12 @@ import './rope.mjs';
 import './transformation.mjs';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {blankLevel,makePart,parseLevel} from '../dist/model.js';
+import {blankLevel,makePart,parseLevel,PARTS} from '../dist/model.js';
 import {createWorld,stepWorld,connectionPoints,pathLength,overlaps} from '../dist/physics.js';
 import {Workshop} from '../dist/workshop.js';
 const simulate=(world,seconds)=>{for(let i=0;i<seconds*120;i++)stepWorld(world);return world;};
 const solveTime=(world,seconds=20)=>{for(let frame=1;frame<=seconds*120;frame++){stepWorld(world);if(world.won)return frame/120;}return null;};
-const overlapPairs=world=>{const pairs=[];for(let i=0;i<world.bodies.length;i++)for(let j=i+1;j<world.bodies.length;j++)if(overlaps(world.bodies[i],world.bodies[j]))pairs.push([world.bodies[i].id,world.bodies[j].id]);return pairs;};
+const overlapPairs=world=>{const pairs=[];for(let i=0;i<world.bodies.length;i++)for(let j=i+1;j<world.bodies.length;j++)if(!PARTS[world.bodies[i].kind].sensor&&!PARTS[world.bodies[j].kind].sensor&&overlaps(world.bodies[i],world.bodies[j]))pairs.push([world.bodies[i].id,world.bodies[j].id]);return pairs;};
 const insideBucket=(world,bodyId,bucketId)=>{const body=world.bodies.find(body=>body.id===bodyId),bucket=world.bodies.find(body=>body.id===bucketId);return Math.abs(body.x-bucket.x)<bucket.w/2-12&&body.y>bucket.y-bucket.h/2&&body.y<bucket.y+bucket.h/2-8;};
 const scene=(bodies,connections=[],environment={})=>({...blankLevel(),bodies,connections,environment:{width:1600,height:1000,gravity:850,pressure:0,floor:false,...environment}});
 const part=(kind,x,y,properties={})=>makePart(kind,x,y,properties);
@@ -68,6 +68,13 @@ for(const [i,level] of pack.levels.entries()){
     const disabled=structuredClone(solved);disabled.bodies=disabled.bodies.filter(body=>body.id!=='stone-zone');const disabledWorld=simulate(createWorld(disabled),12);assert.equal(disabledWorld.won,false,'Disabled zone must fail');assert.equal(insideBucket(disabledWorld,'delivery-ball','stone-bucket'),true,'Ball must reach the bucket without transformation');
     const bypass=structuredClone(solved);Object.assign(bypass.bodies.find(body=>body.stock==='delivery-ramp'),{x:670,y:350,angle:.12});const bypassWorld=simulate(createWorld(bypass),9);assert.equal(bypassWorld.won,false,'Route around zone must fail');assert.deepEqual(bypassWorld.bodies.find(body=>body.id==='delivery-ball').transformedZones,[]);assert.equal(insideBucket(bypassWorld,'delivery-ball','stone-bucket'),true,'Bypass must still reach the bucket');
     const reset=new Workshop(solved),first=solveTime(reset.world);assert.equal(first,6.866666666666666);reset.reset();assert.equal(reset.world.bodies.find(body=>body.id==='delivery-ball').material,'cork');assert.deepEqual(reset.world.bodies.find(body=>body.id==='delivery-ball').transformedZones,[]);assert.equal(solveTime(reset.world),first,'Rock Delivery reset must preserve solve time');
+  }
+  if(level.id==='featherweight-freight'){
+    const reference=createWorld(solved);let transforms=0,wonAt=null;for(let frame=1;frame<=14*120;frame++){transforms+=stepWorld(reference).filter(event=>event.kind==='transform').length;if(reference.won&&wonAt===null)wonAt=frame/120;}assert.equal(wonAt,4.941666666666666);assert.equal(transforms,1);assert.equal(reference.bodies.find(body=>body.id==='freight-ball').material,'cork');assert.deepEqual(overlapPairs(createWorld(solved)),[]);
+    const unchanged=structuredClone(solved);unchanged.bodies.find(body=>body.id==='feather-zone').outputMaterial='steel';assert.equal(simulate(createWorld(unchanged),14).won,false,'Steel ball must be too heavy for the fan');
+    const noFan=structuredClone(solved);noFan.bodies.find(body=>body.id==='freight-fan').on=false;assert.equal(simulate(createWorld(noFan),14).won,false,'Featherweight Freight must need its fan');
+    for(const [field,delta] of [['x',-8],['x',8],['y',-8],['y',8],['angle',-.02],['angle',.02]]){const nearby=structuredClone(solved);nearby.bodies.find(body=>body.stock==='freight-route')[field]+=delta;const nearbyWorld=createWorld(nearby);assert.deepEqual(overlapPairs(nearbyWorld),[]);assert.notEqual(solveTime(nearbyWorld,14),null,`Featherweight Freight nearby ${field} ${delta} must win`);}
+    const reset=new Workshop(solved),first=solveTime(reset.world,14);reset.reset();assert.equal(reset.world.bodies.find(body=>body.id==='freight-ball').material,'steel');assert.equal(solveTime(reset.world,14),first,'Featherweight Freight reset must preserve solve time');
   }
   console.log(`PASS ${level.name}`);
 }

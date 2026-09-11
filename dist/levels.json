@@ -1029,6 +1029,102 @@
         "edge": "right",
         "state": "rung"
       }
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "id": "featherweight-freight",
+      "name": "Featherweight Freight",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 1,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "freight-ball",
+          "kind": "bowling",
+          "x": 280,
+          "y": 170,
+          "w": 58,
+          "h": 58,
+          "material": "steel",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "feather-zone",
+          "kind": "material-zone",
+          "x": 670,
+          "y": 475,
+          "w": 230,
+          "h": 190,
+          "angle": 0,
+          "material": "steel",
+          "outputMaterial": "cork",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "freight-fan",
+          "kind": "fan",
+          "x": 850,
+          "y": 800,
+          "w": 90,
+          "h": 180,
+          "angle": -1.5707963267948966,
+          "material": "steel",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "power": 5,
+          "direction": 1,
+          "on": true
+        }
+      ],
+      "connections": [],
+      "inventory": [
+        {
+          "id": "freight-route",
+          "part": {
+            "kind": "ramp",
+            "w": 810,
+            "h": 16,
+            "angle": 0.08,
+            "material": "wood",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "power": 1,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "region",
+        "target": "freight-ball",
+        "count": 1,
+        "delay": 0.25,
+        "x": 900,
+        "y": 260,
+        "w": 500,
+        "h": 300,
+        "edge": "right",
+        "state": "rung"
+      }
     }
   ]
 }

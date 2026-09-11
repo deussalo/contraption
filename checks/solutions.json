@@ -205,5 +205,26 @@
         "stock": "delivery-ramp"
       }
     ]
+  },
+  {
+    "parts": [
+      {
+        "id": "freight-ramp",
+        "kind": "ramp",
+        "x": 670,
+        "y": 520,
+        "w": 810,
+        "h": 16,
+        "angle": 0.08,
+        "material": "wood",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "freight-route"
+      }
+    ]
   }
 ]
