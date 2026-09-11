@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {blankLevel,makePart,parseLevel} from '../dist/model.js';
+import {blankLevel,makePart,parseLevel,PARTS} from '../dist/model.js';
 import {createWorld,stepWorld} from '../dist/physics.js';
 import {ropeGeometry} from '../dist/rope.js';
 import {Workshop} from '../dist/workshop.js';
@@ -40,4 +40,12 @@ const movable=()=>routed([part('anchor','a',400,100),part('pulley','p',450,400,{
   const world=createWorld(level);world.bodies.at(-1).vy=240;stepWorld(world);assert.equal(world.connections[0].routeCrossed,true);assert.equal(world.connections[0].blocked,true);assert.equal(world.connections[0].tension,0);assert.equal(world.bodies.at(-1).vy,240);
   assert.equal(createWorld(level).connections[0].routeCrossed,false);
 }
-console.log('PASS pulley circumference/tangents, radius, 2:1 motion, rim speed, slack, reaction forces, anchor torque, rope validation and reset');
+{
+  for(const kind of Object.keys(PARTS).filter(kind=>kind!=='pulley')){
+    const level={...blankLevel(),bodies:[part('anchor','fixed',100,100),part(kind,'load',500,100,{fixed:false,pinned:false,on:false})],environment:{width:1600,height:1000,gravity:0,pressure:0,floor:false}};
+    const workshop=new Workshop(level);workshop.addConnection('rope','fixed','load',{ax:0,ay:0,bx:0,by:0});
+    const rope=workshop.world.connections[0],load=workshop.world.bodies[1];load.vx=120;stepWorld(workshop.world);
+    assert.ok(rope.tension>0,`${kind} must receive rope tension`);assert.ok(Math.abs(load.vx)<1e-7,`${kind} must react to rope tension`);
+  }
+}
+console.log('PASS pulley routing and every other component as a force-bearing rope endpoint');
