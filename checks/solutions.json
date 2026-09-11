@@ -247,5 +247,26 @@
         "stock": "weather-route"
       }
     ]
+  },
+  {
+    "parts": [
+      {
+        "id": "placed-trigger-ramp",
+        "kind": "ramp",
+        "x": 220,
+        "y": 500,
+        "w": 260,
+        "h": 16,
+        "angle": 0.18,
+        "material": "wood",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "trigger-ramp"
+      }
+    ]
   }
 ]

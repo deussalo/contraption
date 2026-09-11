@@ -88,6 +88,15 @@ for(const [i,level] of pack.levels.entries()){
     for(const [field,delta] of [['x',-8],['x',8],['y',-8],['y',8],['angle',-.02],['angle',.02]]){const nearby=structuredClone(solved);nearby.bodies.find(body=>body.stock===test.ramp)[field]+=delta;const nearbyWorld=createWorld(nearby);assert.deepEqual(overlapPairs(nearbyWorld),[]);assert.notEqual(solveTime(nearbyWorld,test.seconds),null,`${level.name} nearby ${field} ${delta} must win`);}
     const reset=new Workshop(solved),first=solveTime(reset.world,test.seconds);reset.reset();assert.equal(reset.world.bodies.find(body=>body.id===test.ball).material,test.original);assert.equal(solveTime(reset.world,test.seconds),first,`${level.name} reset must preserve solve time`);
   }
+  if(level.id==='rocket-counterweight'){
+    const baseline=createWorld(parseLevel(level));simulate(baseline,12);assert.notEqual(baseline.bodies.find(body=>body.id==='launch-switch').state,'on','Empty bin must not flip the switch');assert.notEqual(baseline.bodies.find(body=>body.id==='down-rocket').state,'fired','Empty bin must not fire the rocket');
+    const reference=createWorld(solved);let switchAt=null,firedAt=null,wonAt=null;for(let frame=1;frame<=12*120;frame++){stepWorld(reference);if(reference.bodies.find(body=>body.id==='launch-switch').state==='on'&&switchAt===null)switchAt=frame/120;if(reference.bodies.find(body=>body.id==='down-rocket').state==='fired'&&firedAt===null)firedAt=frame/120;if(reference.won&&wonAt===null)wonAt=frame/120;}
+    assert.equal(switchAt,2.4,'Ramp must deliver the ball to the switch');assert.equal(firedAt,2.408333333333333,'Wire must fire the rocket after the switch');assert.equal(wonAt,2.9166666666666665,'Rocket counterweight must ring the bell');assert.deepEqual(overlapPairs(createWorld(solved)),[],'Rocket Counterweight must start without solid overlaps');
+    const ablations=[['wire',level=>{level.connections=level.connections.filter(connection=>connection.kind!=='wire');}],['rope',level=>{level.connections=level.connections.filter(connection=>connection.kind!=='rope');}],['rocket power',level=>{level.bodies.find(body=>body.id==='down-rocket').power=0;}]];
+    for(const [name,mutate] of ablations){const ablation=structuredClone(solved);mutate(ablation);assert.equal(simulate(createWorld(ablation),12).won,false,`Rocket Counterweight must need its ${name}`);}
+    for(const [field,delta] of [['x',-8],['x',8],['y',-8],['y',8],['angle',-.03],['angle',.03]]){const nearby=structuredClone(solved);nearby.bodies.find(body=>body.stock==='trigger-ramp')[field]+=delta;const nearbyWorld=createWorld(nearby);assert.deepEqual(overlapPairs(nearbyWorld),[]);assert.notEqual(solveTime(nearbyWorld,12),null,`Rocket Counterweight nearby ${field} ${delta} must win`);}
+    const reset=new Workshop(solved),first=solveTime(reset.world,12);assert.equal(first,wonAt);reset.reset();assert.equal(solveTime(reset.world,12),first,'Rocket Counterweight reset must preserve solve time');
+  }
   console.log(`PASS ${level.name}`);
 }
 console.log('PASS gravity, stacks, thin collisions, belt chains, ropes, material zones, switches, strict imports, undo, puzzle solutions and JSON round trips');

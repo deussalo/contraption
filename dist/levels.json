@@ -1328,6 +1328,214 @@
         "edge": "right",
         "state": "rung"
       }
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "id": "rocket-counterweight",
+      "name": "Rocket Counterweight",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 1,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "trigger-ball",
+          "kind": "bowling",
+          "x": 150,
+          "y": 330,
+          "w": 54,
+          "h": 54,
+          "material": "steel",
+          "locked": true
+        },
+        {
+          "id": "launch-switch",
+          "kind": "switch",
+          "x": 435,
+          "y": 575,
+          "w": 70,
+          "h": 26,
+          "material": "rubber",
+          "fixed": true,
+          "locked": true,
+          "on": false
+        },
+        {
+          "id": "down-rocket",
+          "kind": "rocket",
+          "x": 700,
+          "y": 500,
+          "w": 32,
+          "h": 72,
+          "angle": 3.141592653589793,
+          "material": "wood",
+          "locked": true,
+          "power": 1.2,
+          "on": false
+        },
+        {
+          "id": "rocket-pulley",
+          "kind": "pulley",
+          "x": 700,
+          "y": 180,
+          "w": 72,
+          "h": 72,
+          "fixed": true,
+          "pinned": true,
+          "locked": true
+        },
+        {
+          "id": "rocket-rail-left",
+          "kind": "ramp",
+          "x": 650,
+          "y": 620,
+          "w": 620,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "fixed": true,
+          "locked": true
+        },
+        {
+          "id": "rocket-rail-right",
+          "kind": "ramp",
+          "x": 750,
+          "y": 620,
+          "w": 620,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "fixed": true,
+          "locked": true
+        },
+        {
+          "id": "clapper-pulley",
+          "kind": "pulley",
+          "x": 1100,
+          "y": 180,
+          "w": 72,
+          "h": 72,
+          "fixed": true,
+          "pinned": true,
+          "locked": true
+        },
+        {
+          "id": "rocket-clapper",
+          "kind": "box",
+          "x": 1100,
+          "y": 650,
+          "w": 20,
+          "h": 20,
+          "material": "steel",
+          "locked": true
+        },
+        {
+          "id": "clapper-rail-left",
+          "kind": "ramp",
+          "x": 1065,
+          "y": 610,
+          "w": 600,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "fixed": true,
+          "locked": true
+        },
+        {
+          "id": "clapper-rail-right",
+          "kind": "ramp",
+          "x": 1135,
+          "y": 610,
+          "w": 600,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "fixed": true,
+          "locked": true
+        },
+        {
+          "id": "clapper-ceiling",
+          "kind": "ramp",
+          "x": 1100,
+          "y": 360,
+          "w": 48,
+          "h": 18,
+          "fixed": true,
+          "locked": true
+        },
+        {
+          "id": "clapper-stop",
+          "kind": "ramp",
+          "x": 1100,
+          "y": 740,
+          "w": 48,
+          "h": 18,
+          "fixed": true,
+          "locked": true
+        },
+        {
+          "id": "launch-bell",
+          "kind": "bell",
+          "x": 1100,
+          "y": 480,
+          "w": 62,
+          "h": 62,
+          "material": "steel",
+          "fixed": true,
+          "locked": true
+        }
+      ],
+      "connections": [
+        {
+          "id": "rocket-rope",
+          "kind": "rope",
+          "a": "down-rocket",
+          "b": "rocket-clapper",
+          "length": 1313.1764421855607,
+          "via": [
+            "rocket-pulley",
+            "clapper-pulley"
+          ],
+          "wrap": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "launch-wire",
+          "kind": "wire",
+          "a": "launch-switch",
+          "b": "down-rocket",
+          "length": 400
+        }
+      ],
+      "inventory": [
+        {
+          "id": "trigger-ramp",
+          "part": {
+            "kind": "ramp",
+            "w": 260,
+            "h": 16,
+            "angle": 0.18,
+            "material": "wood",
+            "fixed": true
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "state",
+        "target": "launch-bell",
+        "count": 1,
+        "delay": 0,
+        "x": 1100,
+        "y": 480,
+        "w": 120,
+        "h": 120,
+        "edge": "right",
+        "state": "rung"
+      }
     }
   ]
 }
