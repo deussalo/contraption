@@ -51,9 +51,14 @@ function hitSegment(world, ball, p, s) {
   }
   impact(world,p,-vn,q.x,q.y);
 }
-export function createWorld(parts){
-  return {parts:structuredClone(parts).map(p=>({...p,vx:0,vy:0,omega:0,initialAngle:p.angle,pivotX:p.x-Math.sin(p.angle*rad)*dimensions(p).height/2,pivotY:p.y+Math.cos(p.angle*rad)*dimensions(p).height/2})),time:0,reactions:0,events:[],won:false};
+export function anchorBody(body){
+  body.initialAngle=body.angle;
+  body.pivotX=body.x-Math.sin(body.angle*rad)*dimensions(body).height/2;
+  body.pivotY=body.y+Math.cos(body.angle*rad)*dimensions(body).height/2;
+  return body;
 }
+export function createBody(piece){return anchorBody({...structuredClone(piece),vx:0,vy:0,omega:0});}
+export function createWorld(parts){return {parts:parts.map(createBody),time:0,reactions:0,events:[],won:false};}
 function updateHinges(world,dt){
   const dominoes=world.parts.filter(p=>p.type==='domino');
   for(const p of world.parts){
