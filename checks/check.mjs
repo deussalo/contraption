@@ -43,6 +43,18 @@ const pulleyLevels=new Map([
   ['two-to-one-takeaway',1.0583333333333333],
   ['pulley-gate-night-shift',1.8916666666666666],
 ]);
+const transformationLevels=new Map([
+  ['featherweight-freight',{seconds:14,wonAt:4.941666666666666,ball:'freight-ball',ramp:'freight-route',original:'steel',transforms:['cork'],ablations:[
+    ['Steel ball must be too heavy for the fan',level=>{level.bodies.find(body=>body.id==='feather-zone').outputMaterial='steel';}],
+    ['Featherweight Freight must need its fan',level=>{level.bodies.find(body=>body.id==='freight-fan').on=false;}],
+  ]}],
+  ['cloud-then-clunk',{seconds:14,wonAt:9.058333333333334,ball:'weather-ball',ramp:'weather-route',original:'steel',transforms:['cork','steel'],ablations:[
+    ['Cloud, Then Clunk must need its fan',level=>{level.bodies.find(body=>body.id==='updraft').on=false;}],
+    ['Cloud, Then Clunk must need its first zone',level=>{level.bodies.find(body=>body.id==='cloud-zone').outputMaterial='steel';}],
+    ['Cloud, Then Clunk must need its second zone',level=>{level.bodies.find(body=>body.id==='clunk-zone').outputMaterial='cork';}],
+    ['Cloud, Then Clunk must need its rope',level=>{level.connections=[];}],
+  ]}],
+]);
 assert.equal(solutions.length,pack.levels.length,'Every playable level needs one reference solution');
 for(const [i,level] of pack.levels.entries()){
   assert.equal(simulate(createWorld(parseLevel(level)),20).won,false,`${level.name}: empty bin must fail`);
@@ -69,12 +81,12 @@ for(const [i,level] of pack.levels.entries()){
     const bypass=structuredClone(solved);Object.assign(bypass.bodies.find(body=>body.stock==='delivery-ramp'),{x:670,y:350,angle:.12});const bypassWorld=simulate(createWorld(bypass),9);assert.equal(bypassWorld.won,false,'Route around zone must fail');assert.deepEqual(bypassWorld.bodies.find(body=>body.id==='delivery-ball').transformedZones,[]);assert.equal(insideBucket(bypassWorld,'delivery-ball','stone-bucket'),true,'Bypass must still reach the bucket');
     const reset=new Workshop(solved),first=solveTime(reset.world);assert.equal(first,6.866666666666666);reset.reset();assert.equal(reset.world.bodies.find(body=>body.id==='delivery-ball').material,'cork');assert.deepEqual(reset.world.bodies.find(body=>body.id==='delivery-ball').transformedZones,[]);assert.equal(solveTime(reset.world),first,'Rock Delivery reset must preserve solve time');
   }
-  if(level.id==='featherweight-freight'){
-    const reference=createWorld(solved);let transforms=0,wonAt=null;for(let frame=1;frame<=14*120;frame++){transforms+=stepWorld(reference).filter(event=>event.kind==='transform').length;if(reference.won&&wonAt===null)wonAt=frame/120;}assert.equal(wonAt,4.941666666666666);assert.equal(transforms,1);assert.equal(reference.bodies.find(body=>body.id==='freight-ball').material,'cork');assert.deepEqual(overlapPairs(createWorld(solved)),[]);
-    const unchanged=structuredClone(solved);unchanged.bodies.find(body=>body.id==='feather-zone').outputMaterial='steel';assert.equal(simulate(createWorld(unchanged),14).won,false,'Steel ball must be too heavy for the fan');
-    const noFan=structuredClone(solved);noFan.bodies.find(body=>body.id==='freight-fan').on=false;assert.equal(simulate(createWorld(noFan),14).won,false,'Featherweight Freight must need its fan');
-    for(const [field,delta] of [['x',-8],['x',8],['y',-8],['y',8],['angle',-.02],['angle',.02]]){const nearby=structuredClone(solved);nearby.bodies.find(body=>body.stock==='freight-route')[field]+=delta;const nearbyWorld=createWorld(nearby);assert.deepEqual(overlapPairs(nearbyWorld),[]);assert.notEqual(solveTime(nearbyWorld,14),null,`Featherweight Freight nearby ${field} ${delta} must win`);}
-    const reset=new Workshop(solved),first=solveTime(reset.world,14);reset.reset();assert.equal(reset.world.bodies.find(body=>body.id==='freight-ball').material,'steel');assert.equal(solveTime(reset.world,14),first,'Featherweight Freight reset must preserve solve time');
+  if(transformationLevels.has(level.id)){
+    const test=transformationLevels.get(level.id),reference=createWorld(solved),transforms=[];let wonAt=null;for(let frame=1;frame<=test.seconds*120;frame++){transforms.push(...stepWorld(reference).filter(event=>event.kind==='transform').map(event=>event.material));if(reference.won&&wonAt===null)wonAt=frame/120;}
+    assert.equal(wonAt,test.wonAt);assert.deepEqual(transforms,test.transforms);assert.equal(reference.bodies.find(body=>body.id===test.ball).material,test.transforms.at(-1));assert.deepEqual(overlapPairs(createWorld(solved)),[]);
+    for(const [message,mutate] of test.ablations){const ablation=structuredClone(solved);mutate(ablation);assert.equal(simulate(createWorld(ablation),test.seconds).won,false,message);}
+    for(const [field,delta] of [['x',-8],['x',8],['y',-8],['y',8],['angle',-.02],['angle',.02]]){const nearby=structuredClone(solved);nearby.bodies.find(body=>body.stock===test.ramp)[field]+=delta;const nearbyWorld=createWorld(nearby);assert.deepEqual(overlapPairs(nearbyWorld),[]);assert.notEqual(solveTime(nearbyWorld,test.seconds),null,`${level.name} nearby ${field} ${delta} must win`);}
+    const reset=new Workshop(solved),first=solveTime(reset.world,test.seconds);reset.reset();assert.equal(reset.world.bodies.find(body=>body.id===test.ball).material,test.original);assert.equal(solveTime(reset.world,test.seconds),first,`${level.name} reset must preserve solve time`);
   }
   console.log(`PASS ${level.name}`);
 }
