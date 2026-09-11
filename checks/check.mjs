@@ -54,6 +54,10 @@ const transformationLevels=new Map([
     ['Cloud, Then Clunk must need its second zone',level=>{level.bodies.find(body=>body.id==='clunk-zone').outputMaterial='cork';}],
     ['Cloud, Then Clunk must need its rope',level=>{level.connections=[];}],
   ]}],
+  ['rubber-stamp',{seconds:12,wonAt:5.816666666666666,ball:'stamp-ball',ramp:'stamp-route',original:'steel',transforms:['rubber'],angleDelta:.025,ablations:[
+    ['Steel must not rebound high enough',level=>{level.bodies.find(body=>body.id==='rubber-zone').outputMaterial='steel';}],
+    ['Rubber Stamp must need its bounce plate',level=>{level.bodies=level.bodies.filter(body=>body.id!=='bounce-plate');}],
+  ]}],
 ]);
 assert.equal(solutions.length,pack.levels.length,'Every playable level needs one reference solution');
 for(const [i,level] of pack.levels.entries()){
@@ -85,7 +89,7 @@ for(const [i,level] of pack.levels.entries()){
     const test=transformationLevels.get(level.id),reference=createWorld(solved),transforms=[];let wonAt=null;for(let frame=1;frame<=test.seconds*120;frame++){transforms.push(...stepWorld(reference).filter(event=>event.kind==='transform').map(event=>event.material));if(reference.won&&wonAt===null)wonAt=frame/120;}
     assert.equal(wonAt,test.wonAt);assert.deepEqual(transforms,test.transforms);assert.equal(reference.bodies.find(body=>body.id===test.ball).material,test.transforms.at(-1));assert.deepEqual(overlapPairs(createWorld(solved)),[]);
     for(const [message,mutate] of test.ablations){const ablation=structuredClone(solved);mutate(ablation);assert.equal(simulate(createWorld(ablation),test.seconds).won,false,message);}
-    for(const [field,delta] of [['x',-8],['x',8],['y',-8],['y',8],['angle',-.02],['angle',.02]]){const nearby=structuredClone(solved);nearby.bodies.find(body=>body.stock===test.ramp)[field]+=delta;const nearbyWorld=createWorld(nearby);assert.deepEqual(overlapPairs(nearbyWorld),[]);assert.notEqual(solveTime(nearbyWorld,test.seconds),null,`${level.name} nearby ${field} ${delta} must win`);}
+    for(const [field,delta] of [['x',-8],['x',8],['y',-8],['y',8],['angle',-(test.angleDelta??.02)],['angle',test.angleDelta??.02]]){const nearby=structuredClone(solved);nearby.bodies.find(body=>body.stock===test.ramp)[field]+=delta;const nearbyWorld=createWorld(nearby);assert.deepEqual(overlapPairs(nearbyWorld),[]);assert.notEqual(solveTime(nearbyWorld,test.seconds),null,`${level.name} nearby ${field} ${delta} must win`);}
     const reset=new Workshop(solved),first=solveTime(reset.world,test.seconds);reset.reset();assert.equal(reset.world.bodies.find(body=>body.id===test.ball).material,test.original);assert.equal(solveTime(reset.world,test.seconds),first,`${level.name} reset must preserve solve time`);
   }
   if(level.id==='rocket-counterweight'){

@@ -268,5 +268,26 @@
         "stock": "trigger-ramp"
       }
     ]
+  },
+  {
+    "parts": [
+      {
+        "id": "stamp-ramp",
+        "kind": "ramp",
+        "x": 620,
+        "y": 520,
+        "w": 760,
+        "h": 16,
+        "angle": 0.12,
+        "material": "wood",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "stamp-route"
+      }
+    ]
   }
 ]

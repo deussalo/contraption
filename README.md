@@ -1,6 +1,6 @@
 # Contraption
 
-A fullscreen illustrated physics workshop with 18 components, procedural sound, and thirteen puzzles.
+A fullscreen illustrated physics workshop with 18 components, procedural sound, and fourteen puzzles.
 
 Dark mode is the default; the sun/moon control switches themes and remembers your choice.
 
