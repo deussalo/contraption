@@ -4672,6 +4672,220 @@
         ]
       },
       "id": "stone-signal-dispatch"
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "name": "Balloon Skycrane Customs",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 1,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "customs-lift",
+          "kind": "bucket",
+          "x": 500,
+          "y": 700,
+          "w": 140,
+          "h": 110,
+          "angle": 0,
+          "material": "cork",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "lift-pulley",
+          "kind": "pulley",
+          "x": 500,
+          "y": 180,
+          "w": 72,
+          "h": 72,
+          "angle": 0,
+          "material": "wood",
+          "fixed": false,
+          "pinned": true,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "balloon-pulley",
+          "kind": "pulley",
+          "x": 1100,
+          "y": 180,
+          "w": 72,
+          "h": 72,
+          "angle": 0,
+          "material": "wood",
+          "fixed": false,
+          "pinned": true,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "crane-balloon",
+          "kind": "balloon",
+          "x": 1100,
+          "y": 700,
+          "w": 60,
+          "h": 60,
+          "angle": 0,
+          "material": "helium",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "lift-rail-left",
+          "kind": "ramp",
+          "x": 400,
+          "y": 620,
+          "w": 640,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "material": "wood",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "lift-rail-right",
+          "kind": "ramp",
+          "x": 600,
+          "y": 620,
+          "w": 640,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "material": "wood",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        }
+      ],
+      "connections": [
+        {
+          "id": "skycrane-rope",
+          "kind": "rope",
+          "a": "customs-lift",
+          "b": "crane-balloon",
+          "length": 1762.1586816834258,
+          "via": [
+            "lift-pulley",
+            "balloon-pulley"
+          ],
+          "ax": 0,
+          "ay": 0,
+          "bx": 0,
+          "by": 0,
+          "wrap": [
+            1,
+            1
+          ]
+        }
+      ],
+      "inventory": [
+        {
+          "id": "crosswind-fan",
+          "part": {
+            "kind": "fan",
+            "x": 0,
+            "y": 0,
+            "w": 70,
+            "h": 70,
+            "angle": 0,
+            "material": "steel",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 0.7,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        },
+        {
+          "id": "stone-cloud",
+          "part": {
+            "kind": "material-zone",
+            "x": 0,
+            "y": 0,
+            "w": 180,
+            "h": 160,
+            "angle": 0,
+            "material": "steel",
+            "outputMaterial": "steel",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        },
+        {
+          "id": "landing-chock",
+          "part": {
+            "kind": "box",
+            "x": 0,
+            "y": 0,
+            "w": 180,
+            "h": 120,
+            "angle": 0,
+            "material": "wood",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "region",
+        "target": "customs-lift",
+        "count": 1,
+        "delay": 3,
+        "x": 480,
+        "y": 480,
+        "w": 70,
+        "h": 20,
+        "edge": "right",
+        "state": "rung"
+      },
+      "id": "balloon-skycrane-customs"
     }
   ]
 }
