@@ -2,18 +2,21 @@ import {PARTS,MATERIALS,uid,makePart,parseLevel,designPart} from './model.js';
 import {createWorld,createBody,setMass,overlaps,connectionPoints,pathLength,ropeGeometry,ropeWrap} from './physics.js';
 export class Workshop{
   constructor(level,running=false){this.history=[];this.future=[];this.selected=null;this.revision=0;this.load(level,running);}
-  load(level,running=false){this.level=parseLevel(level);this.world=createWorld(this.level);this.running=running;this.selected=null;this.history=[];this.future=[];this.changed=true;this.revision++;}
-  capture(){return{level:structuredClone(this.level),world:structuredClone(this.world),selected:this.selected,running:this.running};}
+  load(level,running=false){this.level=parseLevel(level);this.world=createWorld(this.level);this.running=running;this.attemptStarted=this.level.mode==='puzzle'&&running;this.selected=null;this.history=[];this.future=[];this.changed=true;this.revision++;}
+  capture(){return{level:structuredClone(this.level),world:structuredClone(this.world),selected:this.selected,running:this.running,attemptStarted:this.attemptStarted};}
   restore(snapshot){Object.assign(this,structuredClone(snapshot));this.changed=true;}
   record(before){this.history.push(before);if(this.history.length>40)this.history.shift();this.future=[];this.world.cachedContacts=[];this.changed=true;this.revision++;}
   transaction(action){const before=this.capture();try{const result=action();this.record(before);return result;}catch(error){this.restore(before);throw error;}}
   restoreHistory(source,target){if(!source.length)return;target.push(this.capture());this.restore(source.pop());this.running=false;this.revision++;}
   undo(){this.requireConstruction();this.restoreHistory(this.history,this.future);}
   redo(){this.requireConstruction();this.restoreHistory(this.future,this.history);}
-  reset(){this.world=createWorld(this.level);this.running=false;this.selected=null;this.changed=true;this.revision++;}
+  reset(){this.world=createWorld(this.level);this.running=false;this.attemptStarted=false;this.selected=null;this.changed=true;this.revision++;}
   body(){return this.world.bodies.find(b=>b.id===this.selected);}
-  constructionEnabled(){return this.level.mode!=='puzzle'||!this.running;}
-  requireConstruction(){if(!this.constructionEnabled())throw Error('Pause the puzzle to edit.');}
+  beginAttempt(){if(this.level.mode==='puzzle')this.attemptStarted=true;}
+  play(){this.beginAttempt();this.running=true;}
+  pause(){this.running=false;}
+  constructionEnabled(){return this.level.mode!=='puzzle'||!this.attemptStarted&&!this.running;}
+  requireConstruction(){if(!this.constructionEnabled())throw Error('Reset the puzzle to edit.');}
   editable(body){return this.constructionEnabled()&&(this.level.mode!=='puzzle'||!body.locked);}
   canResize(body){return this.level.mode==='editor'||this.level.mode!=='puzzle'&&body.resizable;}
   remaining(entry){return entry.quantity-this.level.bodies.filter(b=>b.stock===entry.id).length;}
