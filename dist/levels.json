@@ -1623,6 +1623,131 @@
         "edge": "right",
         "state": "rung"
       }
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "id": "flywheel-express",
+      "name": "Flywheel Express",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 0.5,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "trigger-ball",
+          "kind": "bowling",
+          "x": 150,
+          "y": 330,
+          "w": 54,
+          "h": 54,
+          "material": "steel",
+          "locked": true
+        },
+        {
+          "id": "flywheel-switch",
+          "kind": "switch",
+          "x": 435,
+          "y": 575,
+          "w": 70,
+          "h": 26,
+          "material": "rubber",
+          "fixed": true,
+          "locked": true,
+          "on": false
+        },
+        {
+          "id": "flywheel-motor",
+          "kind": "motor",
+          "x": 650,
+          "y": 700,
+          "w": 78,
+          "h": 78,
+          "material": "steel",
+          "pinned": true,
+          "locked": true,
+          "power": 5,
+          "on": false
+        },
+        {
+          "id": "launch-wheel",
+          "kind": "wheel",
+          "x": 1000,
+          "y": 650,
+          "w": 180,
+          "h": 180,
+          "material": "rubber",
+          "pinned": true,
+          "locked": true
+        },
+        {
+          "id": "wheel-rider",
+          "kind": "basketball",
+          "x": 1000,
+          "y": 531,
+          "w": 58,
+          "h": 58,
+          "material": "rubber",
+          "locked": true
+        },
+        {
+          "id": "flywheel-bell",
+          "kind": "bell",
+          "x": 1140,
+          "y": 650,
+          "w": 76,
+          "h": 76,
+          "material": "steel",
+          "fixed": true,
+          "locked": true
+        }
+      ],
+      "connections": [
+        {
+          "id": "motor-wire",
+          "kind": "wire",
+          "a": "flywheel-switch",
+          "b": "flywheel-motor",
+          "length": 300
+        },
+        {
+          "id": "flywheel-belt",
+          "kind": "belt",
+          "a": "flywheel-motor",
+          "b": "launch-wheel",
+          "length": 350
+        }
+      ],
+      "inventory": [
+        {
+          "id": "flywheel-trigger-ramp",
+          "part": {
+            "kind": "ramp",
+            "w": 260,
+            "h": 16,
+            "angle": 0.18,
+            "material": "wood",
+            "fixed": true
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "state",
+        "target": "flywheel-bell",
+        "count": 1,
+        "delay": 0,
+        "x": 1140,
+        "y": 650,
+        "w": 130,
+        "h": 130,
+        "edge": "right",
+        "state": "rung"
+      }
     }
   ]
 }
