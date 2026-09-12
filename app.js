@@ -62,7 +62,7 @@ function sync(){
 }
 function syncGoal(){
   const g=workshop.world.goal;if(!g)return;const progress=goalProgress(workshop.world),label=id=>{const body=workshop.level.bodies.find(candidate=>candidate.id===id),stock=workshop.level.inventory.find(entry=>entry.id===id);return id==='any'?'object':PARTS[id]?.name??PARTS[body?.kind]?.name??PARTS[stock?.part.kind]?.name??'object';},target=label(g.target);
-  $('goal-summary').textContent=g.kind==='region'?`${target} → region`:g.kind==='edge'?`${target} → ${g.edge}`:g.hitBy?`${g.hitBy.map(label).join(' / ')} → ${target} · ${g.state}`:`${target} · ${g.state}`;
+  $('goal-summary').textContent=g.kind==='region'?`${target} center → region`:g.kind==='edge'?`${target} → ${g.edge}`:g.hitBy?`${g.hitBy.map(label).join(' / ')} → ${target} · ${g.state}`:`${target} · ${g.state}`;
   const text=`${Math.min(progress.count,g.count)}/${g.count}${g.delay?` · ${Math.min(progress.held,g.delay).toFixed(1)}/${g.delay}s`:''}`;if(text!==lastProgress){$('goal-progress').textContent=text;lastProgress=text;}$('goal-badge').classList.toggle('complete',workshop.world.won);
 }
 let traySignature='';
