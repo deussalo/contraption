@@ -1,5 +1,5 @@
 import {setMass} from './physics.js';
-const BODY_FIELDS=['x','y','angle','vx','vy','omega','sheaveAngle','state','active','exited','lastImpact','material','power','direction','on','transformedZones'];
+const BODY_FIELDS=['x','y','angle','vx','vy','omega','sheaveAngle','state','active','exited','lastImpact','material','power','direction','on','transformedZones','triggeredBy'];
 const CONNECTION_FIELDS=['tension','routeCrossed','blocked','arcSweeps'];
 const copy=value=>Array.isArray(value)?[...value]:value;
 const state=(items,fields)=>items.map(item=>fields.map(field=>copy(item[field])));

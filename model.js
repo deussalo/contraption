@@ -100,6 +100,11 @@ export function parseLevel(source){
   if(source.goal){const g=source.goal;if(!['region','edge','state'].includes(g.kind)||typeof g.target!=='string'||!(g.target==='any'||bodies.has(g.target)||Object.hasOwn(PARTS,g.target)))throw Error('Invalid goal or target.');
     level.goal={kind:g.kind,target:g.target,count:integer(g.count??1,'Goal count',1,100),delay:number(g.delay??0,'Goal delay',0,120),x:number(g.x??1200,'Goal X',-4000,6000),y:number(g.y??700,'Goal Y',-4000,6000),w:number(g.w??180,'Goal width',20,2000),h:number(g.h??180,'Goal height',20,2000),edge:g.edge??'right',state:g.state??'rung'};
     if(!['left','right','top','bottom'].includes(level.goal.edge)||!['rung','on','fired','popped'].includes(level.goal.state))throw Error('Invalid goal condition.');
+    if(g.hitBy!==undefined){
+      const sources=typeof g.hitBy==='string'?[g.hitBy]:g.hitBy;
+      if(g.kind!=='state'||!['rung','on','popped'].includes(level.goal.state)||!Array.isArray(sources)||!sources.length||sources.length>10||new Set(sources).size!==sources.length||sources.some(source=>typeof source!=='string'||source==='any'||!(bodies.has(source)||stockIds.has(source)||Object.hasOwn(PARTS,source))))throw Error('Invalid goal impact source.');
+      level.goal.hitBy=[...sources];
+    }
   }
   if(level.mode==='puzzle'&&!level.goal)throw Error('A puzzle needs a goal.');
   return level;
