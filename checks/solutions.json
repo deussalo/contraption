@@ -850,5 +850,125 @@
         ]
       }
     ]
+  },
+  {
+    "name": "Early Side-Swipe",
+    "parts": [
+      {
+        "id": "placed-trigger-ramp",
+        "kind": "ramp",
+        "x": 120,
+        "y": 480,
+        "w": 300,
+        "h": 16,
+        "angle": 0.4,
+        "material": "wood",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "resizable": false,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "trigger-ramp"
+      },
+      {
+        "id": "placed-crosswind-fan",
+        "kind": "fan",
+        "x": 640,
+        "y": 550,
+        "w": 70,
+        "h": 70,
+        "angle": -0.1,
+        "material": "steel",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "resizable": false,
+        "power": 5,
+        "direction": 1,
+        "on": true,
+        "stock": "crosswind-fan"
+      },
+      {
+        "id": "placed-corner-spring",
+        "kind": "trampoline",
+        "x": 1200,
+        "y": 560,
+        "w": 170,
+        "h": 20,
+        "angle": -0.3,
+        "material": "rubber",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "resizable": false,
+        "power": 2.5,
+        "direction": 1,
+        "on": true,
+        "stock": "corner-spring"
+      }
+    ],
+    "alternatives": [
+      {
+        "name": "Job Swap",
+        "parts": [
+          {
+            "id": "placed-trigger-ramp",
+            "kind": "ramp",
+            "x": 1260,
+            "y": 660,
+            "w": 300,
+            "h": 16,
+            "angle": -1.2,
+            "material": "wood",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true,
+            "stock": "trigger-ramp"
+          },
+          {
+            "id": "placed-crosswind-fan",
+            "kind": "fan",
+            "x": 720,
+            "y": 600,
+            "w": 70,
+            "h": 70,
+            "angle": -0.1,
+            "material": "steel",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 5,
+            "direction": 1,
+            "on": true,
+            "stock": "crosswind-fan"
+          },
+          {
+            "id": "placed-corner-spring",
+            "kind": "trampoline",
+            "x": 250,
+            "y": 600,
+            "w": 170,
+            "h": 20,
+            "angle": 0.05,
+            "material": "rubber",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1.5,
+            "direction": 1,
+            "on": true,
+            "stock": "corner-spring"
+          }
+        ]
+      }
+    ]
   }
 ]
