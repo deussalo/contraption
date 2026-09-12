@@ -1,6 +1,6 @@
 # Contraption
 
-A fullscreen illustrated physics workshop with 18 components, procedural sound, and sixteen puzzles.
+A fullscreen illustrated physics workshop with 18 components, procedural sound, and seventeen puzzles.
 
 Dark mode is the default; the sun/moon control switches themes and remembers your choice.
 
@@ -35,4 +35,4 @@ git push origin main
 git subtree push --prefix=dist origin gh-pages
 ```
 
-The existing ChatGPT Site is recorded in `.openai/hosting.json`. Push the same committed source and package `dist/` through Sites hosting. Browser saves are separate for each site address; use JSON files to transfer levels.
+GitHub Pages is the canonical published endpoint. Browser saves are separate for each site address; use JSON files to transfer levels.

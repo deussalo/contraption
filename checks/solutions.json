@@ -331,5 +331,27 @@
         "stock": "crosswind"
       }
     ]
+  },
+  {
+    "parts": [
+      {
+        "id": "placed-stone-zone",
+        "kind": "material-zone",
+        "x": 400,
+        "y": 520,
+        "w": 180,
+        "h": 180,
+        "angle": 0,
+        "material": "steel",
+        "outputMaterial": "steel",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "stone-zone"
+      }
+    ]
   }
 ]

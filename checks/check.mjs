@@ -9,8 +9,8 @@ import {blankLevel,makePart,parseLevel,PARTS} from '../dist/model.js';
 import {createWorld,stepWorld,connectionPoints,pathLength,overlaps} from '../dist/physics.js';
 import {Workshop} from '../dist/workshop.js';
 const simulate=(world,seconds)=>{for(let i=0;i<seconds*120;i++)stepWorld(world);return world;};
-const solveTime=(world,seconds=20)=>{for(let frame=1;frame<=seconds*120;frame++){stepWorld(world);if(world.won)return frame/120;}return null;};
-const overlapPairs=world=>{const pairs=[];for(let i=0;i<world.bodies.length;i++)for(let j=i+1;j<world.bodies.length;j++)if(!PARTS[world.bodies[i].kind].sensor&&!PARTS[world.bodies[j].kind].sensor&&overlaps(world.bodies[i],world.bodies[j]))pairs.push([world.bodies[i].id,world.bodies[j].id]);return pairs;};
+const solveTime=(world,seconds=20,afterStep)=>{for(let frame=1;frame<=seconds*120;frame++){const events=stepWorld(world);afterStep?.(world,events,frame);if(world.won)return frame/120;}return null;};
+const overlapPairs=(world,includeSensors=false)=>{const pairs=[];for(let i=0;i<world.bodies.length;i++)for(let j=i+1;j<world.bodies.length;j++)if((includeSensors||!PARTS[world.bodies[i].kind].sensor&&!PARTS[world.bodies[j].kind].sensor)&&overlaps(world.bodies[i],world.bodies[j]))pairs.push([world.bodies[i].id,world.bodies[j].id]);return pairs;};
 const insideBucket=(world,bodyId,bucketId)=>{const body=world.bodies.find(body=>body.id===bodyId),bucket=world.bodies.find(body=>body.id===bucketId);return Math.abs(body.x-bucket.x)<bucket.w/2-12&&body.y>bucket.y-bucket.h/2&&body.y<bucket.y+bucket.h/2-8;};
 const scene=(bodies,connections=[],environment={})=>({...blankLevel(),bodies,connections,environment:{width:1600,height:1000,gravity:850,pressure:0,floor:false,...environment}});
 const part=(kind,x,y,properties={})=>makePart(kind,x,y,properties);
@@ -75,6 +75,15 @@ const transformationLevels=new Map([
     ['The Sky Is Falling must need its wire',level=>{level.connections=[];}],
     ['The Sky Is Falling must need rocket power',level=>{level.bodies.find(body=>body.id==='message-rocket').power=0;}],
   ]}],
+  ['stone-balloon',{seconds:12,wonAt:2.75,ball:'ballast-balloon',stock:'stone-zone',original:'helium',transforms:['steel'],zones:['placed-stone-zone'],positionDelta:20,angleDelta:.05,reverses:true,reversalAt:1.3333333333333333,includeSensors:true,rope:'exchange-rope',baseline:[
+    ['Without the placed zone, the balloon must remain helium',world=>world.bodies.find(body=>body.id==='ballast-balloon').material==='helium'],
+  ],milestones:[
+    ['The rising balloon must enter Turn to Stone',.6083333333333333,(_world,events)=>events.some(event=>event.kind==='transform')],
+  ],ablations:[
+    ['Stone Balloon must need its rope',level=>{level.connections=[];}],
+    ['Cork must be too light to reverse the counterweight',level=>{level.bodies.find(body=>body.stock==='stone-zone').outputMaterial='cork';}],
+    ['Stone Balloon must need the zone on the balloon route',level=>{level.bodies.find(body=>body.stock==='stone-zone').x=650;}],
+  ]}],
 ]);
 assert.equal(solutions.length,pack.levels.length,'Every playable level needs one reference solution');
 for(const [i,level] of pack.levels.entries()){
@@ -103,12 +112,12 @@ for(const [i,level] of pack.levels.entries()){
     const reset=new Workshop(solved),first=solveTime(reset.world);assert.equal(first,6.866666666666666);reset.reset();assert.equal(reset.world.bodies.find(body=>body.id==='delivery-ball').material,'cork');assert.deepEqual(reset.world.bodies.find(body=>body.id==='delivery-ball').transformedZones,[]);assert.equal(solveTime(reset.world),first,'Rock Delivery reset must preserve solve time');
   }
   if(transformationLevels.has(level.id)){
-    const test=transformationLevels.get(level.id),reference=createWorld(solved),transforms=[],moments=(test.milestones??[]).map(([message,time,predicate])=>({message,time,predicate,actual:null}));let wonAt=null,transformVelocity=null,reversed=false;for(let frame=1;frame<=test.seconds*120;frame++){const events=stepWorld(reference),materials=events.filter(event=>event.kind==='transform').map(event=>event.material),ball=reference.bodies.find(body=>body.id===test.ball);transforms.push(...materials);if(materials.length&&transformVelocity===null)transformVelocity=ball.vy;if(transformVelocity!==null&&ball.vy>0)reversed=true;for(const moment of moments)if(moment.actual===null&&moment.predicate(reference,events))moment.actual=frame/120;if(reference.won&&wonAt===null)wonAt=frame/120;}
-    assert.equal(wonAt,test.wonAt);assert.deepEqual(transforms,test.transforms);assert.equal(reference.bodies.find(body=>body.id===test.ball).material,test.transforms.at(-1));assert.deepEqual(overlapPairs(createWorld(solved)),[]);
-    for(const moment of moments)assert.equal(moment.actual,moment.time,moment.message);if(test.reverses){assert.ok(transformVelocity<0,'Transformation must preserve the balloon upward velocity');assert.equal(reversed,true,'Steel gravity must reverse the balloon downward');}
+    const test=transformationLevels.get(level.id),reference=createWorld(solved),transforms=[],moments=(test.milestones??[]).map(([message,time,predicate])=>({message,time,predicate,actual:null}));let wonAt=null,transformVelocity=null,reversalAt=null,ropeBlocked=false;for(let frame=1;frame<=test.seconds*120;frame++){const events=stepWorld(reference),materials=events.filter(event=>event.kind==='transform').map(event=>event.material),ball=reference.bodies.find(body=>body.id===test.ball);transforms.push(...materials);if(materials.length&&transformVelocity===null)transformVelocity=ball.vy;if(transformVelocity!==null&&reversalAt===null&&ball.vy>=0)reversalAt=frame/120;if(test.rope&&!reference.won&&reference.connections.find(connection=>connection.id===test.rope).blocked)ropeBlocked=true;for(const moment of moments)if(moment.actual===null&&moment.predicate(reference,events))moment.actual=frame/120;if(reference.won&&wonAt===null)wonAt=frame/120;}
+    const transformed=reference.bodies.find(body=>body.id===test.ball);assert.equal(wonAt,test.wonAt);assert.deepEqual(transforms,test.transforms);assert.equal(transformed.material,test.transforms.at(-1));if(test.zones)assert.deepEqual(transformed.transformedZones,test.zones);assert.deepEqual(overlapPairs(createWorld(solved),test.includeSensors),[]);assert.equal(ropeBlocked,false,`${level.name} rope must remain unblocked through the win`);
+    for(const moment of moments)assert.equal(moment.actual,moment.time,moment.message);if(test.reverses){assert.ok(transformVelocity<0,'Transformation must preserve the balloon upward velocity');assert.notEqual(reversalAt,null,'Steel gravity must reverse the balloon downward');if(test.reversalAt!==undefined)assert.equal(reversalAt,test.reversalAt,'Balloon reversal time changed');}
     if(test.baseline){const baseline=simulate(createWorld(parseLevel(level)),test.seconds);for(const [message,predicate] of test.baseline)assert.equal(predicate(baseline),true,message);}
     for(const [message,mutate] of test.ablations){const ablation=structuredClone(solved);mutate(ablation);assert.equal(simulate(createWorld(ablation),test.seconds).won,false,message);}
-    for(const [field,delta] of [['x',-8],['x',8],['y',-8],['y',8],['angle',-(test.angleDelta??.02)],['angle',test.angleDelta??.02]]){const nearby=structuredClone(solved);nearby.bodies.find(body=>body.stock===test.stock)[field]+=delta;const nearbyWorld=createWorld(nearby);assert.deepEqual(overlapPairs(nearbyWorld),[]);assert.notEqual(solveTime(nearbyWorld,test.seconds),null,`${level.name} nearby ${field} ${delta} must win`);}
+    const positionDelta=test.positionDelta??8;for(const [field,delta] of [['x',-positionDelta],['x',positionDelta],['y',-positionDelta],['y',positionDelta],['angle',-(test.angleDelta??.02)],['angle',test.angleDelta??.02]]){const nearby=structuredClone(solved);nearby.bodies.find(body=>body.stock===test.stock)[field]+=delta;const nearbyWorld=createWorld(nearby);let nearbyRopeBlocked=false;assert.deepEqual(overlapPairs(nearbyWorld,test.includeSensors),[]);const nearbyWin=solveTime(nearbyWorld,test.seconds,world=>{if(test.rope&&world.connections.find(connection=>connection.id===test.rope).blocked)nearbyRopeBlocked=true;});assert.notEqual(nearbyWin,null,`${level.name} nearby ${field} ${delta} must win`);assert.equal(nearbyRopeBlocked,false,`${level.name} nearby ${field} ${delta} must preserve its rope route`);}
     const reset=new Workshop(solved),first=solveTime(reset.world,test.seconds);assert.equal(first,test.wonAt);reset.reset();assert.equal(reset.world.bodies.find(body=>body.id===test.ball).material,test.original);assert.equal(solveTime(reset.world,test.seconds),first,`${level.name} reset must preserve solve time`);
   }
   if(level.id==='rocket-counterweight'){
