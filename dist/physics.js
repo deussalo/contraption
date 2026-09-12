@@ -50,6 +50,7 @@ function collision(a,b){
 export function overlaps(a,b,slop=1){return fixtures(a).some(f=>fixtures(b).some(g=>{const c=collision(f,g);return c&&c.points.some(p=>p.depth>slop);}));}
 export function pointInside(b,x,y,padding=0){const p=localPoint(b,x,y);return PARTS[b.kind].shape==='circle'?Math.hypot(p.x,p.y)<=b.w/2+padding:Math.abs(p.x)<=b.w/2+padding&&Math.abs(p.y)<=b.h/2+padding;}
 function velocity(b,r){return {x:b.vx-b.omega*r.y,y:b.vy+b.omega*r.x};}
+export function conveyorSurfaceSpeed(b){return b.kind==='conveyor'&&b.active?-b.power*160*b.direction:0;}
 function impulse(b,j,r,sign){b.vx+=j.x*b.invMass*sign;b.vy+=j.y*b.invMass*sign;b.omega+=cross(r,j)*b.invI*sign;}
 function massAt(a,b,ra,rb,n){return a.invMass+b.invMass+cross(ra,n)**2*a.invI+cross(rb,n)**2*b.invI;}
 function bounds(b){
@@ -91,7 +92,7 @@ function solveVelocity(c){
   for(const p of c.points){const kn=massAt(a,b,p.ra,p.rb,n);if(kn<1e-9)continue;
     const relative=sub(velocity(b,p.rb),velocity(a,p.ra)),previous=p.jn;p.jn=Math.max(0,p.jn+(p.target-dot(relative,n))/kn);const j=mul(n,p.jn-previous);impulse(a,j,p.ra,-1);impulse(b,j,p.rb,1);
     const kt=massAt(a,b,p.ra,p.rb,t);if(kt<1e-9)continue;
-    const surface=(a.kind==='conveyor'&&a.active?a.power*160*a.direction:0)-(b.kind==='conveyor'&&b.active?b.power*160*b.direction:0),old=p.jt;
+    const surface=dot(sub(rotate(conveyorSurfaceSpeed(b),0,b.angle),rotate(conveyorSurfaceSpeed(a),0,a.angle)),t),old=p.jt;
     p.jt=clamp(p.jt-(dot(sub(velocity(b,p.rb),velocity(a,p.ra)),t)+surface)/kt,-c.friction*p.jn,c.friction*p.jn);
     const friction=mul(t,p.jt-old);impulse(a,friction,p.ra,-1);impulse(b,friction,p.rb,1);
   }

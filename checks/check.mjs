@@ -3,6 +3,7 @@ import './transformation.mjs';
 import './rewind.mjs';
 import './interface.mjs';
 import './performance.mjs';
+import './conveyor-direction.mjs';
 import './stonework-skyhook.mjs';
 import './goal-impact.mjs';
 import './lever-action-air-mail.mjs';
