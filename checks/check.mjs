@@ -4,6 +4,8 @@ import './rewind.mjs';
 import './interface.mjs';
 import './performance.mjs';
 import './stonework-skyhook.mjs';
+import './goal-impact.mjs';
+import './lever-action-air-mail.mjs';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {blankLevel,makePart,parseLevel,PARTS} from '../dist/model.js';
@@ -109,6 +111,7 @@ const transformationLevels=new Map([
 assert.equal(solutions.length,pack.levels.length,'Every playable level needs one reference solution');
 for(const [i,level] of pack.levels.entries()){
   const authored=parseLevel(level);assert.ok(authored.bodies.every(body=>body.resizable===false),`${level.name}: puzzle bodies must have fixed authored sizes`);assert.ok(authored.inventory.every(entry=>entry.part.resizable===false),`${level.name}: puzzle inventory must have fixed authored sizes`);assert.equal(simulate(createWorld(authored),20).won,false,`${level.name}: empty bin must fail`);
+  if(authored.goal.kind==='state'&&['rung','on','popped'].includes(authored.goal.state))assert.ok(authored.goal.hitBy?.length,`${level.name}: state goal must name its valid impact source`);
   const solved=parseLevel({...level,bodies:[...level.bodies,...solutions[i].parts.map(p=>part(p.kind,p.x,p.y,p))]});const world=simulate(createWorld(solved),20);assert.equal(world.won,true,`${level.name}: reference solution must win`);
   const again=parseLevel(JSON.parse(JSON.stringify(solved)));assert.deepEqual(again.bodies,solved.bodies);assert.deepEqual(again.connections,solved.connections);assert.deepEqual(again.goal,solved.goal);assert.deepEqual(again.inventory,solved.inventory);
   if(level.id==='pulley-gate'){

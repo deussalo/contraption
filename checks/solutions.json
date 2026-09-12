@@ -608,5 +608,127 @@
         ]
       }
     ]
+  },
+  {
+    "name": "Far Rebound",
+    "parts": [
+      {
+        "id": "placed-stone-maker",
+        "kind": "material-zone",
+        "x": 520,
+        "y": 500,
+        "w": 150,
+        "h": 130,
+        "angle": 0,
+        "material": "steel",
+        "outputMaterial": "steel",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "resizable": false,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "stone-maker"
+      },
+      {
+        "id": "placed-mail-ramp",
+        "kind": "ramp",
+        "x": 1120,
+        "y": 650,
+        "w": 240,
+        "h": 16,
+        "angle": 0.7,
+        "material": "wood",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "resizable": false,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "mail-ramp"
+      },
+      {
+        "id": "placed-mail-spring",
+        "kind": "trampoline",
+        "x": 1425,
+        "y": 740,
+        "w": 170,
+        "h": 20,
+        "angle": -0.4,
+        "material": "rubber",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "resizable": false,
+        "power": 2.2,
+        "direction": 1,
+        "on": true,
+        "stock": "mail-spring"
+      }
+    ],
+    "alternatives": [
+      {
+        "name": "Direct Dispatch",
+        "parts": [
+          {
+            "id": "placed-stone-maker",
+            "kind": "material-zone",
+            "x": 520,
+            "y": 500,
+            "w": 150,
+            "h": 130,
+            "angle": 0,
+            "material": "steel",
+            "outputMaterial": "steel",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true,
+            "stock": "stone-maker"
+          },
+          {
+            "id": "placed-mail-ramp",
+            "kind": "ramp",
+            "x": 1111,
+            "y": 651,
+            "w": 240,
+            "h": 16,
+            "angle": 0.7,
+            "material": "wood",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true,
+            "stock": "mail-ramp"
+          },
+          {
+            "id": "placed-mail-spring",
+            "kind": "trampoline",
+            "x": 1215,
+            "y": 641,
+            "w": 170,
+            "h": 20,
+            "angle": 0.4,
+            "material": "rubber",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 2.2,
+            "direction": 1,
+            "on": true,
+            "stock": "mail-spring"
+          }
+        ]
+      }
+    ]
   }
 ]

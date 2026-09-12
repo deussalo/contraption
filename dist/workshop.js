@@ -72,5 +72,5 @@ export class Workshop{
   }
   export(){const level=structuredClone(this.level);if(level.mode==='editor')level.mode='puzzle';return parseLevel(level);}
   setEnvironment(change){if(this.level.mode==='puzzle')throw Error('The puzzle environment is locked.');this.transaction(()=>{Object.assign(this.level.environment,change);Object.assign(this.world.environment,change);this.world.floor=createWorld(this.level).floor;});}
-  setGoal(goal){if(this.level.mode==='puzzle')throw Error('The puzzle goal is locked.');this.transaction(()=>{this.level.goal=goal;this.world.goal=structuredClone(goal);this.world.won=false;this.world.goalHeld=0;});}
+  setGoal(goal){if(this.level.mode==='puzzle')throw Error('The puzzle goal is locked.');const checked=goal===null?null:parseLevel({...this.level,goal}).goal;this.transaction(()=>{this.level.goal=checked;this.world.goal=structuredClone(checked);this.world.won=false;this.world.goalHeld=0;});}
 }

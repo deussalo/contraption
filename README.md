@@ -1,6 +1,6 @@
 # Contraption
 
-A fullscreen illustrated physics workshop with 18 components, procedural sound, and twenty-four puzzles.
+A fullscreen illustrated physics workshop with 18 components, procedural sound, and twenty-five puzzles.
 
 Dark mode is the default; the sun/moon control switches themes and remembers your choice.
 
@@ -8,7 +8,7 @@ The expandable inventory contains all 18 component types. Drag parts onto the ca
 
 Hold Rewind or `Q` to move backward through up to 15 seconds of whole-world simulation history. Rewind restores body motion, materials and device states, ropes, goals, and time; releasing it discards the abandoned future and resumes only if the simulation was previously running. Sounds and particles are suppressed while rewinding. Construction Undo and Redo remain separate, with toolbar buttons and `Ctrl/Cmd+Z`, `Ctrl/Cmd+Shift+Z`, or `Ctrl/Cmd+Y`.
 
-The menu opens puzzles, environment settings, browser saves, and JSON import/export. Puzzle editor locks the existing scene; select parts and send them to the bin, set an outcome goal, then test or export the puzzle. Imported levels carry materials, locks, inventory, connections, goals, gravity, and pressure. JSON version 3 is required; v2 files fail with a version error.
+The menu opens puzzles, environment settings, browser saves, and JSON import/export. Puzzle editor locks the existing scene; select parts and send them to the bin, set an outcome goal, then test or export the puzzle. State goals can name one or more valid impact sources, so ringing a bell with an unintended spare part does not win. Imported levels carry materials, locks, inventory, connections, goals, gravity, and pressure. JSON version 3 is required; v2 files fail with a version error.
 
 Ropes attach to every component at visible handles and run around the circumference of every threaded pulley. Radius sets tangent points, wrap length, and rim speed. Both rope ends and movable pulleys receive tension; fixed components anchor it, and unchecking Fixed axle lets a pulley move. Belt wheels are a separate component. Rope properties edit length, take up slack, and reverse the wrap at a chosen pulley. Crossing the authored wrap topology is reported without disabling the inextensible length constraint, so powered rockets and buoyant balloons cannot turn ropes into elastic lines. This is a massless rope model without rope self-collision or pulley bearing friction.
 
@@ -24,7 +24,7 @@ Serve `dist/` with any local HTTP server. No dependency installation or build st
 node --experimental-default-type=module checks/check.mjs
 ```
 
-The checks cover gravity, stable stacks, fast collisions, belt power propagation, rope tangency/radius, movable-pulley ratios, rim speed, slack, wrap crossings, material transformation and reset, switches, bounded whole-world rewind and timeline branching, fixed-size puzzle inventory, malformed imports, undo/redo, JSON round trips, and both empty-bin and reference outcomes for every puzzle. Stonework Skyhook additionally preserves three required placements, neutral-angle failure, a ten-link interaction chain, and two mechanically distinct solution families. Prove changes to visible controls with a browser probe on desktop and mobile, including real two-pointer touch events.
+The checks cover gravity, stable stacks, fast collisions, belt power propagation, rope tangency/radius, movable-pulley ratios, rim speed, slack, wrap crossings, material transformation and reset, source-specific state goals, switches, bounded whole-world rewind and timeline branching, fixed-size puzzle inventory, malformed imports, undo/redo, JSON round trips, and both empty-bin and reference outcomes for every puzzle. Stonework Skyhook and Lever-Action Air Mail additionally preserve three required placements, neutral-angle failure, long interaction chains, and two mechanically distinct solution families. Prove changes to visible controls with a browser probe on desktop and mobile, including real two-pointer touch events.
 
 ## Publish
 
