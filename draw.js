@@ -1,5 +1,5 @@
 import {PARTS,MATERIALS} from './model.js';
-import {worldPoint,connectionPoints} from './physics.js';
+import {worldPoint,connectionPoints,conveyorSurfaceSpeed} from './physics.js';
 import {ropeGeometry,ropePolyline,attachmentPoints} from './rope.js';
 import {canvasTheme} from './theme.js';
 const ink='#414c3c',paper='#faf9eb';
@@ -22,7 +22,7 @@ export function drawBody(c,b,time=0){
     rect(c,-w/2,-h/2,w,h,color,Math.min(3,h/6));c.lineWidth=1;c.strokeStyle='#75664e55';
     if(b.material==='wood'||b.material==='cork'){for(let y=-h/2+7;y<h/2-3;y+=12)for(let x=-w/2+9;x<w/2-15;x+=45)line(c,[[x,y],[x+25,y+1]]);}
     if(b.kind==='ramp'){c.strokeStyle=ink;for(const x of [-w/2+7,w/2-7])circle(c,x,0,1.5,'#81755e');}
-    if(b.kind==='conveyor'){c.strokeStyle=ink;c.lineWidth=1.5;rect(c,-w/2,-h/2,w,h,'#9fae9b',h/2);const phase=b.active?time*b.power*b.direction*90:0;for(let x=-w/2+9;x<w/2-6;x+=18){const px=-w/2+((x+w/2+phase)%(w-8)+w-8)%(w-8);line(c,[[px,-h/2+4],[px,h/2-4]]);}circle(c,-w/2+h/2,0,h*.24,'#d9dfc5');circle(c,w/2-h/2,0,h*.24,'#d9dfc5');}
+    if(b.kind==='conveyor'){c.strokeStyle=ink;c.lineWidth=1.5;rect(c,-w/2,-h/2,w,h,'#9fae9b',h/2);const phase=time*conveyorSurfaceSpeed(b);for(let x=-w/2+9;x<w/2-6;x+=18){const px=-w/2+((x+w/2+phase)%(w-8)+w-8)%(w-8);line(c,[[px,-h/2+4],[px,h/2-4]]);}circle(c,-w/2+h/2,0,h*.24,'#d9dfc5');circle(c,w/2-h/2,0,h*.24,'#d9dfc5');}
   }else if(b.kind==='bucket'){
     rect(c,-w/2,-h/2,10,h,color,2);rect(c,w/2-10,-h/2,10,h,color,2);rect(c,-w/2,h/2-10,w,10,color,2);
     c.strokeStyle='#93a58b';c.lineWidth=1;line(c,[[-w/2+18,h/2-20],[w/2-18,h/2-20]]);
