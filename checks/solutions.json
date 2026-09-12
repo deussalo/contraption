@@ -1334,5 +1334,127 @@
         ]
       }
     ]
+  },
+  {
+    "name": "Long Airmail",
+    "parts": [
+      {
+        "id": "placed-signal-fan",
+        "kind": "fan",
+        "x": 180,
+        "y": 640,
+        "w": 70,
+        "h": 70,
+        "angle": -0.2,
+        "material": "steel",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "resizable": false,
+        "power": 0.55,
+        "direction": 1,
+        "on": true,
+        "stock": "signal-fan"
+      },
+      {
+        "id": "placed-stone-cloud",
+        "kind": "material-zone",
+        "x": 700,
+        "y": 475,
+        "w": 190,
+        "h": 180,
+        "angle": 0,
+        "material": "steel",
+        "outputMaterial": "steel",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "resizable": false,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "stone-cloud"
+      },
+      {
+        "id": "placed-return-spring",
+        "kind": "trampoline",
+        "x": 980,
+        "y": 760,
+        "w": 170,
+        "h": 20,
+        "angle": -1.2,
+        "material": "rubber",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "resizable": false,
+        "power": 2.1,
+        "direction": 1,
+        "on": true,
+        "stock": "return-spring"
+      }
+    ],
+    "alternatives": [
+      {
+        "name": "Ceiling Telegram",
+        "parts": [
+          {
+            "id": "placed-signal-fan",
+            "kind": "fan",
+            "x": 360,
+            "y": 580,
+            "w": 70,
+            "h": 70,
+            "angle": 0.2,
+            "material": "steel",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 0.55,
+            "direction": 1,
+            "on": true,
+            "stock": "signal-fan"
+          },
+          {
+            "id": "placed-stone-cloud",
+            "kind": "material-zone",
+            "x": 600,
+            "y": 475,
+            "w": 190,
+            "h": 180,
+            "angle": 0,
+            "material": "steel",
+            "outputMaterial": "steel",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true,
+            "stock": "stone-cloud"
+          },
+          {
+            "id": "placed-return-spring",
+            "kind": "trampoline",
+            "x": 980,
+            "y": 760,
+            "w": 170,
+            "h": 20,
+            "angle": -1.2,
+            "material": "rubber",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 2.1,
+            "direction": 1,
+            "on": true,
+            "stock": "return-spring"
+          }
+        ]
+      }
+    ]
   }
 ]
