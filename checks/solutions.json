@@ -1456,5 +1456,127 @@
         ]
       }
     ]
+  },
+  {
+    "name": "Deep Overshoot",
+    "parts": [
+      {
+        "id": "placed-crosswind-fan",
+        "kind": "fan",
+        "x": 800,
+        "y": 640,
+        "w": 70,
+        "h": 70,
+        "angle": -0.4,
+        "material": "steel",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "resizable": false,
+        "power": 0.7,
+        "direction": 1,
+        "on": true,
+        "stock": "crosswind-fan"
+      },
+      {
+        "id": "placed-stone-cloud",
+        "kind": "material-zone",
+        "x": 1050,
+        "y": 525,
+        "w": 180,
+        "h": 160,
+        "angle": 0,
+        "material": "steel",
+        "outputMaterial": "steel",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "resizable": false,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "stone-cloud"
+      },
+      {
+        "id": "placed-landing-chock",
+        "kind": "box",
+        "x": 1100,
+        "y": 860,
+        "w": 180,
+        "h": 120,
+        "angle": 0,
+        "material": "wood",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "resizable": false,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "landing-chock"
+      }
+    ],
+    "alternatives": [
+      {
+        "name": "Shallow Loop",
+        "parts": [
+          {
+            "id": "placed-crosswind-fan",
+            "kind": "fan",
+            "x": 800,
+            "y": 740,
+            "w": 70,
+            "h": 70,
+            "angle": 0.4,
+            "material": "steel",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 0.7,
+            "direction": 1,
+            "on": true,
+            "stock": "crosswind-fan"
+          },
+          {
+            "id": "placed-stone-cloud",
+            "kind": "material-zone",
+            "x": 1050,
+            "y": 525,
+            "w": 180,
+            "h": 160,
+            "angle": 0,
+            "material": "steel",
+            "outputMaterial": "steel",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true,
+            "stock": "stone-cloud"
+          },
+          {
+            "id": "placed-landing-chock",
+            "kind": "box",
+            "x": 1100,
+            "y": 860,
+            "w": 180,
+            "h": 120,
+            "angle": 0,
+            "material": "wood",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true,
+            "stock": "landing-chock"
+          }
+        ]
+      }
+    ]
   }
 ]

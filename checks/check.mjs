@@ -13,6 +13,7 @@ import './pendulum-bank-exchange.mjs';
 import './cloudstone-customs.mjs';
 import './counterweight-crossfire.mjs';
 import './stone-signal-dispatch.mjs';
+import './balloon-skycrane-customs.mjs';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {blankLevel,makePart,parseLevel,PARTS} from '../dist/model.js';
