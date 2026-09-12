@@ -486,5 +486,127 @@
         "stock": "stone-zone-stock"
       }
     ]
+  },
+  {
+    "name": "Afterburner Bank",
+    "parts": [
+      {
+        "id": "placed-stone-cloud",
+        "kind": "material-zone",
+        "x": 400,
+        "y": 465,
+        "w": 170,
+        "h": 150,
+        "angle": 0,
+        "material": "steel",
+        "outputMaterial": "steel",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "resizable": false,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "stone-cloud"
+      },
+      {
+        "id": "placed-ballast-stop",
+        "kind": "box",
+        "x": 394,
+        "y": 870,
+        "w": 150,
+        "h": 70,
+        "angle": 0,
+        "material": "wood",
+        "fixed": false,
+        "pinned": false,
+        "locked": false,
+        "resizable": false,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "ballast-stop"
+      },
+      {
+        "id": "placed-courier-spring",
+        "kind": "trampoline",
+        "x": 1088,
+        "y": 568,
+        "w": 170,
+        "h": 20,
+        "angle": 1.2,
+        "material": "rubber",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "resizable": false,
+        "power": 2.1,
+        "direction": 1,
+        "on": true,
+        "stock": "courier-spring"
+      }
+    ],
+    "alternatives": [
+      {
+        "name": "Prelaunch Kick",
+        "parts": [
+          {
+            "id": "placed-stone-cloud",
+            "kind": "material-zone",
+            "x": 400,
+            "y": 487,
+            "w": 170,
+            "h": 150,
+            "angle": 0,
+            "material": "steel",
+            "outputMaterial": "steel",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true,
+            "stock": "stone-cloud"
+          },
+          {
+            "id": "placed-ballast-stop",
+            "kind": "box",
+            "x": 400,
+            "y": 870,
+            "w": 150,
+            "h": 70,
+            "angle": 0,
+            "material": "wood",
+            "fixed": false,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true,
+            "stock": "ballast-stop"
+          },
+          {
+            "id": "placed-courier-spring",
+            "kind": "trampoline",
+            "x": 1020,
+            "y": 680,
+            "w": 170,
+            "h": 20,
+            "angle": -0.6,
+            "material": "rubber",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 2.1,
+            "direction": 1,
+            "on": true,
+            "stock": "courier-spring"
+          }
+        ]
+      }
+    ]
   }
 ]

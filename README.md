@@ -1,6 +1,6 @@
 # Contraption
 
-A fullscreen illustrated physics workshop with 18 components, procedural sound, and twenty-three puzzles.
+A fullscreen illustrated physics workshop with 18 components, procedural sound, and twenty-four puzzles.
 
 Dark mode is the default; the sun/moon control switches themes and remembers your choice.
 
@@ -24,7 +24,7 @@ Serve `dist/` with any local HTTP server. No dependency installation or build st
 node --experimental-default-type=module checks/check.mjs
 ```
 
-The checks cover gravity, stable stacks, fast collisions, belt power propagation, rope tangency/radius, movable-pulley ratios, rim speed, slack, wrap crossings, material transformation and reset, switches, bounded whole-world rewind and timeline branching, fixed-size puzzle inventory, malformed imports, undo/redo, JSON round trips, and both empty-bin and reference outcomes for every puzzle. Prove changes to visible controls with a browser probe on desktop and mobile, including real two-pointer touch events.
+The checks cover gravity, stable stacks, fast collisions, belt power propagation, rope tangency/radius, movable-pulley ratios, rim speed, slack, wrap crossings, material transformation and reset, switches, bounded whole-world rewind and timeline branching, fixed-size puzzle inventory, malformed imports, undo/redo, JSON round trips, and both empty-bin and reference outcomes for every puzzle. Stonework Skyhook additionally preserves three required placements, neutral-angle failure, a ten-link interaction chain, and two mechanically distinct solution families. Prove changes to visible controls with a browser probe on desktop and mobile, including real two-pointer touch events.
 
 ## Publish
 
