@@ -8,15 +8,18 @@ export class Workshop{
   record(before){this.history.push(before);if(this.history.length>40)this.history.shift();this.future=[];this.world.cachedContacts=[];this.changed=true;this.revision++;}
   transaction(action){const before=this.capture();try{const result=action();this.record(before);return result;}catch(error){this.restore(before);throw error;}}
   restoreHistory(source,target){if(!source.length)return;target.push(this.capture());this.restore(source.pop());this.running=false;this.revision++;}
-  undo(){this.restoreHistory(this.history,this.future);}
-  redo(){this.restoreHistory(this.future,this.history);}
+  undo(){this.requireConstruction();this.restoreHistory(this.history,this.future);}
+  redo(){this.requireConstruction();this.restoreHistory(this.future,this.history);}
   reset(){this.world=createWorld(this.level);this.running=false;this.selected=null;this.changed=true;this.revision++;}
   body(){return this.world.bodies.find(b=>b.id===this.selected);}
-  editable(body){return this.level.mode!=='puzzle'||!body.locked;}
+  constructionEnabled(){return this.level.mode!=='puzzle'||!this.running;}
+  requireConstruction(){if(!this.constructionEnabled())throw Error('Pause the puzzle to edit.');}
+  editable(body){return this.constructionEnabled()&&(this.level.mode!=='puzzle'||!body.locked);}
   canResize(body){return this.level.mode==='editor'||this.level.mode!=='puzzle'&&body.resizable;}
   remaining(entry){return entry.quantity-this.level.bodies.filter(b=>b.stock===entry.id).length;}
   available(kind){return this.level.inventory.find(e=>e.part.kind===kind&&this.remaining(e)>0);}
   newPart(kind,x,y,extra={},stockId){
+    this.requireConstruction();
     if(this.level.bodies.length>=100)throw Error('The canvas holds 100 objects.');let options=extra;
     if(this.level.mode==='puzzle'){
       const entry=stockId?this.level.inventory.find(e=>e.id===stockId):this.available(kind);
@@ -25,17 +28,18 @@ export class Workshop{
     return createBody(makePart(kind,x,y,{...options,x,y}));
   }
   canPlace(body){if(PARTS[body.kind].sensor)return true;return !this.world.bodies.some(other=>other.id!==body.id&&!PARTS[other.kind].sensor&&other.state!=='popped'&&overlaps(body,other,2))&&!(this.world.floor&&overlaps(body,this.world.floor,2));}
-  insert(body){this.level.bodies.push(designPart(body));this.world.bodies.push(body);this.selected=body.id;this.changed=true;}
+  insert(body){this.requireConstruction();this.level.bodies.push(designPart(body));this.world.bodies.push(body);this.selected=body.id;this.changed=true;}
   move(body,change){
-    if(!this.editable(body))throw Error('This object is locked.');if(!this.canResize(body)&&((change.w!==undefined&&change.w!==body.w)||(change.h!==undefined&&change.h!==body.h)))throw Error('This component has a fixed size.');if(body.kind==='material-zone'&&(change.fixed===false||change.pinned===true))throw Error('Material zones must be fixed.');if(change.outputMaterial!==undefined&&!Object.hasOwn(MATERIALS,change.outputMaterial))throw Error('Unknown output material.');Object.assign(body,change);setMass(body);for(const c of this.world.connections)if(c.kind==='rope'&&(c.a===body.id||c.b===body.id||c.via.includes(body.id))){delete c.arcSweeps;c.routeCrossed=false;c.blocked=false;}Object.assign(this.level.bodies.find(p=>p.id===body.id),designPart(body));this.world.cachedContacts=[];this.changed=true;
+    this.requireConstruction();if(!this.editable(body))throw Error('This object is locked.');if(!this.canResize(body)&&((change.w!==undefined&&change.w!==body.w)||(change.h!==undefined&&change.h!==body.h)))throw Error('This component has a fixed size.');if(body.kind==='material-zone'&&(change.fixed===false||change.pinned===true))throw Error('Material zones must be fixed.');if(change.outputMaterial!==undefined&&!Object.hasOwn(MATERIALS,change.outputMaterial))throw Error('Unknown output material.');Object.assign(body,change);setMass(body);for(const c of this.world.connections)if(c.kind==='rope'&&(c.a===body.id||c.b===body.id||c.via.includes(body.id))){delete c.arcSweeps;c.routeCrossed=false;c.blocked=false;}Object.assign(this.level.bodies.find(p=>p.id===body.id),designPart(body));this.world.cachedContacts=[];this.changed=true;
   }
   update(change){const body=this.body();if(!body)return;this.transaction(()=>{this.move(body,change);if(!this.canPlace(body))throw Error('Objects cannot overlap.');});}
   remove(){
+    this.requireConstruction();
     const body=this.body();if(!body){const c=this.world.connections.find(c=>c.id===this.selected);if(!c)return;if(this.level.mode==='puzzle'&&[c.a,c.b].every(id=>this.level.bodies.find(b=>b.id===id)?.locked))throw Error('This connection is locked.');this.transaction(()=>{this.level.connections=this.level.connections.filter(j=>j.id!==c.id);this.world.connections=this.world.connections.filter(j=>j.id!==c.id);this.selected=null;});return;}
     if(!this.editable(body))throw Error('This object is locked.');this.transaction(()=>this.removeBody(body.id));
   }
   removeBody(id){for(const owner of [this.level,this.world]){owner.bodies=owner.bodies.filter(b=>b.id!==id);owner.connections=owner.connections.filter(c=>c.a!==id&&c.b!==id&&!c.via?.includes(id));}this.selected=null;this.world.cachedContacts=[];this.changed=true;}
-  duplicate(){const b=this.body();if(!b)return;if(!this.editable(b))throw Error('This object is locked.');
+  duplicate(){this.requireConstruction();const b=this.body();if(!b)return;if(!this.editable(b))throw Error('This object is locked.');
     const p=this.newPart(b.kind,b.x+b.w+15,b.y,{...designPart(b),id:uid(),x:b.x+b.w+15,locked:false},b.stock);
     if(!this.canPlace(p))throw Error('There is no room next to this object.');this.transaction(()=>this.insert(p));
   }
@@ -43,6 +47,7 @@ export class Workshop{
     this.transaction(()=>{const p={...designPart(b),locked:false};delete p.stock;delete p.id;p.x=0;p.y=0;this.level.inventory.push({id:uid(),part:p,quantity:1});this.removeBody(b.id);});
   }
   addConnection(kind,a,b,anchors,via=[]){
+    this.requireConstruction();
     if(this.level.connections.length>=100)throw Error('The canvas holds 100 connections.');
     if(via.length>8)throw Error('A rope can route through up to eight pulleys.');
     if(a===b)throw Error('Choose a different second object.');const first=this.world.bodies.find(p=>p.id===a),last=this.world.bodies.find(p=>p.id===b);
@@ -57,6 +62,7 @@ export class Workshop{
     this.transaction(()=>{this.level.connections.push(structuredClone(joint));this.world.connections.push(joint);this.selected=joint.id;});
   }
   updateRope(change){
+    this.requireConstruction();
     const joint=this.level.connections.find(c=>c.id===this.selected&&c.kind==='rope');if(!joint)return;
     if(this.level.mode==='puzzle'&&[joint.a,joint.b].every(id=>this.level.bodies.find(b=>b.id===id)?.locked))throw Error('This rope is locked.');
     this.transaction(()=>{const checked=parseLevel({...this.level,connections:this.level.connections.map(c=>c.id===joint.id?{...c,...change}:c)}).connections.find(c=>c.id===joint.id);Object.assign(joint,checked);const live=this.world.connections.find(c=>c.id===joint.id);Object.assign(live,checked,{tension:0,routeCrossed:false,blocked:false});delete live.arcSweeps;});

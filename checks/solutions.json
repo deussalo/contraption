@@ -419,5 +419,27 @@
         "stock": "crosswind"
       }
     ]
+  },
+  {
+    "parts": [
+      {
+        "id": "placed-missing-domino",
+        "kind": "box",
+        "x": 880,
+        "y": 859,
+        "w": 24,
+        "h": 150,
+        "angle": 0,
+        "material": "wood",
+        "fixed": false,
+        "pinned": false,
+        "locked": false,
+        "resizable": false,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "missing-domino"
+      }
+    ]
   }
 ]
