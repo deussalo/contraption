@@ -9,33 +9,33 @@ export const MATERIALS={
   helium:{density:.012,friction:.15,bounce:.35,color:'#b4a3c7'},
 };
 export const PARTS={
-  circle:{name:'Circle',shape:'circle',w:50,h:50,material:'rubber'},
-  box:{name:'Rectangle',shape:'box',w:120,h:42,material:'wood'},
-  ramp:{name:'Wall / ramp',shape:'box',w:240,h:16,material:'wood',fixed:true},
-  bowling:{name:'Bowling ball',shape:'circle',w:54,h:54,material:'steel'},
-  basketball:{name:'Basketball',shape:'circle',w:58,h:58,material:'rubber'},
-  balloon:{name:'Balloon',shape:'circle',w:60,h:60,material:'helium'},
-  trampoline:{name:'Spring',shape:'box',w:120,h:18,material:'rubber',fixed:true},
-  fan:{name:'Fan',shape:'box',w:70,h:70,material:'steel',fixed:true},
-  bell:{name:'Bell',shape:'circle',w:62,h:62,material:'steel',fixed:true,sensor:true},
-  bucket:{name:'Bucket',shape:'bucket',w:130,h:110,material:'steel',fixed:true},
-  anchor:{name:'Anchor',shape:'circle',w:24,h:24,material:'steel',fixed:true},
-  wheel:{name:'Belt wheel',shape:'circle',w:62,h:62,material:'wood',pinned:true},
-  pulley:{name:'Pulley',shape:'circle',w:62,h:62,material:'wood',pinned:true},
-  motor:{name:'Motor',shape:'circle',w:78,h:78,material:'steel',pinned:true},
-  conveyor:{name:'Conveyor',shape:'box',w:220,h:22,material:'rubber',fixed:true},
-  switch:{name:'Switch',shape:'box',w:42,h:22,material:'rubber',fixed:true,sensor:true,on:false},
-  'material-zone':{name:'Material zone',shape:'box',w:220,h:160,material:'steel',fixed:true,sensor:true,outputMaterial:'steel'},
-  rocket:{name:'Rocket',shape:'box',w:32,h:72,material:'wood',on:false},
+  circle:{name:'Circle',shape:'circle',w:50,h:50,material:'rubber',resizable:true},
+  box:{name:'Rectangle',shape:'box',w:120,h:42,material:'wood',resizable:true},
+  ramp:{name:'Wall / ramp',shape:'box',w:240,h:16,material:'wood',fixed:true,resizable:false},
+  bowling:{name:'Bowling ball',shape:'circle',w:54,h:54,material:'steel',resizable:false},
+  basketball:{name:'Basketball',shape:'circle',w:58,h:58,material:'rubber',resizable:false},
+  balloon:{name:'Balloon',shape:'circle',w:60,h:60,material:'helium',resizable:false},
+  trampoline:{name:'Spring',shape:'box',w:120,h:18,material:'rubber',fixed:true,resizable:false},
+  fan:{name:'Fan',shape:'box',w:70,h:70,material:'steel',fixed:true,resizable:false},
+  bell:{name:'Bell',shape:'circle',w:62,h:62,material:'steel',fixed:true,sensor:true,resizable:false},
+  bucket:{name:'Bucket',shape:'bucket',w:130,h:110,material:'steel',fixed:true,resizable:false},
+  anchor:{name:'Anchor',shape:'circle',w:24,h:24,material:'steel',fixed:true,resizable:false},
+  wheel:{name:'Belt wheel',shape:'circle',w:62,h:62,material:'wood',pinned:true,resizable:false},
+  pulley:{name:'Pulley',shape:'circle',w:62,h:62,material:'wood',pinned:true,resizable:false},
+  motor:{name:'Motor',shape:'circle',w:78,h:78,material:'steel',pinned:true,resizable:false},
+  conveyor:{name:'Conveyor',shape:'box',w:220,h:22,material:'rubber',fixed:true,resizable:false},
+  switch:{name:'Switch',shape:'box',w:42,h:22,material:'rubber',fixed:true,sensor:true,on:false,resizable:false},
+  'material-zone':{name:'Material zone',shape:'box',w:220,h:160,material:'steel',fixed:true,sensor:true,outputMaterial:'steel',resizable:true},
+  rocket:{name:'Rocket',shape:'box',w:32,h:72,material:'wood',on:false,resizable:false},
 };
 export const ENVIRONMENT={width:1600,height:1000,gravity:850,pressure:1,floor:true};
 export const uid=()=>crypto.randomUUID();
 export function makePart(kind,x,y,overrides={}){
   if(!Object.hasOwn(PARTS,kind))throw Error('Unknown component.');
   const spec=PARTS[kind];
-  return {id:uid(),kind,x,y,w:spec.w,h:spec.h,angle:0,material:spec.material,...(spec.outputMaterial?{outputMaterial:spec.outputMaterial}:{}),fixed:!!spec.fixed,pinned:!!spec.pinned,locked:false,power:1,direction:1,on:spec.on!==false,...overrides};
+  return {id:uid(),kind,x,y,w:spec.w,h:spec.h,angle:0,material:spec.material,...(spec.outputMaterial?{outputMaterial:spec.outputMaterial}:{}),fixed:!!spec.fixed,pinned:!!spec.pinned,locked:false,resizable:spec.resizable,power:1,direction:1,on:spec.on!==false,...overrides};
 }
-const DESIGN_KEYS=['id','kind','x','y','w','h','angle','material','outputMaterial','fixed','pinned','locked','power','direction','on','stock'];
+const DESIGN_KEYS=['id','kind','x','y','w','h','angle','material','outputMaterial','fixed','pinned','locked','resizable','power','direction','on','stock'];
 export function designPart(body){return Object.fromEntries(DESIGN_KEYS.filter(key=>body[key]!==undefined).map(key=>[key,body[key]]));}
 export function blankLevel(){return {format:'contraption',version:3,name:'Workshop',mode:'sandbox',environment:{...ENVIRONMENT},bodies:[],connections:[],inventory:[],goal:null};}
 export function starterLevel(){
@@ -58,6 +58,7 @@ function parsePart(source,ids,prototype=false){
     if(source.fixed===false||source.pinned===true)throw Error('Material zones must be fixed.');p.fixed=true;p.pinned=false;
   }else if(source.outputMaterial!==undefined)throw Error('Only material zones have an output material.');
   for(const k of ['fixed','pinned','locked','on'])if(source[k]!==undefined){if(typeof source[k]!=='boolean')throw Error(`Invalid ${k} setting.`);p[k]=source[k];}
+  if(source.resizable!==undefined){if(typeof source.resizable!=='boolean')throw Error('Invalid resizable setting.');if(source.resizable&&!PARTS[p.kind].resizable)throw Error(`${PARTS[p.kind].name} has a fixed size.`);p.resizable=source.resizable;}
   p.power=number(source.power??1,'Power',0,5);p.direction=source.direction===-1?-1:1;
   if(source.stock!==undefined){if(typeof source.stock!=='string')throw Error('Invalid inventory reference.');p.stock=source.stock;}
   if(prototype){delete p.id;delete p.stock;}
@@ -92,8 +93,9 @@ export function parseLevel(source){
     return joint;
   });
   if(!Array.isArray(source.inventory)||source.inventory.length>60)throw Error('Invalid parts bin.');const stockIds=new Set();
-  level.inventory=source.inventory.map(entry=>{if(!entry||typeof entry.id!=='string'||!entry.id.length||stockIds.has(entry.id))throw Error('Inventory IDs must be unique.');stockIds.add(entry.id);return{id:entry.id,part:designPart(parsePart(entry.part,new Set(),true)),quantity:integer(entry.quantity,'Inventory quantity',0,100)};});
+  level.inventory=source.inventory.map(entry=>{if(!entry||typeof entry.id!=='string'||!entry.id.length||stockIds.has(entry.id))throw Error('Inventory IDs must be unique.');stockIds.add(entry.id);const inventoryPart=parsePart(entry.part,new Set(),true);if(level.mode==='puzzle')inventoryPart.resizable=false;return{id:entry.id,part:designPart(inventoryPart),quantity:integer(entry.quantity,'Inventory quantity',0,100)};});
   for(const p of level.bodies)if(p.stock&&!stockIds.has(p.stock))throw Error('An object refers to missing inventory.');
+  if(level.mode==='puzzle')for(const p of level.bodies)p.resizable=false;
   for(const entry of level.inventory)if(level.bodies.filter(p=>p.stock===entry.id).length>entry.quantity)throw Error('Placed objects exceed the available inventory.');
   if(source.goal){const g=source.goal;if(!['region','edge','state'].includes(g.kind)||typeof g.target!=='string'||!(g.target==='any'||bodies.has(g.target)||Object.hasOwn(PARTS,g.target)))throw Error('Invalid goal or target.');
     level.goal={kind:g.kind,target:g.target,count:integer(g.count??1,'Goal count',1,100),delay:number(g.delay??0,'Goal delay',0,120),x:number(g.x??1200,'Goal X',-4000,6000),y:number(g.y??700,'Goal Y',-4000,6000),w:number(g.w??180,'Goal width',20,2000),h:number(g.h??180,'Goal height',20,2000),edge:g.edge??'right',state:g.state??'rung'};

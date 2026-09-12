@@ -37,14 +37,15 @@ function ropePropertySync(c){
 function propertySync(){
   const b=workshop.body(),c=workshop.world.connections.find(connection=>connection.id===workshop.selected&&connection.kind==='rope'),selection=b?.id??c?.id??null;if(selection!==propertySelection){propertySelection=selection;propertiesOpen=false;$('material-properties').open=false;}
   $('properties-button').hidden=!selection||propertiesOpen;$('inspector').hidden=!b||!propertiesOpen;$('rope-inspector').hidden=!c||!propertiesOpen;ropePropertySync(c);if(!b)return;
+  const editable=workshop.editable(b),resizable=workshop.canResize(b);
   $('pinned-name').textContent=b.kind==='pulley'?'Fixed axle':'Pivot';
-  $('part-name').textContent=PARTS[b.kind].name+(workshop.level.mode==='puzzle'&&b.locked?' · locked':'');
+  $('part-name').textContent=PARTS[b.kind].name+(workshop.level.mode==='puzzle'&&b.locked?' · locked':resizable?'':' · fixed size');
   const values={material:b.material,'output-material':b.outputMaterial,angle:Math.round(((b.angle*180/Math.PI+180)%360+360)%360-180),width:Math.round(b.w),height:Math.round(b.h),power:b.power};
   for(const [id,value] of Object.entries(values))if(document.activeElement!==$(id))$(id).value=value;
   for(const field of ['fixed','pinned','locked','on'])$(field).checked=!!b[field];
   $('output-material-row').hidden=b.kind!=='material-zone';$('power-row').hidden=!['fan','motor','conveyor','rocket','trampoline'].includes(b.kind);$('on-row').hidden=!['fan','motor','conveyor','rocket'].includes(b.kind);$('locked-label').hidden=workshop.level.mode!=='editor';$('to-bin').hidden=workshop.level.mode!=='editor';
-  for(const input of $('inspector').querySelectorAll('input,select,button:not(#close-inspector)'))input.disabled=!workshop.editable(b);
-  $('height').disabled=!workshop.editable(b)||PARTS[b.kind].shape==='circle';
+  for(const input of $('inspector').querySelectorAll('input,select,button:not(#close-inspector)'))input.disabled=!editable;
+  $('width').disabled=!editable||!resizable;$('height').disabled=!editable||!resizable||PARTS[b.kind].shape==='circle';
   if(b.kind==='material-zone')for(const id of ['fixed','pinned'])$(id).disabled=true;
   if(workshop.level.mode==='puzzle'){for(const id of ['material','power','fixed','pinned','on'])$(id).disabled=true;}
 }
@@ -69,8 +70,8 @@ function renderTray(){
   const puzzle=workshop.level.mode==='puzzle',entries=puzzle?workshop.level.inventory.map(e=>({kind:e.part.kind,part:e.part,stock:e.id,count:workshop.remaining(e)})):Object.keys(PARTS).map(kind=>({kind,part:PARTS[kind],count:null}));
   const signature=JSON.stringify(entries);if(signature===traySignature)return;traySignature=signature;$('parts-grid').replaceChildren();$('bin-label').textContent=puzzle?entries.reduce((sum,e)=>sum+e.count,0):'∞';
   if(!entries.length){const empty=document.createElement('div');empty.className='empty-bin';empty.textContent='Empty bin';$('parts-grid').append(empty);}
-  for(const entry of entries){const button=document.createElement('button');button.className='part-card';button.dataset.kind=entry.kind;button.setAttribute('aria-label',`Drag ${PARTS[entry.kind].name} onto the canvas${entry.count===null?'':`, ${entry.count} left`}`);button.title=`Drag ${PARTS[entry.kind].name} onto the canvas`;button.disabled=entry.count===0;
-    const preview=document.createElement('canvas');preview.width=144;preview.height=98;preview.setAttribute('aria-hidden','true');button.append(preview);const label=document.createElement('span');label.textContent=PARTS[entry.kind].name;button.append(label);const count=document.createElement('small');count.textContent=entry.count===null?'':entry.count;button.append(count);
+  for(const entry of entries){const button=document.createElement('button');button.className='part-card';button.dataset.kind=entry.kind;const dimensions=PARTS[entry.kind].shape==='circle'?`Ø${Math.round(entry.part.w)}`:`${Math.round(entry.part.w)}×${Math.round(entry.part.h)}`,fixedSize=puzzle||!entry.part.resizable;button.setAttribute('aria-label',`Drag ${dimensions} ${PARTS[entry.kind].name} onto the canvas${fixedSize?', fixed size':''}${entry.count===null?'':`, ${entry.count} left`}`);button.title=`Drag ${dimensions} ${PARTS[entry.kind].name} onto the canvas${fixedSize?' · fixed size':''}`;button.disabled=entry.count===0;
+    const preview=document.createElement('canvas');preview.width=144;preview.height=98;preview.setAttribute('aria-hidden','true');button.append(preview);const label=document.createElement('span');label.textContent=PARTS[entry.kind].name;button.append(label);const size=document.createElement('span');size.className='part-size';size.textContent=dimensions+(fixedSize?' · fixed':'');button.append(size);const count=document.createElement('small');count.textContent=entry.count===null?'':entry.count;button.append(count);
     const b=createBody({...entry.part,id:'preview',kind:entry.kind,x:0,y:0,angle:entry.kind==='ramp'?-.15:0,material:entry.part.material??PARTS[entry.kind].material,fixed:!!entry.part.fixed,pinned:!!entry.part.pinned,power:1,direction:1,on:true});const c=preview.getContext('2d');c.translate(72,43);const scale=Math.min(1.2,115/b.w,65/(b.h+(entry.kind==='trampoline'?30:0)));c.scale(scale,scale);drawBody(c,b);
     button.addEventListener('pointerdown',e=>{if(e.button!==0)return;button.setPointerCapture(e.pointerId);trayDrag={entry,start:{x:e.clientX,y:e.clientY},moved:false,before:workshop.capture(),ghost:null};});
     button.addEventListener('pointermove',e=>{if(!trayDrag)return;trayDrag.moved||=Math.hypot(e.clientX-trayDrag.start.x,e.clientY-trayDrag.start.y)>8;if(!trayDrag.moved)return;const p=view.toWorld(e.clientX,e.clientY);try{trayDrag.ghost??=workshop.newPart(entry.kind,p.x,p.y,{},entry.stock);trayDrag.ghost.x=p.x;trayDrag.ghost.y=p.y;}catch(error){toast(error.message);trayDrag=null;}});
@@ -111,7 +112,7 @@ function frame(now){
   if(!workshop.world.won&&shownWin){shownWin=false;$('win').hidden=true;}
   if(!$('rope-inspector').hidden){const c=workshop.world.connections.find(c=>c.id===workshop.selected);$('rope-tension').value=c?.blocked?'Blocked route':c?.routeCrossed?'Wrap crossed · constrained':c?.tension>1?'Under tension':c&&ropeGeometry(workshop.world.bodies,c).length>=c.length-.1?'Taut':'Slack';}
   if(workshop.changed)sync();
-  drawScene(paint,workshop.world,camera,viewport,{selected:workshop.selected,invalid:trayDrag?.ghost?!workshop.canPlace(trayDrag.ghost):gestures.invalid,puzzle:workshop.level.mode==='puzzle',ghost:trayDrag?.ghost??gestures.ghost,region:gestures.region,connection:gestures.previewConnection(),particles,attachments:gestures.tool==='rope'});requestAnimationFrame(frame);
+  const selected=workshop.body();drawScene(paint,workshop.world,camera,viewport,{selected:workshop.selected,editable:selected&&workshop.editable(selected),resizable:selected&&workshop.canResize(selected),invalid:trayDrag?.ghost?!workshop.canPlace(trayDrag.ghost):gestures.invalid,puzzle:workshop.level.mode==='puzzle',ghost:trayDrag?.ghost??gestures.ghost,region:gestures.region,connection:gestures.previewConnection(),particles,attachments:gestures.tool==='rope'});requestAnimationFrame(frame);
 }
 initIcons();try{setTheme(localStorage.getItem('contraption.theme')==='light'?'light':'dark');}catch{setTheme('dark');}setIcon($('theme'),themeName()==='dark'?'sun':'moon');resize();fit();sync();requestAnimationFrame(frame);addEventListener('resize',()=>{resize();fit();});
 canvas.addEventListener('pointerdown',()=>{closePopovers();if(sound.enabled&&!sound.audio)sound.unlock().catch(error=>{sound.enabled=false;setIcon($('sound'),'mute');toast(error.message);});});
