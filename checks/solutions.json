@@ -310,5 +310,26 @@
         "stock": "flywheel-trigger-ramp"
       }
     ]
+  },
+  {
+    "parts": [
+      {
+        "id": "placed-crosswind",
+        "kind": "fan",
+        "x": 300,
+        "y": 600,
+        "w": 70,
+        "h": 110,
+        "angle": 0,
+        "material": "steel",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "power": 0.45,
+        "direction": 1,
+        "on": true,
+        "stock": "crosswind"
+      }
+    ]
   }
 ]

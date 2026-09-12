@@ -46,19 +46,33 @@ const pulleyLevels=new Map([
   ['pulley-gate-night-shift',1.8916666666666666],
 ]);
 const transformationLevels=new Map([
-  ['featherweight-freight',{seconds:14,wonAt:4.941666666666666,ball:'freight-ball',ramp:'freight-route',original:'steel',transforms:['cork'],ablations:[
+  ['featherweight-freight',{seconds:14,wonAt:4.941666666666666,ball:'freight-ball',stock:'freight-route',original:'steel',transforms:['cork'],ablations:[
     ['Steel ball must be too heavy for the fan',level=>{level.bodies.find(body=>body.id==='feather-zone').outputMaterial='steel';}],
     ['Featherweight Freight must need its fan',level=>{level.bodies.find(body=>body.id==='freight-fan').on=false;}],
   ]}],
-  ['cloud-then-clunk',{seconds:14,wonAt:9.058333333333334,ball:'weather-ball',ramp:'weather-route',original:'steel',transforms:['cork','steel'],ablations:[
+  ['cloud-then-clunk',{seconds:14,wonAt:9.058333333333334,ball:'weather-ball',stock:'weather-route',original:'steel',transforms:['cork','steel'],ablations:[
     ['Cloud, Then Clunk must need its fan',level=>{level.bodies.find(body=>body.id==='updraft').on=false;}],
     ['Cloud, Then Clunk must need its first zone',level=>{level.bodies.find(body=>body.id==='cloud-zone').outputMaterial='steel';}],
     ['Cloud, Then Clunk must need its second zone',level=>{level.bodies.find(body=>body.id==='clunk-zone').outputMaterial='cork';}],
     ['Cloud, Then Clunk must need its rope',level=>{level.connections=[];}],
   ]}],
-  ['rubber-stamp',{seconds:12,wonAt:5.816666666666666,ball:'stamp-ball',ramp:'stamp-route',original:'steel',transforms:['rubber'],angleDelta:.025,ablations:[
+  ['rubber-stamp',{seconds:12,wonAt:5.816666666666666,ball:'stamp-ball',stock:'stamp-route',original:'steel',transforms:['rubber'],angleDelta:.025,ablations:[
     ['Steel must not rebound high enough',level=>{level.bodies.find(body=>body.id==='rubber-zone').outputMaterial='steel';}],
     ['Rubber Stamp must need its bounce plate',level=>{level.bodies=level.bodies.filter(body=>body.id!=='bounce-plate');}],
+  ]}],
+  ['the-sky-is-falling',{seconds:12,wonAt:3.408333333333333,ball:'sky-balloon',stock:'crosswind',original:'helium',transforms:['steel'],angleDelta:.03,reverses:true,baseline:[
+    ['Unassisted balloon must miss Turn to Stone',world=>world.bodies.find(body=>body.id==='sky-balloon').transformedZones.length===0],
+    ['Unassisted balloon must miss the switch',world=>world.bodies.find(body=>body.id==='stone-switch').state!=='on'],
+    ['Unassisted rocket must remain off',world=>world.bodies.find(body=>body.id==='message-rocket').state!=='fired'],
+  ],milestones:[
+    ['Fan must route the balloon through Turn to Stone',1.2916666666666667,(_world,events)=>events.some(event=>event.kind==='transform')],
+    ['Stone balloon must land on the switch',2.691666666666667,world=>world.bodies.find(body=>body.id==='stone-switch').state==='on'],
+    ['Wire must fire the rocket after the switch',2.7,world=>world.bodies.find(body=>body.id==='message-rocket').state==='fired'],
+  ],ablations:[
+    ['The Sky Is Falling must need its fan',level=>{level.bodies.find(body=>body.stock==='crosswind').on=false;}],
+    ['The Sky Is Falling must need its stone zone',level=>{level.bodies=level.bodies.filter(body=>body.id!=='stone-cloud');}],
+    ['The Sky Is Falling must need its wire',level=>{level.connections=[];}],
+    ['The Sky Is Falling must need rocket power',level=>{level.bodies.find(body=>body.id==='message-rocket').power=0;}],
   ]}],
 ]);
 assert.equal(solutions.length,pack.levels.length,'Every playable level needs one reference solution');
@@ -88,11 +102,13 @@ for(const [i,level] of pack.levels.entries()){
     const reset=new Workshop(solved),first=solveTime(reset.world);assert.equal(first,6.866666666666666);reset.reset();assert.equal(reset.world.bodies.find(body=>body.id==='delivery-ball').material,'cork');assert.deepEqual(reset.world.bodies.find(body=>body.id==='delivery-ball').transformedZones,[]);assert.equal(solveTime(reset.world),first,'Rock Delivery reset must preserve solve time');
   }
   if(transformationLevels.has(level.id)){
-    const test=transformationLevels.get(level.id),reference=createWorld(solved),transforms=[];let wonAt=null;for(let frame=1;frame<=test.seconds*120;frame++){transforms.push(...stepWorld(reference).filter(event=>event.kind==='transform').map(event=>event.material));if(reference.won&&wonAt===null)wonAt=frame/120;}
+    const test=transformationLevels.get(level.id),reference=createWorld(solved),transforms=[],moments=(test.milestones??[]).map(([message,time,predicate])=>({message,time,predicate,actual:null}));let wonAt=null,transformVelocity=null,reversed=false;for(let frame=1;frame<=test.seconds*120;frame++){const events=stepWorld(reference),materials=events.filter(event=>event.kind==='transform').map(event=>event.material),ball=reference.bodies.find(body=>body.id===test.ball);transforms.push(...materials);if(materials.length&&transformVelocity===null)transformVelocity=ball.vy;if(transformVelocity!==null&&ball.vy>0)reversed=true;for(const moment of moments)if(moment.actual===null&&moment.predicate(reference,events))moment.actual=frame/120;if(reference.won&&wonAt===null)wonAt=frame/120;}
     assert.equal(wonAt,test.wonAt);assert.deepEqual(transforms,test.transforms);assert.equal(reference.bodies.find(body=>body.id===test.ball).material,test.transforms.at(-1));assert.deepEqual(overlapPairs(createWorld(solved)),[]);
+    for(const moment of moments)assert.equal(moment.actual,moment.time,moment.message);if(test.reverses){assert.ok(transformVelocity<0,'Transformation must preserve the balloon upward velocity');assert.equal(reversed,true,'Steel gravity must reverse the balloon downward');}
+    if(test.baseline){const baseline=simulate(createWorld(parseLevel(level)),test.seconds);for(const [message,predicate] of test.baseline)assert.equal(predicate(baseline),true,message);}
     for(const [message,mutate] of test.ablations){const ablation=structuredClone(solved);mutate(ablation);assert.equal(simulate(createWorld(ablation),test.seconds).won,false,message);}
-    for(const [field,delta] of [['x',-8],['x',8],['y',-8],['y',8],['angle',-(test.angleDelta??.02)],['angle',test.angleDelta??.02]]){const nearby=structuredClone(solved);nearby.bodies.find(body=>body.stock===test.ramp)[field]+=delta;const nearbyWorld=createWorld(nearby);assert.deepEqual(overlapPairs(nearbyWorld),[]);assert.notEqual(solveTime(nearbyWorld,test.seconds),null,`${level.name} nearby ${field} ${delta} must win`);}
-    const reset=new Workshop(solved),first=solveTime(reset.world,test.seconds);reset.reset();assert.equal(reset.world.bodies.find(body=>body.id===test.ball).material,test.original);assert.equal(solveTime(reset.world,test.seconds),first,`${level.name} reset must preserve solve time`);
+    for(const [field,delta] of [['x',-8],['x',8],['y',-8],['y',8],['angle',-(test.angleDelta??.02)],['angle',test.angleDelta??.02]]){const nearby=structuredClone(solved);nearby.bodies.find(body=>body.stock===test.stock)[field]+=delta;const nearbyWorld=createWorld(nearby);assert.deepEqual(overlapPairs(nearbyWorld),[]);assert.notEqual(solveTime(nearbyWorld,test.seconds),null,`${level.name} nearby ${field} ${delta} must win`);}
+    const reset=new Workshop(solved),first=solveTime(reset.world,test.seconds);assert.equal(first,test.wonAt);reset.reset();assert.equal(reset.world.bodies.find(body=>body.id===test.ball).material,test.original);assert.equal(solveTime(reset.world,test.seconds),first,`${level.name} reset must preserve solve time`);
   }
   if(level.id==='rocket-counterweight'){
     const baseline=createWorld(parseLevel(level));simulate(baseline,12);assert.notEqual(baseline.bodies.find(body=>body.id==='launch-switch').state,'on','Empty bin must not flip the switch');assert.notEqual(baseline.bodies.find(body=>body.id==='down-rocket').state,'fired','Empty bin must not fire the rocket');
