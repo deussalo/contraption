@@ -2840,6 +2840,249 @@
         "state": "rung"
       },
       "id": "stone-age-seesaw"
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "name": "Stonework Skyhook",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 700,
+        "pressure": 0.45,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "ballast-balloon",
+          "kind": "balloon",
+          "x": 400,
+          "y": 690,
+          "w": 60,
+          "h": 60,
+          "angle": 0,
+          "material": "helium",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "launch-lift",
+          "kind": "bucket",
+          "x": 850,
+          "y": 670,
+          "w": 190,
+          "h": 150,
+          "angle": 0,
+          "material": "cork",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "sky-courier",
+          "kind": "rocket",
+          "x": 850,
+          "y": 610,
+          "w": 32,
+          "h": 72,
+          "angle": 1.5707963267948966,
+          "material": "wood",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 0.72,
+          "direction": 1,
+          "on": false
+        },
+        {
+          "id": "ballast-pulley",
+          "kind": "pulley",
+          "x": 400,
+          "y": 170,
+          "w": 72,
+          "h": 72,
+          "angle": 0,
+          "material": "wood",
+          "fixed": false,
+          "pinned": true,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "lift-pulley",
+          "kind": "pulley",
+          "x": 850,
+          "y": 170,
+          "w": 72,
+          "h": 72,
+          "angle": 0,
+          "material": "wood",
+          "fixed": false,
+          "pinned": true,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "launch-switch",
+          "kind": "switch",
+          "x": 400,
+          "y": 760,
+          "w": 110,
+          "h": 24,
+          "angle": 0,
+          "material": "rubber",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": false
+        },
+        {
+          "id": "sky-bell",
+          "kind": "bell",
+          "x": 1420,
+          "y": 120,
+          "w": 220,
+          "h": 220,
+          "angle": 0,
+          "material": "steel",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        }
+      ],
+      "connections": [
+        {
+          "id": "skyhook-rope",
+          "kind": "rope",
+          "a": "ballast-balloon",
+          "b": "launch-lift",
+          "length": 1592.2142975127422,
+          "via": [
+            "ballast-pulley",
+            "lift-pulley"
+          ],
+          "ax": 0,
+          "ay": 0,
+          "bx": 0,
+          "by": 0,
+          "wrap": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "launch-wire",
+          "kind": "wire",
+          "a": "launch-switch",
+          "b": "sky-courier",
+          "length": 100,
+          "via": [],
+          "ax": 0,
+          "ay": 0,
+          "bx": 0,
+          "by": 0
+        }
+      ],
+      "inventory": [
+        {
+          "id": "stone-cloud",
+          "part": {
+            "kind": "material-zone",
+            "x": 0,
+            "y": 0,
+            "w": 170,
+            "h": 150,
+            "angle": 0,
+            "material": "steel",
+            "outputMaterial": "steel",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        },
+        {
+          "id": "ballast-stop",
+          "part": {
+            "kind": "box",
+            "x": 0,
+            "y": 0,
+            "w": 150,
+            "h": 70,
+            "angle": 0,
+            "material": "wood",
+            "fixed": false,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        },
+        {
+          "id": "courier-spring",
+          "part": {
+            "kind": "trampoline",
+            "x": 0,
+            "y": 0,
+            "w": 170,
+            "h": 20,
+            "angle": 0,
+            "material": "rubber",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 2.1,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "state",
+        "target": "sky-bell",
+        "count": 1,
+        "delay": 0,
+        "x": 1420,
+        "y": 120,
+        "w": 130,
+        "h": 130,
+        "edge": "right",
+        "state": "rung"
+      },
+      "id": "stonework-skyhook"
     }
   ]
 }
