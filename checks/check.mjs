@@ -1,5 +1,7 @@
 import './rope.mjs';
 import './transformation.mjs';
+import './rewind.mjs';
+import './interface.mjs';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {blankLevel,makePart,parseLevel,PARTS} from '../dist/model.js';
@@ -35,7 +37,7 @@ const part=(kind,x,y,properties={})=>makePart(kind,x,y,properties);
 }
 {
   const baseline=blankLevel();assert.throws(()=>parseLevel({...baseline,bodies:[{id:'x',kind:'toString',x:0,y:0}]}),/component/i);assert.throws(()=>parseLevel({...baseline,inventory:[null]}),/Inventory/);assert.throws(()=>parseLevel({...baseline,inventory:[{id:'stock',part:part('box',0,0),quantity:1.5}]}),/whole/);
-  const workshop=new Workshop(scene([part('circle',400,200,{id:'ball'})]));workshop.selected='ball';workshop.update({x:500});assert.equal(workshop.world.bodies[0].x,500);workshop.undo();assert.equal(workshop.world.bodies[0].x,400);workshop.undo(true);assert.equal(workshop.world.bodies[0].x,500);workshop.reset();assert.equal(workshop.world.bodies[0].x,500);
+  const workshop=new Workshop(scene([part('circle',400,200,{id:'ball'})]));workshop.selected='ball';workshop.update({x:500});assert.equal(workshop.world.bodies[0].x,500);workshop.undo();assert.equal(workshop.world.bodies[0].x,400);workshop.redo();assert.equal(workshop.world.bodies[0].x,500);workshop.reset();assert.equal(workshop.world.bodies[0].x,500);
 }
 const pack=JSON.parse(await readFile(new URL('../dist/levels.json',import.meta.url))),solutions=JSON.parse(await readFile(new URL('./solutions.json',import.meta.url)));
 const pulleyLevels=new Map([

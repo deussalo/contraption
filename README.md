@@ -4,7 +4,9 @@ A fullscreen illustrated physics workshop with 18 components, procedural sound, 
 
 Dark mode is the default; the sun/moon control switches themes and remembers your choice.
 
-Draw rectangles and circles, drag parts from the expandable bin, and connect ropes, pulleys, belts, and switches. Free objects obey gravity. Space pauses or resumes; editing works in either state. Drag with one finger, then add a second finger to rotate and scale. Reset restores the edited starting layout.
+Draw rectangles and circles, drag parts from the expandable bin onto the canvas, and connect ropes, pulleys, belts, and switches. Select is the default canvas tool. Selecting an object keeps its Properties tab collapsed until you open it; Material is collapsed separately inside. Free objects obey gravity. Space pauses or resumes; editing works in either state. Drag with one finger, then add a second finger to rotate and scale. Reset restores the edited starting layout.
+
+Hold Rewind or `Q` to move backward through up to 15 seconds of whole-world simulation history. Rewind restores body motion, materials and device states, ropes, goals, and time; releasing it discards the abandoned future and resumes only if the simulation was previously running. Sounds and particles are suppressed while rewinding. Construction Undo and Redo remain separate, with toolbar buttons and `Ctrl/Cmd+Z`, `Ctrl/Cmd+Shift+Z`, or `Ctrl/Cmd+Y`.
 
 The menu opens puzzles, environment settings, browser saves, and JSON import/export. Puzzle editor locks the existing scene; select parts and send them to the bin, set an outcome goal, then test or export the puzzle. Imported levels carry materials, locks, inventory, connections, goals, gravity, and pressure. JSON version 3 is required; v2 files fail with a version error.
 
@@ -22,7 +24,7 @@ Serve `dist/` with any local HTTP server. No dependency installation or build st
 node --experimental-default-type=module checks/check.mjs
 ```
 
-The checks cover gravity, stable stacks, fast collisions, belt power propagation, rope tangency/radius, movable-pulley ratios, rim speed, slack, wrap crossings, material transformation and reset, switches, malformed imports, undo, JSON round trips, and both empty-bin and reference outcomes for every puzzle. Prove changes to visible controls with a browser probe on desktop and mobile, including real two-pointer touch events.
+The checks cover gravity, stable stacks, fast collisions, belt power propagation, rope tangency/radius, movable-pulley ratios, rim speed, slack, wrap crossings, material transformation and reset, switches, bounded whole-world rewind and timeline branching, malformed imports, undo/redo, JSON round trips, and both empty-bin and reference outcomes for every puzzle. Prove changes to visible controls with a browser probe on desktop and mobile, including real two-pointer touch events.
 
 ## Publish
 

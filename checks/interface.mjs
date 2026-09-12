@@ -1,0 +1,8 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+const html=await readFile(new URL('../dist/index.html',import.meta.url),'utf8'),app=await readFile(new URL('../dist/app.js',import.meta.url),'utf8');
+const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(match=>match[1]),counts=new Map(ids.map(id=>[id,ids.filter(other=>other===id).length]));assert.deepEqual([...counts].filter(([,count])=>count!==1),[],'HTML ids must be unique');const references=[...app.matchAll(/\$\('([^']+)'\)/g)].map(match=>match[1]);assert.deepEqual([...new Set(references)].filter(id=>!counts.has(id)),[],'App controls must exist in HTML');
+const materialTag=html.match(/<details id="material-properties"[^>]*>/)?.[0];assert.ok(materialTag,'Material properties need a disclosure control');assert.doesNotMatch(materialTag,/\sopen(?:\s|=|>)/,'Material properties must default closed');assert.match(html,/id="properties-button"[^>]*hidden/,'Properties tab must default closed');assert.match(html,/data-tool="select"[^>]*class="active"/,'Select must be the default canvas tool');
+assert.match(app,/Drag \$\{PARTS\[entry\.kind\]\.name\} onto the canvas/);assert.doesNotMatch(app,/setTool\(entry\.kind/,'Parts must be dragged instead of switching the canvas tool');assert.match(app,/setTool\('select'\)/,'Placed parts must return to Select');
+for(const id of ['undo','redo','menu-undo','menu-redo','rewind'])assert.match(html,new RegExp(`id="${id}"`),`${id} control is missing`);assert.match(app,/key==='y'/,'Redo needs the conventional Ctrl/Cmd+Y shortcut');
+console.log('PASS collapsed properties and material controls, drag-only parts, default Select, rewind, undo and redo controls');

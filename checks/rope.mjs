@@ -32,7 +32,7 @@ const movable=()=>routed([part('anchor','a',400,100),part('pulley','p',450,400,{
   const wheel=structuredClone(level);wheel.connections=[{id:'belt',kind:'belt',a:'p',b:'q',length:300}];assert.throws(()=>parseLevel(wheel),/belt wheels/);
 }
 {
-  const workshop=new Workshop(movable());workshop.selected='rope';const original=workshop.export();workshop.updateRope({length:original.connections[0].length+80});workshop.undo();assert.deepEqual(workshop.export(),original);workshop.undo(true);assert.equal(workshop.export().connections[0].length,original.connections[0].length+80);
+  const workshop=new Workshop(movable());workshop.selected='rope';const original=workshop.export();workshop.updateRope({length:original.connections[0].length+80});workshop.undo();assert.deepEqual(workshop.export(),original);workshop.redo();assert.equal(workshop.export().connections[0].length,original.connections[0].length+80);
   const run=()=>{workshop.world.bodies[1].vy=500;for(let i=0;i<90;i++)stepWorld(workshop.world);return structuredClone(workshop.world);};const first=run();workshop.reset();assert.equal(workshop.world.bodies[1].sheaveAngle,0);assert.equal(workshop.world.connections[0].tension,0);assert.deepEqual(run(),first);assert.deepEqual(parseLevel(JSON.parse(JSON.stringify(workshop.export()))),workshop.export());
 }
 {
