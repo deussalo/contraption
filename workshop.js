@@ -1,14 +1,16 @@
-import {PARTS,uid,makePart,parseLevel,designPart} from './model.js';
+import {PARTS,MATERIALS,uid,makePart,parseLevel,designPart} from './model.js';
 import {createWorld,createBody,setMass,overlaps,connectionPoints,pathLength,ropeGeometry,ropeWrap} from './physics.js';
 export class Workshop{
-  constructor(level,running=false){this.history=[];this.future=[];this.selected=null;this.load(level,running);}
-  load(level,running=false){this.level=parseLevel(level);this.world=createWorld(this.level);this.running=running;this.selected=null;this.history=[];this.future=[];this.changed=true;}
+  constructor(level,running=false){this.history=[];this.future=[];this.selected=null;this.revision=0;this.load(level,running);}
+  load(level,running=false){this.level=parseLevel(level);this.world=createWorld(this.level);this.running=running;this.selected=null;this.history=[];this.future=[];this.changed=true;this.revision++;}
   capture(){return{level:structuredClone(this.level),world:structuredClone(this.world),selected:this.selected,running:this.running};}
   restore(snapshot){Object.assign(this,structuredClone(snapshot));this.changed=true;}
-  record(before){this.history.push(before);if(this.history.length>40)this.history.shift();this.future=[];this.world.cachedContacts=[];this.changed=true;}
+  record(before){this.history.push(before);if(this.history.length>40)this.history.shift();this.future=[];this.world.cachedContacts=[];this.changed=true;this.revision++;}
   transaction(action){const before=this.capture();try{const result=action();this.record(before);return result;}catch(error){this.restore(before);throw error;}}
-  undo(redo=false){const source=redo?this.future:this.history,target=redo?this.history:this.future;if(!source.length)return;target.push(this.capture());this.restore(source.pop());this.running=false;}
-  reset(){this.world=createWorld(this.level);this.running=false;this.selected=null;this.changed=true;}
+  restoreHistory(source,target){if(!source.length)return;target.push(this.capture());this.restore(source.pop());this.running=false;this.revision++;}
+  undo(){this.restoreHistory(this.history,this.future);}
+  redo(){this.restoreHistory(this.future,this.history);}
+  reset(){this.world=createWorld(this.level);this.running=false;this.selected=null;this.changed=true;this.revision++;}
   body(){return this.world.bodies.find(b=>b.id===this.selected);}
   editable(body){return this.level.mode!=='puzzle'||!body.locked;}
   remaining(entry){return entry.quantity-this.level.bodies.filter(b=>b.stock===entry.id).length;}
@@ -24,7 +26,7 @@ export class Workshop{
   canPlace(body){if(PARTS[body.kind].sensor)return true;return !this.world.bodies.some(other=>other.id!==body.id&&!PARTS[other.kind].sensor&&other.state!=='popped'&&overlaps(body,other,2))&&!(this.world.floor&&overlaps(body,this.world.floor,2));}
   insert(body){this.level.bodies.push(designPart(body));this.world.bodies.push(body);this.selected=body.id;this.changed=true;}
   move(body,change){
-    if(!this.editable(body))throw Error('This object is locked.');Object.assign(body,change);setMass(body);for(const c of this.world.connections)if(c.kind==='rope'&&(c.a===body.id||c.b===body.id||c.via.includes(body.id))){delete c.arcSweeps;c.routeCrossed=false;c.blocked=false;}Object.assign(this.level.bodies.find(p=>p.id===body.id),designPart(body));this.world.cachedContacts=[];this.changed=true;
+    if(!this.editable(body))throw Error('This object is locked.');if(body.kind==='material-zone'&&(change.fixed===false||change.pinned===true))throw Error('Material zones must be fixed.');if(change.outputMaterial!==undefined&&!Object.hasOwn(MATERIALS,change.outputMaterial))throw Error('Unknown output material.');Object.assign(body,change);setMass(body);for(const c of this.world.connections)if(c.kind==='rope'&&(c.a===body.id||c.b===body.id||c.via.includes(body.id))){delete c.arcSweeps;c.routeCrossed=false;c.blocked=false;}Object.assign(this.level.bodies.find(p=>p.id===body.id),designPart(body));this.world.cachedContacts=[];this.changed=true;
   }
   update(change){const body=this.body();if(!body)return;this.transaction(()=>{this.move(body,change);if(!this.canPlace(body))throw Error('Objects cannot overlap.');});}
   remove(){

@@ -503,6 +503,1359 @@
         }
       ],
       "id": "pulley-gate"
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "id": "bellhop-express",
+      "name": "Bellhop Express",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 1,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "ringer",
+          "kind": "box",
+          "x": 520,
+          "y": 700,
+          "w": 72,
+          "h": 72,
+          "material": "steel",
+          "locked": true
+        },
+        {
+          "id": "bellhop-left",
+          "kind": "pulley",
+          "x": 520,
+          "y": 220,
+          "w": 70,
+          "h": 70,
+          "fixed": true,
+          "pinned": true,
+          "locked": true
+        },
+        {
+          "id": "bellhop-right",
+          "kind": "pulley",
+          "x": 1080,
+          "y": 220,
+          "w": 70,
+          "h": 70,
+          "fixed": true,
+          "pinned": true,
+          "locked": true
+        },
+        {
+          "id": "tip-bucket",
+          "kind": "bucket",
+          "x": 1080,
+          "y": 690,
+          "w": 150,
+          "h": 140,
+          "material": "cork",
+          "fixed": false,
+          "pinned": false,
+          "locked": true
+        },
+        {
+          "id": "lobby-bell",
+          "kind": "bell",
+          "x": 520,
+          "y": 550,
+          "w": 62,
+          "h": 62,
+          "locked": true
+        }
+      ],
+      "connections": [
+        {
+          "id": "bellhop-rope",
+          "kind": "rope",
+          "a": "ringer",
+          "b": "tip-bucket",
+          "length": 1629.122813747717,
+          "via": [
+            "bellhop-left",
+            "bellhop-right"
+          ],
+          "wrap": [
+            1,
+            1
+          ]
+        }
+      ],
+      "inventory": [
+        {
+          "id": "bellhop-crates",
+          "part": {
+            "kind": "box",
+            "w": 48,
+            "h": 48,
+            "material": "steel",
+            "fixed": false
+          },
+          "quantity": 2
+        }
+      ],
+      "goal": {
+        "kind": "state",
+        "target": "lobby-bell",
+        "count": 1,
+        "delay": 0,
+        "x": 520,
+        "y": 550,
+        "w": 120,
+        "h": 120,
+        "edge": "right",
+        "state": "rung"
+      }
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "id": "two-to-one-takeaway",
+      "name": "Two-to-One Takeaway",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 1,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "takeaway-anchor",
+          "kind": "anchor",
+          "x": 420,
+          "y": 180,
+          "w": 24,
+          "h": 24,
+          "locked": true
+        },
+        {
+          "id": "takeaway-lift",
+          "kind": "pulley",
+          "x": 520,
+          "y": 700,
+          "w": 80,
+          "h": 80,
+          "fixed": false,
+          "pinned": false,
+          "locked": true
+        },
+        {
+          "id": "takeaway-guide",
+          "kind": "pulley",
+          "x": 780,
+          "y": 180,
+          "w": 76,
+          "h": 76,
+          "fixed": true,
+          "pinned": true,
+          "locked": true
+        },
+        {
+          "id": "takeaway-bucket",
+          "kind": "bucket",
+          "x": 1080,
+          "y": 550,
+          "w": 100,
+          "h": 90,
+          "material": "cork",
+          "fixed": false,
+          "pinned": false,
+          "locked": true
+        }
+      ],
+      "connections": [
+        {
+          "id": "takeaway-rope",
+          "kind": "rope",
+          "a": "takeaway-anchor",
+          "b": "takeaway-bucket",
+          "length": 1780.7454670443442,
+          "via": [
+            "takeaway-lift",
+            "takeaway-guide"
+          ],
+          "wrap": [
+            -1,
+            1
+          ]
+        }
+      ],
+      "inventory": [
+        {
+          "id": "takeaway-weight",
+          "part": {
+            "kind": "box",
+            "w": 70,
+            "h": 70,
+            "material": "steel",
+            "fixed": false
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "region",
+        "target": "takeaway-lift",
+        "count": 1,
+        "delay": 0.2,
+        "x": 580,
+        "y": 535,
+        "w": 240,
+        "h": 130,
+        "edge": "right",
+        "state": "rung"
+      }
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "id": "pulley-gate-night-shift",
+      "name": "Pulley Gate: Night Shift",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 1,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "night-gate",
+          "kind": "box",
+          "x": 900,
+          "y": 780,
+          "w": 30,
+          "h": 180,
+          "material": "steel",
+          "locked": true
+        },
+        {
+          "id": "gate-rail-left",
+          "kind": "ramp",
+          "x": 860,
+          "y": 600,
+          "w": 600,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "locked": true
+        },
+        {
+          "id": "gate-rail-right",
+          "kind": "ramp",
+          "x": 940,
+          "y": 600,
+          "w": 600,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "locked": true
+        },
+        {
+          "id": "night-left",
+          "kind": "pulley",
+          "x": 900,
+          "y": 170,
+          "w": 72,
+          "h": 72,
+          "fixed": true,
+          "pinned": true,
+          "locked": true
+        },
+        {
+          "id": "night-right",
+          "kind": "pulley",
+          "x": 1220,
+          "y": 170,
+          "w": 72,
+          "h": 72,
+          "fixed": true,
+          "pinned": true,
+          "locked": true
+        },
+        {
+          "id": "night-bucket",
+          "kind": "bucket",
+          "x": 1220,
+          "y": 620,
+          "w": 140,
+          "h": 120,
+          "material": "cork",
+          "fixed": false,
+          "pinned": false,
+          "locked": true
+        },
+        {
+          "id": "bucket-rail-left",
+          "kind": "ramp",
+          "x": 1135,
+          "y": 600,
+          "w": 600,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "locked": true
+        },
+        {
+          "id": "bucket-rail-right",
+          "kind": "ramp",
+          "x": 1305,
+          "y": 600,
+          "w": 600,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "locked": true
+        }
+      ],
+      "connections": [
+        {
+          "id": "night-rope",
+          "kind": "rope",
+          "a": "night-gate",
+          "b": "night-bucket",
+          "length": 1502.1699105199682,
+          "via": [
+            "night-left",
+            "night-right"
+          ],
+          "wrap": [
+            1,
+            1
+          ]
+        }
+      ],
+      "inventory": [
+        {
+          "id": "night-crates",
+          "part": {
+            "kind": "box",
+            "w": 90,
+            "h": 90,
+            "material": "steel",
+            "fixed": false
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "region",
+        "target": "night-gate",
+        "count": 1,
+        "delay": 0.2,
+        "x": 900,
+        "y": 520,
+        "w": 150,
+        "h": 170,
+        "edge": "right",
+        "state": "rung"
+      }
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "id": "rock-delivery",
+      "name": "Rock Delivery",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 1,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "delivery-ball",
+          "kind": "circle",
+          "x": 300,
+          "y": 180,
+          "w": 54,
+          "h": 54,
+          "material": "cork",
+          "locked": true
+        },
+        {
+          "id": "stone-zone",
+          "kind": "material-zone",
+          "x": 650,
+          "y": 475,
+          "w": 230,
+          "h": 170,
+          "outputMaterial": "steel",
+          "locked": true
+        },
+        {
+          "id": "stone-bucket",
+          "kind": "bucket",
+          "x": 1100,
+          "y": 690,
+          "w": 150,
+          "h": 140,
+          "material": "cork",
+          "fixed": false,
+          "pinned": false,
+          "locked": true
+        },
+        {
+          "id": "bucket-pulley",
+          "kind": "pulley",
+          "x": 1100,
+          "y": 200,
+          "w": 72,
+          "h": 72,
+          "fixed": true,
+          "pinned": true,
+          "locked": true
+        },
+        {
+          "id": "bucket-rail-left",
+          "kind": "ramp",
+          "x": 1015,
+          "y": 790,
+          "w": 300,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "locked": true
+        },
+        {
+          "id": "bucket-rail-right",
+          "kind": "ramp",
+          "x": 1185,
+          "y": 790,
+          "w": 300,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "locked": true
+        },
+        {
+          "id": "striker-pulley",
+          "kind": "pulley",
+          "x": 1400,
+          "y": 200,
+          "w": 72,
+          "h": 72,
+          "fixed": true,
+          "pinned": true,
+          "locked": true
+        },
+        {
+          "id": "bell-striker",
+          "kind": "box",
+          "x": 1400,
+          "y": 650,
+          "w": 34,
+          "h": 34,
+          "material": "steel",
+          "locked": true
+        },
+        {
+          "id": "striker-rail-left",
+          "kind": "ramp",
+          "x": 1365,
+          "y": 610,
+          "w": 600,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "locked": true
+        },
+        {
+          "id": "striker-rail-right",
+          "kind": "ramp",
+          "x": 1435,
+          "y": 610,
+          "w": 600,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "locked": true
+        },
+        {
+          "id": "delivery-bell",
+          "kind": "bell",
+          "x": 1400,
+          "y": 505,
+          "w": 62,
+          "h": 62,
+          "locked": true
+        }
+      ],
+      "connections": [
+        {
+          "id": "delivery-rope",
+          "kind": "rope",
+          "a": "stone-bucket",
+          "b": "bell-striker",
+          "length": 1362.460129947163,
+          "via": [
+            "bucket-pulley",
+            "striker-pulley"
+          ],
+          "wrap": [
+            1,
+            1
+          ]
+        }
+      ],
+      "inventory": [
+        {
+          "id": "delivery-ramp",
+          "part": {
+            "kind": "ramp",
+            "w": 810,
+            "h": 16,
+            "angle": 0.14,
+            "material": "wood",
+            "fixed": true
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "state",
+        "target": "delivery-bell",
+        "count": 1,
+        "delay": 0,
+        "x": 1400,
+        "y": 505,
+        "w": 120,
+        "h": 120,
+        "edge": "right",
+        "state": "rung"
+      }
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "id": "featherweight-freight",
+      "name": "Featherweight Freight",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 1,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "freight-ball",
+          "kind": "bowling",
+          "x": 280,
+          "y": 170,
+          "w": 58,
+          "h": 58,
+          "material": "steel",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "feather-zone",
+          "kind": "material-zone",
+          "x": 670,
+          "y": 475,
+          "w": 230,
+          "h": 190,
+          "angle": 0,
+          "material": "steel",
+          "outputMaterial": "cork",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "freight-fan",
+          "kind": "fan",
+          "x": 850,
+          "y": 800,
+          "w": 90,
+          "h": 180,
+          "angle": -1.5707963267948966,
+          "material": "steel",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "power": 5,
+          "direction": 1,
+          "on": true
+        }
+      ],
+      "connections": [],
+      "inventory": [
+        {
+          "id": "freight-route",
+          "part": {
+            "kind": "ramp",
+            "w": 810,
+            "h": 16,
+            "angle": 0.08,
+            "material": "wood",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "power": 1,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "region",
+        "target": "freight-ball",
+        "count": 1,
+        "delay": 0.25,
+        "x": 900,
+        "y": 260,
+        "w": 500,
+        "h": 300,
+        "edge": "right",
+        "state": "rung"
+      }
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "id": "cloud-then-clunk",
+      "name": "Cloud, Then Clunk",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 1,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "weather-ball",
+          "kind": "bowling",
+          "x": 280,
+          "y": 170,
+          "w": 58,
+          "h": 58,
+          "material": "steel",
+          "locked": true
+        },
+        {
+          "id": "cloud-zone",
+          "kind": "material-zone",
+          "x": 580,
+          "y": 475,
+          "w": 200,
+          "h": 190,
+          "outputMaterial": "cork",
+          "locked": true
+        },
+        {
+          "id": "updraft",
+          "kind": "fan",
+          "x": 750,
+          "y": 800,
+          "w": 90,
+          "h": 180,
+          "angle": -1.5707963267948966,
+          "power": 3.5,
+          "on": true,
+          "locked": true
+        },
+        {
+          "id": "clunk-zone",
+          "kind": "material-zone",
+          "x": 970,
+          "y": 500,
+          "w": 140,
+          "h": 250,
+          "outputMaterial": "steel",
+          "locked": true
+        },
+        {
+          "id": "weather-wall",
+          "kind": "ramp",
+          "x": 900,
+          "y": 770,
+          "w": 340,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "locked": true
+        },
+        {
+          "id": "weather-bucket",
+          "kind": "bucket",
+          "x": 1070,
+          "y": 700,
+          "w": 220,
+          "h": 200,
+          "material": "cork",
+          "fixed": false,
+          "pinned": false,
+          "locked": true
+        },
+        {
+          "id": "weather-pulley",
+          "kind": "pulley",
+          "x": 1070,
+          "y": 200,
+          "w": 72,
+          "h": 72,
+          "fixed": true,
+          "pinned": true,
+          "locked": true
+        },
+        {
+          "id": "bucket-rail-right",
+          "kind": "ramp",
+          "x": 1225,
+          "y": 790,
+          "w": 300,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "locked": true
+        },
+        {
+          "id": "clapper-pulley",
+          "kind": "pulley",
+          "x": 1450,
+          "y": 200,
+          "w": 72,
+          "h": 72,
+          "fixed": true,
+          "pinned": true,
+          "locked": true
+        },
+        {
+          "id": "weather-clapper",
+          "kind": "box",
+          "x": 1450,
+          "y": 700,
+          "w": 40.5,
+          "h": 40.5,
+          "material": "steel",
+          "locked": true
+        },
+        {
+          "id": "clapper-rail-left",
+          "kind": "ramp",
+          "x": 1415,
+          "y": 610,
+          "w": 600,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "locked": true
+        },
+        {
+          "id": "clapper-rail-right",
+          "kind": "ramp",
+          "x": 1485,
+          "y": 610,
+          "w": 600,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "locked": true
+        },
+        {
+          "id": "clapper-stop",
+          "kind": "ramp",
+          "x": 1450,
+          "y": 750,
+          "w": 48,
+          "h": 18,
+          "locked": true
+        },
+        {
+          "id": "weather-bell",
+          "kind": "bell",
+          "x": 1450,
+          "y": 560,
+          "w": 62,
+          "h": 62,
+          "locked": true
+        }
+      ],
+      "connections": [
+        {
+          "id": "weather-rope",
+          "kind": "rope",
+          "a": "weather-bucket",
+          "b": "weather-clapper",
+          "length": 1502.2699133420585,
+          "via": [
+            "weather-pulley",
+            "clapper-pulley"
+          ],
+          "wrap": [
+            1,
+            1
+          ]
+        }
+      ],
+      "inventory": [
+        {
+          "id": "weather-route",
+          "part": {
+            "kind": "ramp",
+            "w": 500,
+            "h": 16,
+            "angle": 0.08,
+            "material": "wood",
+            "fixed": true
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "state",
+        "target": "weather-bell",
+        "count": 1,
+        "delay": 0,
+        "x": 1450,
+        "y": 560,
+        "w": 120,
+        "h": 120,
+        "edge": "right",
+        "state": "rung"
+      }
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "id": "rocket-counterweight",
+      "name": "Rocket Counterweight",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 1,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "trigger-ball",
+          "kind": "bowling",
+          "x": 150,
+          "y": 330,
+          "w": 54,
+          "h": 54,
+          "material": "steel",
+          "locked": true
+        },
+        {
+          "id": "launch-switch",
+          "kind": "switch",
+          "x": 435,
+          "y": 575,
+          "w": 70,
+          "h": 26,
+          "material": "rubber",
+          "fixed": true,
+          "locked": true,
+          "on": false
+        },
+        {
+          "id": "down-rocket",
+          "kind": "rocket",
+          "x": 700,
+          "y": 500,
+          "w": 32,
+          "h": 72,
+          "angle": 3.141592653589793,
+          "material": "wood",
+          "locked": true,
+          "power": 1.2,
+          "on": false
+        },
+        {
+          "id": "rocket-pulley",
+          "kind": "pulley",
+          "x": 700,
+          "y": 180,
+          "w": 72,
+          "h": 72,
+          "fixed": true,
+          "pinned": true,
+          "locked": true
+        },
+        {
+          "id": "rocket-rail-left",
+          "kind": "ramp",
+          "x": 650,
+          "y": 620,
+          "w": 620,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "fixed": true,
+          "locked": true
+        },
+        {
+          "id": "rocket-rail-right",
+          "kind": "ramp",
+          "x": 750,
+          "y": 620,
+          "w": 620,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "fixed": true,
+          "locked": true
+        },
+        {
+          "id": "clapper-pulley",
+          "kind": "pulley",
+          "x": 1100,
+          "y": 180,
+          "w": 72,
+          "h": 72,
+          "fixed": true,
+          "pinned": true,
+          "locked": true
+        },
+        {
+          "id": "rocket-clapper",
+          "kind": "box",
+          "x": 1100,
+          "y": 650,
+          "w": 20,
+          "h": 20,
+          "material": "steel",
+          "locked": true
+        },
+        {
+          "id": "clapper-rail-left",
+          "kind": "ramp",
+          "x": 1065,
+          "y": 610,
+          "w": 600,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "fixed": true,
+          "locked": true
+        },
+        {
+          "id": "clapper-rail-right",
+          "kind": "ramp",
+          "x": 1135,
+          "y": 610,
+          "w": 600,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "fixed": true,
+          "locked": true
+        },
+        {
+          "id": "clapper-ceiling",
+          "kind": "ramp",
+          "x": 1100,
+          "y": 360,
+          "w": 48,
+          "h": 18,
+          "fixed": true,
+          "locked": true
+        },
+        {
+          "id": "clapper-stop",
+          "kind": "ramp",
+          "x": 1100,
+          "y": 740,
+          "w": 48,
+          "h": 18,
+          "fixed": true,
+          "locked": true
+        },
+        {
+          "id": "launch-bell",
+          "kind": "bell",
+          "x": 1100,
+          "y": 480,
+          "w": 62,
+          "h": 62,
+          "material": "steel",
+          "fixed": true,
+          "locked": true
+        }
+      ],
+      "connections": [
+        {
+          "id": "rocket-rope",
+          "kind": "rope",
+          "a": "down-rocket",
+          "b": "rocket-clapper",
+          "length": 1313.1764421855607,
+          "via": [
+            "rocket-pulley",
+            "clapper-pulley"
+          ],
+          "wrap": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "launch-wire",
+          "kind": "wire",
+          "a": "launch-switch",
+          "b": "down-rocket",
+          "length": 400
+        }
+      ],
+      "inventory": [
+        {
+          "id": "trigger-ramp",
+          "part": {
+            "kind": "ramp",
+            "w": 260,
+            "h": 16,
+            "angle": 0.18,
+            "material": "wood",
+            "fixed": true
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "state",
+        "target": "launch-bell",
+        "count": 1,
+        "delay": 0,
+        "x": 1100,
+        "y": 480,
+        "w": 120,
+        "h": 120,
+        "edge": "right",
+        "state": "rung"
+      }
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "id": "rubber-stamp",
+      "name": "Rubber Stamp",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 0.4,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "stamp-ball",
+          "kind": "bowling",
+          "x": 280,
+          "y": 170,
+          "w": 58,
+          "h": 58,
+          "material": "steel",
+          "locked": true
+        },
+        {
+          "id": "rubber-zone",
+          "kind": "material-zone",
+          "x": 650,
+          "y": 490,
+          "w": 230,
+          "h": 190,
+          "material": "steel",
+          "outputMaterial": "rubber",
+          "fixed": true,
+          "locked": true
+        },
+        {
+          "id": "bounce-plate",
+          "kind": "ramp",
+          "x": 1060,
+          "y": 820,
+          "w": 360,
+          "h": 22,
+          "material": "wood",
+          "fixed": true,
+          "locked": true
+        },
+        {
+          "id": "stamp-bell",
+          "kind": "bell",
+          "x": 1375,
+          "y": 635,
+          "w": 74,
+          "h": 74,
+          "material": "steel",
+          "fixed": true,
+          "locked": true
+        }
+      ],
+      "connections": [],
+      "inventory": [
+        {
+          "id": "stamp-route",
+          "part": {
+            "kind": "ramp",
+            "w": 760,
+            "h": 16,
+            "angle": 0.12,
+            "material": "wood",
+            "fixed": true
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "state",
+        "target": "stamp-bell",
+        "count": 1,
+        "delay": 0,
+        "x": 1375,
+        "y": 635,
+        "w": 130,
+        "h": 130,
+        "edge": "right",
+        "state": "rung"
+      }
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "id": "flywheel-express",
+      "name": "Flywheel Express",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 0.5,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "trigger-ball",
+          "kind": "bowling",
+          "x": 150,
+          "y": 330,
+          "w": 54,
+          "h": 54,
+          "material": "steel",
+          "locked": true
+        },
+        {
+          "id": "flywheel-switch",
+          "kind": "switch",
+          "x": 435,
+          "y": 575,
+          "w": 70,
+          "h": 26,
+          "material": "rubber",
+          "fixed": true,
+          "locked": true,
+          "on": false
+        },
+        {
+          "id": "flywheel-motor",
+          "kind": "motor",
+          "x": 650,
+          "y": 700,
+          "w": 78,
+          "h": 78,
+          "material": "steel",
+          "pinned": true,
+          "locked": true,
+          "power": 5,
+          "on": false
+        },
+        {
+          "id": "launch-wheel",
+          "kind": "wheel",
+          "x": 1000,
+          "y": 650,
+          "w": 180,
+          "h": 180,
+          "material": "rubber",
+          "pinned": true,
+          "locked": true
+        },
+        {
+          "id": "wheel-rider",
+          "kind": "basketball",
+          "x": 1000,
+          "y": 531,
+          "w": 58,
+          "h": 58,
+          "material": "rubber",
+          "locked": true
+        },
+        {
+          "id": "flywheel-bell",
+          "kind": "bell",
+          "x": 1140,
+          "y": 650,
+          "w": 76,
+          "h": 76,
+          "material": "steel",
+          "fixed": true,
+          "locked": true
+        }
+      ],
+      "connections": [
+        {
+          "id": "motor-wire",
+          "kind": "wire",
+          "a": "flywheel-switch",
+          "b": "flywheel-motor",
+          "length": 300
+        },
+        {
+          "id": "flywheel-belt",
+          "kind": "belt",
+          "a": "flywheel-motor",
+          "b": "launch-wheel",
+          "length": 350
+        }
+      ],
+      "inventory": [
+        {
+          "id": "flywheel-trigger-ramp",
+          "part": {
+            "kind": "ramp",
+            "w": 260,
+            "h": 16,
+            "angle": 0.18,
+            "material": "wood",
+            "fixed": true
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "state",
+        "target": "flywheel-bell",
+        "count": 1,
+        "delay": 0,
+        "x": 1140,
+        "y": 650,
+        "w": 130,
+        "h": 130,
+        "edge": "right",
+        "state": "rung"
+      }
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "id": "the-sky-is-falling",
+      "name": "The Sky Is Falling",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 1,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "sky-balloon",
+          "kind": "balloon",
+          "x": 420,
+          "y": 850,
+          "w": 60,
+          "h": 60,
+          "material": "helium",
+          "locked": true
+        },
+        {
+          "id": "stone-cloud",
+          "kind": "material-zone",
+          "x": 650,
+          "y": 550,
+          "w": 180,
+          "h": 200,
+          "material": "steel",
+          "outputMaterial": "steel",
+          "fixed": true,
+          "locked": true
+        },
+        {
+          "id": "stone-switch",
+          "kind": "switch",
+          "x": 1290,
+          "y": 925,
+          "w": 150,
+          "h": 24,
+          "material": "rubber",
+          "fixed": true,
+          "locked": true,
+          "on": false
+        },
+        {
+          "id": "message-rocket",
+          "kind": "rocket",
+          "x": 1110,
+          "y": 920,
+          "w": 32,
+          "h": 72,
+          "material": "wood",
+          "locked": true,
+          "power": 1.2,
+          "on": false
+        },
+        {
+          "id": "sky-bell",
+          "kind": "bell",
+          "x": 1110,
+          "y": 500,
+          "w": 76,
+          "h": 76,
+          "material": "steel",
+          "fixed": true,
+          "locked": true
+        }
+      ],
+      "connections": [
+        {
+          "id": "launch-wire",
+          "kind": "wire",
+          "a": "stone-switch",
+          "b": "message-rocket",
+          "length": 230
+        }
+      ],
+      "inventory": [
+        {
+          "id": "crosswind",
+          "part": {
+            "kind": "fan",
+            "w": 70,
+            "h": 110,
+            "material": "steel",
+            "fixed": true,
+            "power": 0.45
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "state",
+        "target": "sky-bell",
+        "count": 1,
+        "delay": 0,
+        "x": 1110,
+        "y": 500,
+        "w": 130,
+        "h": 130,
+        "edge": "right",
+        "state": "rung"
+      }
     }
   ]
 }
