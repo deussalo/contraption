@@ -730,5 +730,125 @@
         ]
       }
     ]
+  },
+  {
+    "name": "High Catch",
+    "parts": [
+      {
+        "id": "placed-weight-stop",
+        "kind": "box",
+        "x": 1100,
+        "y": 800,
+        "w": 180,
+        "h": 140,
+        "angle": 0,
+        "material": "wood",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "resizable": false,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "weight-stop"
+      },
+      {
+        "id": "placed-ejection-ramp",
+        "kind": "ramp",
+        "x": 500,
+        "y": 450,
+        "w": 240,
+        "h": 16,
+        "angle": -0.4,
+        "material": "wood",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "resizable": false,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "ejection-ramp"
+      },
+      {
+        "id": "placed-catch-spring",
+        "kind": "trampoline",
+        "x": 840,
+        "y": 700,
+        "w": 170,
+        "h": 20,
+        "angle": -1.2,
+        "material": "rubber",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "resizable": false,
+        "power": 2.1,
+        "direction": 1,
+        "on": true,
+        "stock": "catch-spring"
+      }
+    ],
+    "alternatives": [
+      {
+        "name": "Boomerang Bank",
+        "parts": [
+          {
+            "id": "placed-weight-stop",
+            "kind": "box",
+            "x": 1100,
+            "y": 800,
+            "w": 180,
+            "h": 140,
+            "angle": 0,
+            "material": "wood",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true,
+            "stock": "weight-stop"
+          },
+          {
+            "id": "placed-ejection-ramp",
+            "kind": "ramp",
+            "x": 502,
+            "y": 421,
+            "w": 240,
+            "h": 16,
+            "angle": -0.595,
+            "material": "wood",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true,
+            "stock": "ejection-ramp"
+          },
+          {
+            "id": "placed-catch-spring",
+            "kind": "trampoline",
+            "x": 758,
+            "y": 503,
+            "w": 170,
+            "h": 20,
+            "angle": -0.753,
+            "material": "rubber",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 2.1,
+            "direction": 1,
+            "on": true,
+            "stock": "catch-spring"
+          }
+        ]
+      }
+    ]
   }
 ]
