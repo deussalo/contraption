@@ -108,6 +108,7 @@ export function connectionPoints(world,c){
 }
 export function pathLength(points){return points.slice(1).reduce((sum,p,i)=>sum+Math.hypot(p.x-points[i].x,p.y-points[i].y),0);}
 function emit(world,b,kind,strength){if(world.time-b.lastImpact<.12||strength<35)return;b.lastImpact=world.time;world.events.push({kind,x:b.x,y:b.y,strength,time:world.time});world.reactions++;}
+function recordTrigger(target,source){target.triggeredBy??=[];if(!target.triggeredBy.includes(source.id))target.triggeredBy.push(source.id);}
 function updateDevices(world,dt){
   const wired=new Set(world.connections.filter(c=>c.kind==='wire').map(c=>c.b));
   for(const b of world.bodies){if(wired.has(b.id))b.active=world.connections.some(c=>c.kind==='wire'&&c.b===b.id&&world.bodies.find(a=>a.id===c.a)?.state==='on');else b.active=b.on;
@@ -136,15 +137,17 @@ function updateDevices(world,dt){
   }
   for(const sensor of world.bodies.filter(b=>PARTS[b.kind].sensor&&b.kind!=='material-zone'))for(const b of world.bodies){
     if(!b.invMass||b.held||b===sensor||!overlaps(sensor,b,0))continue;
+    recordTrigger(sensor,b);
     if(sensor.kind==='bell'&&sensor.state!=='rung'){sensor.state='rung';emit(world,sensor,'bell',300);}
     if(sensor.kind==='switch'&&sensor.state!=='on'){sensor.state='on';emit(world,sensor,'switch',100);}
   }
-  for(const balloon of world.bodies.filter(b=>b.kind==='balloon'&&b.state!=='popped'))for(const rocket of world.bodies.filter(b=>b.kind==='rocket'&&b.state==='fired'))if(overlaps(balloon,rocket)){balloon.state='popped';emit(world,balloon,'pop',200);}
+  for(const balloon of world.bodies.filter(b=>b.kind==='balloon'&&b.state!=='popped'))for(const rocket of world.bodies.filter(b=>b.kind==='rocket'&&b.state==='fired'))if(overlaps(balloon,rocket)){recordTrigger(balloon,rocket);balloon.state='popped';emit(world,balloon,'pop',200);}
 }
 function goalProgress(world){
   const goal=world.goal;if(!goal)return{count:0,needed:0,held:0,complete:false};
   const candidates=world.bodies.filter(b=>goal.target===b.id||goal.target===b.kind||(goal.target==='any'&&!b.fixed&&!b.pinned));
-  const count=candidates.filter(b=>goal.kind==='state'?b.state===goal.state:goal.kind==='edge'?b.exited===goal.edge:b.x>=goal.x-goal.w/2&&b.x<=goal.x+goal.w/2&&b.y>=goal.y-goal.h/2&&b.y<=goal.y+goal.h/2).length;
+  const causedBy=body=>!goal.hitBy||(body.triggeredBy??[]).some(id=>{const source=world.bodies.find(candidate=>candidate.id===id);return goal.hitBy.includes(id)||goal.hitBy.includes(source?.kind)||goal.hitBy.includes(source?.stock);});
+  const count=candidates.filter(b=>goal.kind==='state'?b.state===goal.state&&causedBy(b):goal.kind==='edge'?b.exited===goal.edge:b.x>=goal.x-goal.w/2&&b.x<=goal.x+goal.w/2&&b.y>=goal.y-goal.h/2&&b.y<=goal.y+goal.h/2).length;
   return {count,needed:goal.count,held:world.goalHeld,complete:world.won};
 }
 export function createWorld(level){

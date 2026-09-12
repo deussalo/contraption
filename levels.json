@@ -605,6 +605,7 @@
       "goal": {
         "kind": "state",
         "target": "lobby-bell",
+        "hitBy": ["ringer"],
         "count": 1,
         "delay": 0,
         "x": 520,
@@ -1020,6 +1021,7 @@
       "goal": {
         "kind": "state",
         "target": "delivery-bell",
+        "hitBy": ["bell-striker"],
         "count": 1,
         "delay": 0,
         "x": 1400,
@@ -1319,6 +1321,7 @@
       "goal": {
         "kind": "state",
         "target": "weather-bell",
+        "hitBy": ["weather-clapper"],
         "count": 1,
         "delay": 0,
         "x": 1450,
@@ -1527,6 +1530,7 @@
       "goal": {
         "kind": "state",
         "target": "launch-bell",
+        "hitBy": ["rocket-clapper"],
         "count": 1,
         "delay": 0,
         "x": 1100,
@@ -1614,6 +1618,7 @@
       "goal": {
         "kind": "state",
         "target": "stamp-bell",
+        "hitBy": ["stamp-ball"],
         "count": 1,
         "delay": 0,
         "x": 1375,
@@ -1739,6 +1744,7 @@
       "goal": {
         "kind": "state",
         "target": "flywheel-bell",
+        "hitBy": ["wheel-rider"],
         "count": 1,
         "delay": 0,
         "x": 1140,
@@ -1847,6 +1853,7 @@
       "goal": {
         "kind": "state",
         "target": "sky-bell",
+        "hitBy": ["message-rocket"],
         "count": 1,
         "delay": 0,
         "x": 1110,
@@ -1998,6 +2005,7 @@
       "goal": {
         "kind": "state",
         "target": "exchange-bell",
+        "hitBy": ["lift-clapper"],
         "count": 1,
         "delay": 0,
         "x": 850,
@@ -2080,6 +2088,7 @@
       "goal": {
         "kind": "state",
         "target": "bank-shot-bell",
+        "hitBy": ["ricochet-rocket"],
         "count": 1,
         "delay": 0,
         "x": 900,
@@ -2183,6 +2192,7 @@
       "goal": {
         "kind": "state",
         "target": "air-bell",
+        "hitBy": ["freight-parcel"],
         "count": 1,
         "delay": 0,
         "x": 635,
@@ -2299,6 +2309,7 @@
       "goal": {
         "kind": "state",
         "target": "swing-bell",
+        "hitBy": ["pendulum-ball"],
         "count": 1,
         "delay": 0,
         "x": 1025,
@@ -2503,6 +2514,7 @@
       "goal": {
         "kind": "state",
         "target": "finish-switch",
+        "hitBy": ["domino-f"],
         "count": 1,
         "delay": 0,
         "x": 1190,
@@ -2830,6 +2842,7 @@
       "goal": {
         "kind": "state",
         "target": "finish-bell",
+        "hitBy": ["delivery-ball"],
         "count": 1,
         "delay": 0,
         "x": 1010,
@@ -3073,6 +3086,7 @@
       "goal": {
         "kind": "state",
         "target": "sky-bell",
+        "hitBy": ["launch-lift", "sky-courier"],
         "count": 1,
         "delay": 0,
         "x": 1420,
@@ -3083,6 +3097,214 @@
         "state": "rung"
       },
       "id": "stonework-skyhook"
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "name": "Lever-Action Air Mail",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 0.3,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "cork-counterweight",
+          "kind": "circle",
+          "x": 520,
+          "y": 300,
+          "w": 54,
+          "h": 54,
+          "angle": 0,
+          "material": "cork",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "sorting-lever",
+          "kind": "box",
+          "x": 720,
+          "y": 760,
+          "w": 500,
+          "h": 24,
+          "angle": 0,
+          "material": "wood",
+          "fixed": false,
+          "pinned": true,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "mail-ball",
+          "kind": "basketball",
+          "x": 860,
+          "y": 718,
+          "w": 58,
+          "h": 58,
+          "angle": 0,
+          "material": "rubber",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "launch-switch",
+          "kind": "switch",
+          "x": 1400,
+          "y": 450,
+          "w": 90,
+          "h": 30,
+          "angle": 0,
+          "material": "rubber",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": false
+        },
+        {
+          "id": "mail-rocket",
+          "kind": "rocket",
+          "x": 1120,
+          "y": 900,
+          "w": 32,
+          "h": 72,
+          "angle": 0,
+          "material": "wood",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 0.85,
+          "direction": 1,
+          "on": false
+        },
+        {
+          "id": "priority-bell",
+          "kind": "bell",
+          "x": 710,
+          "y": 830,
+          "w": 70,
+          "h": 70,
+          "angle": 0,
+          "material": "steel",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        }
+      ],
+      "connections": [
+        {
+          "id": "launch-wire",
+          "kind": "wire",
+          "a": "launch-switch",
+          "b": "mail-rocket",
+          "length": 100,
+          "via": [],
+          "ax": 0,
+          "ay": 0,
+          "bx": 0,
+          "by": 0
+        }
+      ],
+      "inventory": [
+        {
+          "id": "stone-maker",
+          "part": {
+            "kind": "material-zone",
+            "x": 0,
+            "y": 0,
+            "w": 150,
+            "h": 130,
+            "angle": 0,
+            "material": "steel",
+            "outputMaterial": "steel",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        },
+        {
+          "id": "mail-ramp",
+          "part": {
+            "kind": "ramp",
+            "x": 0,
+            "y": 0,
+            "w": 240,
+            "h": 16,
+            "angle": 0,
+            "material": "wood",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        },
+        {
+          "id": "mail-spring",
+          "part": {
+            "kind": "trampoline",
+            "x": 0,
+            "y": 0,
+            "w": 170,
+            "h": 20,
+            "angle": 0,
+            "material": "rubber",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 2.2,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "state",
+        "target": "priority-bell",
+        "hitBy": ["mail-rocket"],
+        "count": 1,
+        "delay": 0,
+        "x": 710,
+        "y": 830,
+        "w": 130,
+        "h": 130,
+        "edge": "right",
+        "state": "rung"
+      },
+      "id": "lever-action-air-mail"
     }
   ]
 }
