@@ -2192,6 +2192,122 @@
         "edge": "right",
         "state": "rung"
       }
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "id": "blow-the-bell",
+      "name": "Blow the Bell",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 0.5,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "pendulum-anchor",
+          "kind": "anchor",
+          "x": 800,
+          "y": 150,
+          "w": 24,
+          "h": 24,
+          "angle": 0,
+          "material": "steel",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "pendulum-ball",
+          "kind": "basketball",
+          "x": 800,
+          "y": 500,
+          "w": 58,
+          "h": 58,
+          "angle": 0,
+          "material": "rubber",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "swing-bell",
+          "kind": "bell",
+          "x": 1025,
+          "y": 425,
+          "w": 76,
+          "h": 76,
+          "angle": 0,
+          "material": "steel",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        }
+      ],
+      "connections": [
+        {
+          "id": "pendulum-rope",
+          "kind": "rope",
+          "a": "pendulum-anchor",
+          "b": "pendulum-ball",
+          "length": 350,
+          "via": [],
+          "ax": 0,
+          "ay": 0,
+          "bx": 0,
+          "by": 0,
+          "wrap": []
+        }
+      ],
+      "inventory": [
+        {
+          "id": "crosswind",
+          "part": {
+            "kind": "fan",
+            "x": 0,
+            "y": 0,
+            "w": 70,
+            "h": 70,
+            "angle": 0,
+            "material": "steel",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 5,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "state",
+        "target": "swing-bell",
+        "count": 1,
+        "delay": 0,
+        "x": 1025,
+        "y": 425,
+        "w": 130,
+        "h": 130,
+        "edge": "right",
+        "state": "rung"
+      }
     }
   ]
 }
