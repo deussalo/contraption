@@ -1748,6 +1748,114 @@
         "edge": "right",
         "state": "rung"
       }
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "id": "the-sky-is-falling",
+      "name": "The Sky Is Falling",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 1,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "sky-balloon",
+          "kind": "balloon",
+          "x": 420,
+          "y": 850,
+          "w": 60,
+          "h": 60,
+          "material": "helium",
+          "locked": true
+        },
+        {
+          "id": "stone-cloud",
+          "kind": "material-zone",
+          "x": 650,
+          "y": 550,
+          "w": 180,
+          "h": 200,
+          "material": "steel",
+          "outputMaterial": "steel",
+          "fixed": true,
+          "locked": true
+        },
+        {
+          "id": "stone-switch",
+          "kind": "switch",
+          "x": 1290,
+          "y": 925,
+          "w": 150,
+          "h": 24,
+          "material": "rubber",
+          "fixed": true,
+          "locked": true,
+          "on": false
+        },
+        {
+          "id": "message-rocket",
+          "kind": "rocket",
+          "x": 1110,
+          "y": 920,
+          "w": 32,
+          "h": 72,
+          "material": "wood",
+          "locked": true,
+          "power": 1.2,
+          "on": false
+        },
+        {
+          "id": "sky-bell",
+          "kind": "bell",
+          "x": 1110,
+          "y": 500,
+          "w": 76,
+          "h": 76,
+          "material": "steel",
+          "fixed": true,
+          "locked": true
+        }
+      ],
+      "connections": [
+        {
+          "id": "launch-wire",
+          "kind": "wire",
+          "a": "stone-switch",
+          "b": "message-rocket",
+          "length": 230
+        }
+      ],
+      "inventory": [
+        {
+          "id": "crosswind",
+          "part": {
+            "kind": "fan",
+            "w": 70,
+            "h": 110,
+            "material": "steel",
+            "fixed": true,
+            "power": 0.45
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "state",
+        "target": "sky-bell",
+        "count": 1,
+        "delay": 0,
+        "x": 1110,
+        "y": 500,
+        "w": 130,
+        "h": 130,
+        "edge": "right",
+        "state": "rung"
+      }
     }
   ]
 }
