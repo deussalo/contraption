@@ -463,5 +463,28 @@
         "stock": "stop-crate"
       }
     ]
+  },
+  {
+    "parts": [
+      {
+        "id": "placed-stone-zone",
+        "kind": "material-zone",
+        "x": 520,
+        "y": 500,
+        "w": 150,
+        "h": 130,
+        "angle": 0,
+        "material": "steel",
+        "outputMaterial": "steel",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "resizable": false,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "stone-zone-stock"
+      }
+    ]
   }
 ]
