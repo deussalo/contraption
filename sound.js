@@ -1,12 +1,19 @@
+const PRIORITY={goal:9,bell:8,transform:7,pop:6,trampoline:5,switch:4,steel:3,rubber:2,cork:1,wood:1};
+export function audibleEvents(events,limit=6){
+  const strongest=new Map();
+  for(const event of events){const key=(PRIORITY[event.kind]??0)>=4?event.kind:`${event.kind}:${Math.floor((event.x??0)/320)}`,old=strongest.get(key);if(!old||(event.strength??0)>(old.strength??0))strongest.set(key,event);}
+  return [...strongest.values()].sort((a,b)=>(PRIORITY[b.kind]??0)-(PRIORITY[a.kind]??0)||(b.strength??0)-(a.strength??0)).slice(0,limit);
+}
 export class WorkshopSound{
-  constructor(){this.audio=null;this.master=null;this.enabled=true;this.volume=.65;this.pressure=1;this.hum=null;}
+  constructor(){this.audio=null;this.master=null;this.enabled=true;this.volume=.65;this.pressure=1;this.hum=null;this.humLevel=-1;this.voices=0;this.silent=false;}
   async unlock(){const Audio=globalThis.AudioContext??globalThis.webkitAudioContext;if(!Audio)throw Error('Sound is unavailable in this browser.');if(!this.audio){this.audio=new Audio();this.master=this.audio.createGain();this.master.connect(this.audio.destination);}if(this.audio.state==='suspended')await this.audio.resume();}
   tone(frequency,duration,type='sine',volume=.08,end=frequency,x=800){
-    if(!this.enabled||!this.audio||this.audio.state!=='running'||this.pressure<=0)return;
+    if(!this.enabled||!this.audio||this.audio.state!=='running'||this.pressure<=0||this.voices>=20)return false;
     const a=this.audio,t=a.currentTime,osc=a.createOscillator(),gain=a.createGain(),pan=a.createStereoPanner();pan.pan.value=Math.max(-.8,Math.min(.8,(x-800)/1000));
-    osc.type=type;osc.frequency.setValueAtTime(frequency,t);osc.frequency.exponentialRampToValueAtTime(Math.max(20,end),t+duration);gain.gain.setValueAtTime(0,t);gain.gain.linearRampToValueAtTime(volume*this.volume*Math.min(1,this.pressure),t+.003);gain.gain.exponentialRampToValueAtTime(.0001,t+duration);osc.connect(gain);gain.connect(pan);pan.connect(this.master);osc.start(t);osc.stop(t+duration+.01);osc.onended=()=>{osc.disconnect();gain.disconnect();pan.disconnect();};
+    this.voices++;osc.type=type;osc.frequency.setValueAtTime(frequency,t);osc.frequency.exponentialRampToValueAtTime(Math.max(20,end),t+duration);gain.gain.setValueAtTime(0,t);gain.gain.linearRampToValueAtTime(volume*this.volume*Math.min(1,this.pressure),t+.003);gain.gain.exponentialRampToValueAtTime(.0001,t+duration);osc.connect(gain);gain.connect(pan);pan.connect(this.master);osc.start(t);osc.stop(t+duration+.01);osc.onended=()=>{this.voices--;osc.disconnect();gain.disconnect();pan.disconnect();};return true;
   }
-  play(e){
+  play(events){const selected=audibleEvents(Array.isArray(events)?events:[events]);for(const e of selected)this.playEvent(e);return selected;}
+  playEvent(e){
     const volume=Math.min(.14,.015+e.strength/5000);
     if(e.kind==='bell'||e.kind==='goal'){for(const [f,v] of [[784,.11],[1568,.035],[2180,.015]])this.tone(f,1.5,'sine',v,f,e.x);}
     else if(e.kind==='trampoline')this.tone(100,.35,'sine',.11,700,e.x);
@@ -18,9 +25,9 @@ export class WorkshopSound{
   }
   update(world,running){
     this.pressure=world.environment.pressure;
-    if(!this.audio)return;const active=running&&this.enabled&&this.pressure>0?world.bodies.filter(b=>(b.kind==='fan'||b.kind==='motor'||b.kind==='rocket')&&b.active).length:0;
-    if(active&&!this.hum){const a=this.audio,buffer=a.createBuffer(1,a.sampleRate,a.sampleRate),samples=buffer.getChannelData(0);for(let i=0;i<samples.length;i++)samples[i]=(Math.random()*2-1)*.25;const source=a.createBufferSource(),filter=a.createBiquadFilter(),gain=a.createGain();source.buffer=buffer;source.loop=true;filter.type='lowpass';filter.frequency.value=550;gain.gain.value=0;source.connect(filter);filter.connect(gain);gain.connect(this.master);source.start();this.hum={source,filter,gain};}
-    if(this.hum)this.hum.gain.gain.setTargetAtTime(Math.min(.05,active*.008)*this.volume,this.audio.currentTime,.08);
+    if(!this.audio)return;let active=0;if(running&&this.enabled&&this.pressure>0)for(const b of world.bodies)if((b.kind==='fan'||b.kind==='motor'||b.kind==='rocket')&&b.active)active++;
+    if(active&&!this.hum){const a=this.audio,buffer=a.createBuffer(1,Math.ceil(a.sampleRate/4),a.sampleRate),samples=buffer.getChannelData(0);for(let i=0;i<samples.length;i++)samples[i]=(Math.random()*2-1)*.25;const source=a.createBufferSource(),filter=a.createBiquadFilter(),gain=a.createGain();source.buffer=buffer;source.loop=true;filter.type='lowpass';filter.frequency.value=550;gain.gain.value=0;source.connect(filter);filter.connect(gain);gain.connect(this.master);source.start();this.hum={source,filter,gain};}
+    const level=Math.min(.05,active*.008)*this.volume;if(this.hum&&level!==this.humLevel){this.hum.gain.gain.setTargetAtTime(level,this.audio.currentTime,.08);this.humLevel=level;}
   }
-  silence(silent){if(this.master)this.master.gain.setTargetAtTime(silent?0:1,this.audio.currentTime,.015);}
+  silence(silent){if(silent===this.silent)return;this.silent=silent;if(this.master)this.master.gain.setTargetAtTime(silent?0:1,this.audio.currentTime,.015);}
 }

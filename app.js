@@ -102,10 +102,10 @@ async function importFile(file){
 function saveBrowser(){try{localStorage.setItem('contraption.saved.v3',JSON.stringify(workshop.level));toast('Level saved in this browser');}catch{toast('Saving failed. Export a JSON file instead.');}closePopovers();}
 function loadBrowser(){const raw=localStorage.getItem('contraption.saved.v3');if(!raw)throw Error('No saved level in this browser.');replaceLevel(parseLevel(JSON.parse(raw)),false);}
 function burst(event){const count=event.kind==='goal'?60:event.kind==='transform'?28:event.kind==='pop'?20:4,palette=event.kind==='transform'?[MATERIALS[event.material].color,'#faf9eb','#dcc471']:['#c79676','#a3b88a','#dcc471','#ad9cbd'];for(let i=0;i<count;i++)particles.push({x:event.x,y:event.y,vx:(Math.random()-.5)*(count>10?400:100),vy:-Math.random()*(count>10?500:100),life:count>10?2:.35,maxLife:count>10?2:.35,size:count>10?6:3,color:palette[i%palette.length]});}
-function consume(events){for(const event of events){sound.play(event);burst(event);}}
+function consume(events){if(events.length)for(const event of sound.play(events))burst(event);}
 function frame(now){
   const dt=Math.min((now-lastFrame)/1000,.06)||0;lastFrame=now;
-  if(timeline.rewinding){if(timeline.rewind(workshop.world,dt))workshop.changed=true;particles=[];accumulator=0;}else if(workshop.running){accumulator+=dt*Number($('speed').value);while(accumulator>=1/120){consume(stepSimulation());accumulator-=1/120;}for(const p of particles){p.life-=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=300*dt;}particles=particles.filter(p=>p.life>0).slice(-300);}
+  if(timeline.rewinding){if(timeline.rewind(workshop.world,dt))workshop.changed=true;particles=[];accumulator=0;}else if(workshop.running){const events=[];accumulator+=dt*Number($('speed').value);while(accumulator>=1/120){events.push(...stepSimulation());accumulator-=1/120;}consume(events);for(const p of particles){p.life-=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=300*dt;}particles=particles.filter(p=>p.life>0).slice(-300);}
   sound.update(workshop.world,workshop.running&&!timeline.rewinding);sound.silence(timeline.rewinding);$('timer').value=workshop.world.time.toFixed(1)+'s';$('rewind').disabled=!timeline.rewinding&&!timeline.canRewind;syncGoal();
   if(workshop.world.won&&!shownWin){shownWin=true;$('win').hidden=false;if(activePuzzle>=0)try{localStorage.setItem('contraption.complete.'+puzzles[activePuzzle].name,'1');}catch{toast('Progress could not be saved.');}}
   if(!workshop.world.won&&shownWin){shownWin=false;$('win').hidden=true;}
