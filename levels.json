@@ -2513,6 +2513,213 @@
         "state": "on"
       },
       "id": "stone-cold-chain"
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "name": "Counterweight Checkpoint",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 0.3,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "lift-car",
+          "kind": "bucket",
+          "x": 500,
+          "y": 700,
+          "w": 140,
+          "h": 110,
+          "angle": 0,
+          "material": "cork",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "lift-pulley",
+          "kind": "pulley",
+          "x": 500,
+          "y": 180,
+          "w": 72,
+          "h": 72,
+          "angle": 0,
+          "material": "wood",
+          "fixed": true,
+          "pinned": true,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "weight-pulley",
+          "kind": "pulley",
+          "x": 1100,
+          "y": 180,
+          "w": 72,
+          "h": 72,
+          "angle": 0,
+          "material": "wood",
+          "fixed": true,
+          "pinned": true,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "drop-weight",
+          "kind": "box",
+          "x": 1100,
+          "y": 500,
+          "w": 70,
+          "h": 70,
+          "angle": 0,
+          "material": "steel",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "lift-rail-left",
+          "kind": "ramp",
+          "x": 400,
+          "y": 620,
+          "w": 640,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "material": "wood",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "lift-rail-right",
+          "kind": "ramp",
+          "x": 600,
+          "y": 620,
+          "w": 640,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "material": "wood",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "weight-rail-left",
+          "kind": "ramp",
+          "x": 985,
+          "y": 650,
+          "w": 580,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "material": "wood",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "weight-rail-right",
+          "kind": "ramp",
+          "x": 1215,
+          "y": 650,
+          "w": 580,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "material": "wood",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        }
+      ],
+      "connections": [
+        {
+          "id": "elevator-rope",
+          "kind": "rope",
+          "a": "lift-car",
+          "b": "drop-weight",
+          "length": 1563.028513935223,
+          "via": [
+            "lift-pulley",
+            "weight-pulley"
+          ],
+          "ax": 0,
+          "ay": 0,
+          "bx": 0,
+          "by": 0,
+          "wrap": [
+            1,
+            1
+          ]
+        }
+      ],
+      "inventory": [
+        {
+          "id": "stop-crate",
+          "part": {
+            "kind": "box",
+            "x": 0,
+            "y": 0,
+            "w": 180,
+            "h": 140,
+            "angle": 0,
+            "material": "wood",
+            "fixed": false,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "region",
+        "target": "lift-car",
+        "count": 1,
+        "delay": 0.5,
+        "x": 500,
+        "y": 435,
+        "w": 170,
+        "h": 90,
+        "edge": "right",
+        "state": "rung"
+      },
+      "id": "counterweight-checkpoint"
     }
   ]
 }
