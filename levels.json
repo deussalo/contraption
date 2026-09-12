@@ -3569,6 +3569,198 @@
         "state": "rung"
       },
       "id": "express-elevator-ejection"
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "name": "Rocket Canopy Relay",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 0.3,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "starter-ball",
+          "kind": "bowling",
+          "x": 250,
+          "y": 100,
+          "w": 54,
+          "h": 54,
+          "angle": 0,
+          "material": "steel",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "launch-switch",
+          "kind": "switch",
+          "x": 500,
+          "y": 895,
+          "w": 70,
+          "h": 30,
+          "angle": 0,
+          "material": "rubber",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": false
+        },
+        {
+          "id": "courier-rocket",
+          "kind": "rocket",
+          "x": 800,
+          "y": 875,
+          "w": 32,
+          "h": 72,
+          "angle": 0,
+          "material": "wood",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1.4,
+          "direction": 1,
+          "on": false
+        },
+        {
+          "id": "canopy",
+          "kind": "ramp",
+          "x": 800,
+          "y": 490,
+          "w": 700,
+          "h": 34,
+          "angle": 0,
+          "material": "steel",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "delivery-balloon",
+          "kind": "balloon",
+          "x": 1350,
+          "y": 390,
+          "w": 60,
+          "h": 60,
+          "angle": 0,
+          "material": "helium",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        }
+      ],
+      "connections": [
+        {
+          "id": "launch-wire",
+          "kind": "wire",
+          "a": "launch-switch",
+          "b": "courier-rocket",
+          "length": 1,
+          "via": [],
+          "ax": 0,
+          "ay": 0,
+          "bx": 0,
+          "by": 0
+        }
+      ],
+      "inventory": [
+        {
+          "id": "trigger-ramp",
+          "part": {
+            "kind": "ramp",
+            "x": 0,
+            "y": 0,
+            "w": 300,
+            "h": 16,
+            "angle": 0,
+            "material": "wood",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        },
+        {
+          "id": "crosswind-fan",
+          "part": {
+            "kind": "fan",
+            "x": 0,
+            "y": 0,
+            "w": 70,
+            "h": 70,
+            "angle": 0,
+            "material": "steel",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 2.2,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        },
+        {
+          "id": "corner-spring",
+          "part": {
+            "kind": "trampoline",
+            "x": 0,
+            "y": 0,
+            "w": 170,
+            "h": 20,
+            "angle": 0,
+            "material": "rubber",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 2.2,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "state",
+        "target": "delivery-balloon",
+        "count": 1,
+        "delay": 0,
+        "x": 1200,
+        "y": 700,
+        "w": 180,
+        "h": 180,
+        "edge": "right",
+        "state": "popped",
+        "hitBy": [
+          "courier-rocket"
+        ]
+      },
+      "id": "rocket-canopy-relay"
     }
   ]
 }

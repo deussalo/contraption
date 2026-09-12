@@ -141,7 +141,6 @@ function updateDevices(world,dt){
     if(sensor.kind==='bell'&&sensor.state!=='rung'){sensor.state='rung';emit(world,sensor,'bell',300);}
     if(sensor.kind==='switch'&&sensor.state!=='on'){sensor.state='on';emit(world,sensor,'switch',100);}
   }
-  for(const balloon of world.bodies.filter(b=>b.kind==='balloon'&&b.state!=='popped'))for(const rocket of world.bodies.filter(b=>b.kind==='rocket'&&b.state==='fired'))if(overlaps(balloon,rocket)){recordTrigger(balloon,rocket);balloon.state='popped';emit(world,balloon,'pop',200);}
 }
 function goalProgress(world){
   const goal=world.goal;if(!goal)return{count:0,needed:0,held:0,complete:false};
@@ -163,6 +162,7 @@ function tick(world,dt){
     if(b.invI){b.omega=clamp(b.omega,-35,35);b.angle+=b.omega*dt;b.omega*=Math.exp(-dt*.015);}
     if(b.x+b.w/2<0)b.exited='left';else if(b.x-b.w/2>world.environment.width)b.exited='right';else if(b.y+b.h/2<0)b.exited='top';else if(b.y-b.h/2>world.environment.height)b.exited='bottom';
   }
+  for(const balloon of world.bodies.filter(b=>b.kind==='balloon'&&b.state!=='popped'))for(const rocket of world.bodies.filter(b=>b.kind==='rocket'&&b.state==='fired'))if(overlaps(balloon,rocket)){recordTrigger(balloon,rocket);balloon.state='popped';emit(world,balloon,'pop',200);}
   const contacts=contactPairs(world),ropes=prepareRopes(world,dt);
   const cached=world.cachedContacts??[],used=new Set();
   for(const c of contacts)for(const p of c.points){
