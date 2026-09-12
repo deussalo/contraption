@@ -27,7 +27,7 @@ export class Gestures{
     if(selected&&this.workshop.editable(selected)){const handles=selectionHandles(selected,this.view.camera.scale);if(distance(point,handles.rotate)<14/this.view.camera.scale)handle='rotate';else if(this.workshop.canResize(selected)&&handles.corners.some(p=>distance(point,p)<13/this.view.camera.scale))handle='scale';}
     const b=handle?selected:this.hit(point);this.workshop.selected=b?.id??null;this.workshop.changed=true;
     if(!b){for(const joint of this.workshop.world.connections){const points=connectionPoints(this.workshop.world,joint);for(let i=1;i<points.length;i++){const a=points[i-1],b=points[i],dx=b.x-a.x,dy=b.y-a.y,t=clamp(((point.x-a.x)*dx+(point.y-a.y)*dy)/(dx*dx+dy*dy||1),0,1);if(distance(point,{x:a.x+t*dx,y:a.y+t*dy})<8/this.view.camera.scale){this.workshop.selected=joint.id;break;}}}return;}
-    if(!this.workshop.editable(b)){this.view.toast(this.workshop.constructionEnabled()?'Locked':'Pause the puzzle to edit');return;}
+    if(!this.workshop.editable(b)){this.view.toast(this.workshop.constructionEnabled()?'Locked':'Reset the puzzle to edit');return;}
     const before=this.workshop.capture();this.drag={mode:handle??'move',body:b,before,original:structuredClone(b),start:point,offset:{x:point.x-b.x,y:point.y-b.y},moved:false,base:{x:b.x,y:b.y,w:b.w,h:b.h,angle:b.angle}};
     b.held=true;setMass(b);this.workshop.world.cachedContacts=[];
   }
@@ -64,7 +64,7 @@ export class Gestures{
     this.clear();this.workshop.changed=true;this.view.sync();
   }
   connect(point){
-    if(!this.workshop.constructionEnabled()){this.view.toast('Pause the puzzle to edit');return;}
+    if(!this.workshop.constructionEnabled()){this.view.toast('Reset the puzzle to edit');return;}
     const b=this.hit(point);if(!b)return;
     if(!this.connection){if(this.tool==='rope'&&b.kind==='pulley'){this.view.toast('Start at a load or anchor, then thread the pulley.');return;}if(this.tool==='wire'&&b.kind!=='switch'){this.view.toast('Start a wire at a switch.');return;}const a=this.tool==='rope'?nearestAttachment(b,point):localPoint(b,point.x,point.y);this.connection={kind:this.tool,a:b.id,ax:a.x,ay:a.y,via:[]};this.view.syncConnection();return;}
     const c=this.connection;if(b.kind==='pulley'&&c.kind==='rope'){if(c.via.includes(b.id))this.view.toast('This pulley is already threaded.');else if(c.via.length===8)this.view.toast('A rope can thread eight pulleys.');else c.via.push(b.id);this.view.syncConnection();return;}
