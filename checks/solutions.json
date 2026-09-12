@@ -353,5 +353,26 @@
         "stock": "stone-zone"
       }
     ]
+  },
+  {
+    "parts": [
+      {
+        "id": "placed-spring-mirror",
+        "kind": "trampoline",
+        "x": 700,
+        "y": 800,
+        "w": 170,
+        "h": 20,
+        "angle": 0.42,
+        "material": "rubber",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "power": 2.2,
+        "direction": 1,
+        "on": true,
+        "stock": "spring-mirror"
+      }
+    ]
   }
 ]
