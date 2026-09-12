@@ -2720,6 +2720,126 @@
         "state": "rung"
       },
       "id": "counterweight-checkpoint"
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "name": "Stone Age Seesaw",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 0.3,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "cork-counterweight",
+          "kind": "circle",
+          "x": 520,
+          "y": 300,
+          "w": 54,
+          "h": 54,
+          "angle": 0,
+          "material": "cork",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "seesaw",
+          "kind": "box",
+          "x": 720,
+          "y": 760,
+          "w": 500,
+          "h": 24,
+          "angle": 0,
+          "material": "wood",
+          "fixed": false,
+          "pinned": true,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "delivery-ball",
+          "kind": "basketball",
+          "x": 860,
+          "y": 718,
+          "w": 58,
+          "h": 58,
+          "angle": 0,
+          "material": "rubber",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "finish-bell",
+          "kind": "bell",
+          "x": 1010,
+          "y": 420,
+          "w": 62,
+          "h": 62,
+          "angle": 0,
+          "material": "steel",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        }
+      ],
+      "connections": [],
+      "inventory": [
+        {
+          "id": "stone-zone-stock",
+          "part": {
+            "kind": "material-zone",
+            "x": 0,
+            "y": 0,
+            "w": 150,
+            "h": 130,
+            "angle": 0,
+            "material": "steel",
+            "outputMaterial": "steel",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "state",
+        "target": "finish-bell",
+        "count": 1,
+        "delay": 0,
+        "x": 1010,
+        "y": 420,
+        "w": 100,
+        "h": 100,
+        "edge": "right",
+        "state": "rung"
+      },
+      "id": "stone-age-seesaw"
     }
   ]
 }
