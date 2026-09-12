@@ -13,20 +13,21 @@ export class Workshop{
   reset(){this.world=createWorld(this.level);this.running=false;this.selected=null;this.changed=true;this.revision++;}
   body(){return this.world.bodies.find(b=>b.id===this.selected);}
   editable(body){return this.level.mode!=='puzzle'||!body.locked;}
+  canResize(body){return this.level.mode==='editor'||this.level.mode!=='puzzle'&&body.resizable;}
   remaining(entry){return entry.quantity-this.level.bodies.filter(b=>b.stock===entry.id).length;}
   available(kind){return this.level.inventory.find(e=>e.part.kind===kind&&this.remaining(e)>0);}
   newPart(kind,x,y,extra={},stockId){
     if(this.level.bodies.length>=100)throw Error('The canvas holds 100 objects.');let options=extra;
     if(this.level.mode==='puzzle'){
       const entry=stockId?this.level.inventory.find(e=>e.id===stockId):this.available(kind);
-      if(!entry||this.remaining(entry)<=0||entry.part.kind!==kind)throw Error('No more of this part in the bin.');options={...entry.part,...extra,id:uid(),stock:entry.id,locked:false};
+      if(!entry||this.remaining(entry)<=0||entry.part.kind!==kind)throw Error('No more of this part in the bin.');options={...entry.part,...extra,id:uid(),stock:entry.id,locked:false,resizable:false};
     }
     return createBody(makePart(kind,x,y,{...options,x,y}));
   }
   canPlace(body){if(PARTS[body.kind].sensor)return true;return !this.world.bodies.some(other=>other.id!==body.id&&!PARTS[other.kind].sensor&&other.state!=='popped'&&overlaps(body,other,2))&&!(this.world.floor&&overlaps(body,this.world.floor,2));}
   insert(body){this.level.bodies.push(designPart(body));this.world.bodies.push(body);this.selected=body.id;this.changed=true;}
   move(body,change){
-    if(!this.editable(body))throw Error('This object is locked.');if(body.kind==='material-zone'&&(change.fixed===false||change.pinned===true))throw Error('Material zones must be fixed.');if(change.outputMaterial!==undefined&&!Object.hasOwn(MATERIALS,change.outputMaterial))throw Error('Unknown output material.');Object.assign(body,change);setMass(body);for(const c of this.world.connections)if(c.kind==='rope'&&(c.a===body.id||c.b===body.id||c.via.includes(body.id))){delete c.arcSweeps;c.routeCrossed=false;c.blocked=false;}Object.assign(this.level.bodies.find(p=>p.id===body.id),designPart(body));this.world.cachedContacts=[];this.changed=true;
+    if(!this.editable(body))throw Error('This object is locked.');if(!this.canResize(body)&&((change.w!==undefined&&change.w!==body.w)||(change.h!==undefined&&change.h!==body.h)))throw Error('This component has a fixed size.');if(body.kind==='material-zone'&&(change.fixed===false||change.pinned===true))throw Error('Material zones must be fixed.');if(change.outputMaterial!==undefined&&!Object.hasOwn(MATERIALS,change.outputMaterial))throw Error('Unknown output material.');Object.assign(body,change);setMass(body);for(const c of this.world.connections)if(c.kind==='rope'&&(c.a===body.id||c.b===body.id||c.via.includes(body.id))){delete c.arcSweeps;c.routeCrossed=false;c.blocked=false;}Object.assign(this.level.bodies.find(p=>p.id===body.id),designPart(body));this.world.cachedContacts=[];this.changed=true;
   }
   update(change){const body=this.body();if(!body)return;this.transaction(()=>{this.move(body,change);if(!this.canPlace(body))throw Error('Objects cannot overlap.');});}
   remove(){
