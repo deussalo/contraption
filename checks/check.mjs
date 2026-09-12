@@ -11,6 +11,7 @@ import './express-elevator-ejection.mjs';
 import './rocket-canopy-relay.mjs';
 import './pendulum-bank-exchange.mjs';
 import './cloudstone-customs.mjs';
+import './counterweight-crossfire.mjs';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {blankLevel,makePart,parseLevel,PARTS} from '../dist/model.js';

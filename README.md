@@ -1,6 +1,6 @@
 # Contraption
 
-A fullscreen illustrated physics workshop with 18 components, procedural sound, and twenty-nine puzzles.
+A fullscreen illustrated physics workshop with 18 components, procedural sound, and thirty puzzles.
 
 Dark mode is the default; the sun/moon control switches themes and remembers your choice.
 
@@ -24,7 +24,7 @@ Serve `dist/` with any local HTTP server. No dependency installation or build st
 node --experimental-default-type=module checks/check.mjs
 ```
 
-The checks cover gravity, stable stacks, fast collisions, belt power propagation, rope tangency/radius, movable-pulley ratios, rim speed, slack, wrap crossings, material transformation and reset, pre-resolution rocket/balloon hits, source-specific state goals, switches, bounded whole-world rewind and timeline branching, fixed-size puzzle inventory, malformed imports, undo/redo, JSON round trips, and both empty-bin and reference outcomes for every puzzle. Stonework Skyhook, Lever-Action Air Mail, Express Elevator Ejection, Rocket Canopy Relay, Pendulum Bank Exchange, and Cloudstone Customs additionally preserve three required placements, neutral-angle failure, long interaction chains, and two mechanically distinct solution families. Prove changes to visible controls with a browser probe on desktop and mobile, including real two-pointer touch events.
+The checks cover gravity, stable stacks, fast collisions, conveyor direction, belt power propagation, rope tangency/radius, movable-pulley ratios, rim speed, slack, wrap crossings, material transformation and reset, pre-resolution rocket/balloon hits, source-specific state goals, switches, bounded whole-world rewind and timeline branching, fixed-size puzzle inventory, malformed imports, undo/redo, JSON round trips, and both empty-bin and reference outcomes for every puzzle. Stonework Skyhook, Lever-Action Air Mail, Express Elevator Ejection, Rocket Canopy Relay, Pendulum Bank Exchange, Cloudstone Customs, and Counterweight Crossfire additionally preserve three required placements, neutral-angle failure, long interaction chains, and two mechanically distinct solution families. Prove changes to visible controls with a browser probe on desktop and mobile, including real two-pointer touch events.
 
 ## Publish
 

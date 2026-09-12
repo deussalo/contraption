@@ -1214,5 +1214,125 @@
         ]
       }
     ]
+  },
+  {
+    "name": "High Arc",
+    "parts": [
+      {
+        "id": "placed-trigger-ramp",
+        "kind": "ramp",
+        "x": 300,
+        "y": 350,
+        "w": 280,
+        "h": 16,
+        "angle": -1,
+        "material": "wood",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "resizable": false,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "trigger-ramp"
+      },
+      {
+        "id": "placed-spring",
+        "kind": "trampoline",
+        "x": 700,
+        "y": 800,
+        "w": 170,
+        "h": 20,
+        "angle": 0.42,
+        "material": "rubber",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "resizable": false,
+        "power": 2.2,
+        "direction": 1,
+        "on": true,
+        "stock": "rocket-spring"
+      },
+      {
+        "id": "placed-gate-stop",
+        "kind": "box",
+        "x": 1400,
+        "y": 900,
+        "w": 140,
+        "h": 80,
+        "angle": 0,
+        "material": "wood",
+        "fixed": false,
+        "pinned": false,
+        "locked": false,
+        "resizable": false,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "gate-stop"
+      }
+    ],
+    "alternatives": [
+      {
+        "name": "Delayed Flip",
+        "parts": [
+          {
+            "id": "placed-trigger-ramp",
+            "kind": "ramp",
+            "x": 450,
+            "y": 350,
+            "w": 280,
+            "h": 16,
+            "angle": 1,
+            "material": "wood",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true,
+            "stock": "trigger-ramp"
+          },
+          {
+            "id": "placed-spring",
+            "kind": "trampoline",
+            "x": 700,
+            "y": 800,
+            "w": 170,
+            "h": 20,
+            "angle": 0.42,
+            "material": "rubber",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 2.2,
+            "direction": 1,
+            "on": true,
+            "stock": "rocket-spring"
+          },
+          {
+            "id": "placed-gate-stop",
+            "kind": "box",
+            "x": 1400,
+            "y": 900,
+            "w": 140,
+            "h": 80,
+            "angle": 0,
+            "material": "wood",
+            "fixed": false,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true,
+            "stock": "gate-stop"
+          }
+        ]
+      }
+    ]
   }
 ]
