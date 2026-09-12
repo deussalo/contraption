@@ -441,5 +441,27 @@
         "stock": "missing-domino"
       }
     ]
+  },
+  {
+    "parts": [
+      {
+        "id": "placed-stop-crate",
+        "kind": "box",
+        "x": 1100,
+        "y": 864,
+        "w": 180,
+        "h": 140,
+        "angle": 0,
+        "material": "wood",
+        "fixed": false,
+        "pinned": false,
+        "locked": false,
+        "resizable": false,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "stop-crate"
+      }
+    ]
   }
 ]
