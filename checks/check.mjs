@@ -2,6 +2,7 @@ import './rope.mjs';
 import './transformation.mjs';
 import './rewind.mjs';
 import './interface.mjs';
+import './performance.mjs';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {blankLevel,makePart,parseLevel,PARTS} from '../dist/model.js';

@@ -52,11 +52,29 @@ export function pointInside(b,x,y,padding=0){const p=localPoint(b,x,y);return PA
 function velocity(b,r){return {x:b.vx-b.omega*r.y,y:b.vy+b.omega*r.x};}
 function impulse(b,j,r,sign){b.vx+=j.x*b.invMass*sign;b.vy+=j.y*b.invMass*sign;b.omega+=cross(r,j)*b.invI*sign;}
 function massAt(a,b,ra,rb,n){return a.invMass+b.invMass+cross(ra,n)**2*a.invI+cross(rb,n)**2*b.invI;}
+function bounds(b){
+  if(PARTS[b.kind].shape==='circle'){const radius=b.w/2;return{minX:b.x-radius,maxX:b.x+radius,minY:b.y-radius,maxY:b.y+radius};}
+  const cosine=Math.abs(Math.cos(b.angle)),sine=Math.abs(Math.sin(b.angle)),halfX=(b.w*cosine+b.h*sine)/2,halfY=(b.w*sine+b.h*cosine)/2;
+  return{minX:b.x-halfX,maxX:b.x+halfX,minY:b.y-halfY,maxY:b.y+halfY};
+}
+function collisionCandidates(bodies){
+  const entries=bodies.map((body,index)=>({body,index,bounds:bounds(body),fixtures:fixtures(body)})).sort((a,b)=>a.bounds.minX-b.bounds.minX||a.index-b.index),active=[],pairs=[];
+  for(const entry of entries){
+    for(let i=active.length-1;i>=0;i--)if(active[i].bounds.maxX<entry.bounds.minX)active.splice(i,1);
+    for(const other of active){
+      if(other.bounds.maxY<entry.bounds.minY||entry.bounds.maxY<other.bounds.minY)continue;
+      const a=other.index<entry.index?other:entry,b=a===other?entry:other;
+      pairs.push([a,b]);
+    }
+    active.push(entry);
+  }
+  return pairs.sort((a,b)=>a[0].index-b[0].index||a[1].index-b[1].index);
+}
 function contactPairs(world,position=false){
   const bodies=world.floor?[...world.bodies,world.floor]:world.bodies,contacts=[];
-  for(let i=0;i<bodies.length;i++)for(let j=i+1;j<bodies.length;j++){
-    const a=bodies[i],b=bodies[j];if(a.state==='popped'||b.state==='popped'||(a.invMass+a.invI+b.invMass+b.invI===0)||PARTS[a.kind].sensor||PARTS[b.kind].sensor)continue;
-    for(const fa of fixtures(a))for(const fb of fixtures(b)){
+  for(const [first,second] of collisionCandidates(bodies)){
+    const a=first.body,b=second.body;if(a.state==='popped'||b.state==='popped'||(a.invMass+a.invI+b.invMass+b.invI===0)||PARTS[a.kind].sensor||PARTS[b.kind].sensor)continue;
+    for(const fa of first.fixtures)for(const fb of second.fixtures){
       const manifold=collision(fa,fb);if(!manifold)continue;
       const n=manifold.n,t={x:-n.y,y:n.x};
       const c={a,b,n,t,friction:Math.sqrt(MATERIALS[a.material].friction*MATERIALS[b.material].friction),points:manifold.points};
