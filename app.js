@@ -109,7 +109,7 @@ function frame(now){
   sound.update(workshop.world,workshop.running&&!timeline.rewinding);sound.silence(timeline.rewinding);$('timer').value=workshop.world.time.toFixed(1)+'s';$('rewind').disabled=!timeline.rewinding&&!timeline.canRewind;syncGoal();
   if(workshop.world.won&&!shownWin){shownWin=true;$('win').hidden=false;if(activePuzzle>=0)try{localStorage.setItem('contraption.complete.'+puzzles[activePuzzle].name,'1');}catch{toast('Progress could not be saved.');}}
   if(!workshop.world.won&&shownWin){shownWin=false;$('win').hidden=true;}
-  if(!$('rope-inspector').hidden){const c=workshop.world.connections.find(c=>c.id===workshop.selected);$('rope-tension').value=c?.routeCrossed?'Rethread or reset':c?.blocked?'Blocked route':c?.tension>1?'Under tension':c&&ropeGeometry(workshop.world.bodies,c).length>=c.length-.1?'Taut':'Slack';}
+  if(!$('rope-inspector').hidden){const c=workshop.world.connections.find(c=>c.id===workshop.selected);$('rope-tension').value=c?.blocked?'Blocked route':c?.routeCrossed?'Wrap crossed · constrained':c?.tension>1?'Under tension':c&&ropeGeometry(workshop.world.bodies,c).length>=c.length-.1?'Taut':'Slack';}
   if(workshop.changed)sync();
   drawScene(paint,workshop.world,camera,viewport,{selected:workshop.selected,invalid:trayDrag?.ghost?!workshop.canPlace(trayDrag.ghost):gestures.invalid,puzzle:workshop.level.mode==='puzzle',ghost:trayDrag?.ghost??gestures.ghost,region:gestures.region,connection:gestures.previewConnection(),particles,attachments:gestures.tool==='rope'});requestAnimationFrame(frame);
 }
