@@ -2007,6 +2007,88 @@
         "edge": "right",
         "state": "rung"
       }
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "id": "rocket-bank-shot",
+      "name": "Rocket Bank Shot",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 0,
+        "pressure": 0.5,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "ricochet-rocket",
+          "kind": "rocket",
+          "x": 700,
+          "y": 250,
+          "w": 32,
+          "h": 72,
+          "angle": 3.141592653589793,
+          "material": "wood",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "power": 0.7,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "bank-shot-bell",
+          "kind": "bell",
+          "x": 900,
+          "y": 530,
+          "w": 76,
+          "h": 76,
+          "angle": 0,
+          "material": "steel",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        }
+      ],
+      "connections": [],
+      "inventory": [
+        {
+          "id": "spring-mirror",
+          "part": {
+            "kind": "trampoline",
+            "x": 0,
+            "y": 0,
+            "w": 170,
+            "h": 20,
+            "angle": 0.42,
+            "material": "rubber",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "power": 2.2,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "state",
+        "target": "bank-shot-bell",
+        "count": 1,
+        "delay": 0,
+        "x": 900,
+        "y": 530,
+        "w": 130,
+        "h": 130,
+        "edge": "right",
+        "state": "rung"
+      }
     }
   ]
 }
