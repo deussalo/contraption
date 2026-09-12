@@ -70,8 +70,8 @@ export function drawScene(c,world,camera,viewport,options={}){
   if(options.attachments){c.strokeStyle=theme.selection;c.lineWidth=1.2/camera.scale;for(const b of world.bodies)if(b.kind!=='pulley')for(const p of attachmentPoints(b))circle(c,p.x,p.y,4/camera.scale,theme.handle);}
   const selected=world.bodies.find(b=>b.id===options.selected);
   if(selected){const b=selected,pad=8/camera.scale,handle=4/camera.scale;c.save();c.translate(b.x,b.y);c.rotate(b.angle);c.strokeStyle=options.invalid?'#e69483':theme.selection;c.lineWidth=1.2/camera.scale;c.setLineDash([4/camera.scale,3/camera.scale]);c.strokeRect(-b.w/2-pad,-b.h/2-pad,b.w+pad*2,b.h+pad*2);c.setLineDash([]);
-    for(const x of [-b.w/2-pad,b.w/2+pad])for(const y of [-b.h/2-pad,b.h/2+pad])rect(c,x-handle,y-handle,handle*2,handle*2,theme.handle,1);
-    line(c,[[0,-b.h/2-pad],[0,-b.h/2-32/camera.scale]]);circle(c,0,-b.h/2-32/camera.scale,5/camera.scale,theme.handle);c.restore();
+    if(options.resizable)for(const x of [-b.w/2-pad,b.w/2+pad])for(const y of [-b.h/2-pad,b.h/2+pad])rect(c,x-handle,y-handle,handle*2,handle*2,theme.handle,1);
+    if(options.editable){line(c,[[0,-b.h/2-pad],[0,-b.h/2-32/camera.scale]]);circle(c,0,-b.h/2-32/camera.scale,5/camera.scale,theme.handle);}c.restore();
     if(options.invalid){c.strokeStyle='#c57868';c.lineWidth=3/camera.scale;const size=9/camera.scale;line(c,[[b.x-size,b.y-size],[b.x+size,b.y+size]]);line(c,[[b.x-size,b.y+size],[b.x+size,b.y-size]]);}
   }
   if(options.ghost){const b=options.ghost;c.globalAlpha=.55;drawBody(c,b,world.time);c.globalAlpha=1;if(options.invalid){const size=10/camera.scale;c.strokeStyle='#c57868';c.lineWidth=3/camera.scale;line(c,[[b.x-size,b.y-size],[b.x+size,b.y+size]]);line(c,[[b.x-size,b.y+size],[b.x+size,b.y-size]]);}}

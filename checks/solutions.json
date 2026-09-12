@@ -374,5 +374,28 @@
         "stock": "spring-mirror"
       }
     ]
+  },
+  {
+    "parts": [
+      {
+        "id": "placed-helium-zone",
+        "kind": "material-zone",
+        "x": 700,
+        "y": 660,
+        "w": 180,
+        "h": 150,
+        "angle": 0,
+        "material": "steel",
+        "outputMaterial": "helium",
+        "fixed": true,
+        "pinned": false,
+        "locked": false,
+        "resizable": true,
+        "power": 1,
+        "direction": 1,
+        "on": true,
+        "stock": "helium-zone"
+      }
+    ]
   }
 ]

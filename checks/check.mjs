@@ -40,6 +40,13 @@ const part=(kind,x,y,properties={})=>makePart(kind,x,y,properties);
   const baseline=blankLevel();assert.throws(()=>parseLevel({...baseline,bodies:[{id:'x',kind:'toString',x:0,y:0}]}),/component/i);assert.throws(()=>parseLevel({...baseline,inventory:[null]}),/Inventory/);assert.throws(()=>parseLevel({...baseline,inventory:[{id:'stock',part:part('box',0,0),quantity:1.5}]}),/whole/);
   const workshop=new Workshop(scene([part('circle',400,200,{id:'ball'})]));workshop.selected='ball';workshop.update({x:500});assert.equal(workshop.world.bodies[0].x,500);workshop.undo();assert.equal(workshop.world.bodies[0].x,400);workshop.redo();assert.equal(workshop.world.bodies[0].x,500);workshop.reset();assert.equal(workshop.world.bodies[0].x,500);
 }
+{
+  assert.ok(Object.values(PARTS).every(component=>typeof component.resizable==='boolean'),'Every inventory component must declare its sizing policy');assert.deepEqual(Object.entries(PARTS).filter(([,component])=>component.resizable).map(([kind])=>kind),['circle','box','material-zone']);
+  const baseline=blankLevel();assert.throws(()=>parseLevel({...baseline,bodies:[part('rocket',300,200,{id:'oversized-rocket',resizable:true})]}),/fixed size/);assert.throws(()=>parseLevel({...baseline,bodies:[part('circle',300,200,{id:'bad-resize',resizable:'yes'})]}),/resizable/);
+  const sandbox=new Workshop(scene([part('circle',300,200,{id:'generic'}),part('rocket',600,200,{id:'special'})]));assert.equal(sandbox.canResize(sandbox.world.bodies[0]),true);assert.equal(sandbox.canResize(sandbox.world.bodies[1]),false);sandbox.selected='special';assert.throws(()=>sandbox.update({w:64}),/fixed size/);sandbox.selected='generic';sandbox.update({w:80,h:80});assert.equal(sandbox.body().w,80);
+  const editor=new Workshop({...scene([part('rocket',300,200,{id:'author-rocket'})]),mode:'editor'});editor.selected='author-rocket';assert.equal(editor.canResize(editor.body()),true);editor.update({w:64,h:96});assert.deepEqual([editor.body().w,editor.body().h],[64,96]);
+  const sizedPuzzle=parseLevel({...scene([part('bell',1200,200,{id:'size-goal'})]),mode:'puzzle',inventory:[{id:'small-circle',part:part('circle',0,0,{w:30,h:30}),quantity:1},{id:'large-circle',part:part('circle',0,0,{w:70,h:70}),quantity:1}],goal:{kind:'state',target:'size-goal',state:'rung'}});assert.deepEqual(sizedPuzzle.inventory.map(entry=>[entry.part.w,entry.part.resizable]),[[30,false],[70,false]],'Puzzle authors may supply multiple fixed-size variants');const puzzleWorkshop=new Workshop(sizedPuzzle),small=puzzleWorkshop.newPart('circle',300,200,{},'small-circle'),large=puzzleWorkshop.newPart('circle',500,200,{},'large-circle');assert.deepEqual([small.w,large.w],[30,70]);puzzleWorkshop.insert(small);puzzleWorkshop.selected=small.id;assert.throws(()=>puzzleWorkshop.update({w:40}),/fixed size/);
+}
 const pack=JSON.parse(await readFile(new URL('../dist/levels.json',import.meta.url))),solutions=JSON.parse(await readFile(new URL('./solutions.json',import.meta.url)));
 const pulleyLevels=new Map([
   ['bellhop-express',4.95],
@@ -84,10 +91,23 @@ const transformationLevels=new Map([
     ['Cork must be too light to reverse the counterweight',level=>{level.bodies.find(body=>body.stock==='stone-zone').outputMaterial='cork';}],
     ['Stone Balloon must need the zone on the balloon route',level=>{level.bodies.find(body=>body.stock==='stone-zone').x=650;}],
   ]}],
+  ['upward-mobility',{seconds:8,wonAt:4.208333333333333,ball:'freight-parcel',stock:'helium-zone',original:'steel',transforms:['helium'],zones:['placed-helium-zone'],includeSensors:true,variants:[['x',-20],['x',20],['y',-8],['y',8],['angle',-.03],['angle',.03]],baseline:[
+    ['Empty-bin parcel must remain steel',world=>world.bodies.find(body=>body.id==='freight-parcel').material==='steel'],
+    ['Empty bin must not transform the parcel',world=>world.bodies.find(body=>body.id==='freight-parcel').transformedZones.length===0],
+  ],milestones:[
+    ['Conveyor must deliver the parcel into the placed zone',3.35,(_world,events)=>events.some(event=>event.kind==='transform')],
+    ['Helium parcel must rise into the overhead bell',4.208333333333333,world=>world.bodies.find(body=>body.id==='air-bell').state==='rung'],
+  ],ablations:[
+    ['Upward Mobility must need its material zone',level=>{level.bodies=level.bodies.filter(body=>body.stock!=='helium-zone');}],
+    ['Upward Mobility must need its conveyor',level=>{level.bodies.find(body=>body.id==='freight-belt').on=false;}],
+    ['Upward Mobility must need the conveyor direction',level=>{level.bodies.find(body=>body.id==='freight-belt').direction=1;}],
+    ['Cork must not rise into the bell',level=>{level.bodies.find(body=>body.stock==='helium-zone').outputMaterial='cork';}],
+    ['Upward Mobility must need atmospheric pressure',level=>{level.environment.pressure=0;}],
+  ]}],
 ]);
 assert.equal(solutions.length,pack.levels.length,'Every playable level needs one reference solution');
 for(const [i,level] of pack.levels.entries()){
-  assert.equal(simulate(createWorld(parseLevel(level)),20).won,false,`${level.name}: empty bin must fail`);
+  const authored=parseLevel(level);assert.ok(authored.bodies.every(body=>body.resizable===false),`${level.name}: puzzle bodies must have fixed authored sizes`);assert.ok(authored.inventory.every(entry=>entry.part.resizable===false),`${level.name}: puzzle inventory must have fixed authored sizes`);assert.equal(simulate(createWorld(authored),20).won,false,`${level.name}: empty bin must fail`);
   const solved=parseLevel({...level,bodies:[...level.bodies,...solutions[i].parts.map(p=>part(p.kind,p.x,p.y,p))]});const world=simulate(createWorld(solved),20);assert.equal(world.won,true,`${level.name}: reference solution must win`);
   const again=parseLevel(JSON.parse(JSON.stringify(solved)));assert.deepEqual(again.bodies,solved.bodies);assert.deepEqual(again.connections,solved.connections);assert.deepEqual(again.goal,solved.goal);assert.deepEqual(again.inventory,solved.inventory);
   if(level.id==='pulley-gate'){
@@ -117,7 +137,7 @@ for(const [i,level] of pack.levels.entries()){
     for(const moment of moments)assert.equal(moment.actual,moment.time,moment.message);if(test.reverses){assert.ok(transformVelocity<0,'Transformation must preserve the balloon upward velocity');assert.notEqual(reversalAt,null,'Steel gravity must reverse the balloon downward');if(test.reversalAt!==undefined)assert.equal(reversalAt,test.reversalAt,'Balloon reversal time changed');}
     if(test.baseline){const baseline=simulate(createWorld(parseLevel(level)),test.seconds);for(const [message,predicate] of test.baseline)assert.equal(predicate(baseline),true,message);}
     for(const [message,mutate] of test.ablations){const ablation=structuredClone(solved);mutate(ablation);assert.equal(simulate(createWorld(ablation),test.seconds).won,false,message);}
-    const positionDelta=test.positionDelta??8;for(const [field,delta] of [['x',-positionDelta],['x',positionDelta],['y',-positionDelta],['y',positionDelta],['angle',-(test.angleDelta??.02)],['angle',test.angleDelta??.02]]){const nearby=structuredClone(solved);nearby.bodies.find(body=>body.stock===test.stock)[field]+=delta;const nearbyWorld=createWorld(nearby);let nearbyRopeBlocked=false;assert.deepEqual(overlapPairs(nearbyWorld,test.includeSensors),[]);const nearbyWin=solveTime(nearbyWorld,test.seconds,world=>{if(test.rope&&world.connections.find(connection=>connection.id===test.rope).blocked)nearbyRopeBlocked=true;});assert.notEqual(nearbyWin,null,`${level.name} nearby ${field} ${delta} must win`);assert.equal(nearbyRopeBlocked,false,`${level.name} nearby ${field} ${delta} must preserve its rope route`);}
+    const positionDelta=test.positionDelta??8,variants=test.variants??[['x',-positionDelta],['x',positionDelta],['y',-positionDelta],['y',positionDelta],['angle',-(test.angleDelta??.02)],['angle',test.angleDelta??.02]];for(const [field,delta] of variants){const nearby=structuredClone(solved);nearby.bodies.find(body=>body.stock===test.stock)[field]+=delta;const nearbyWorld=createWorld(nearby);let nearbyRopeBlocked=false;assert.deepEqual(overlapPairs(nearbyWorld,test.includeSensors),[]);const nearbyWin=solveTime(nearbyWorld,test.seconds,world=>{if(test.rope&&world.connections.find(connection=>connection.id===test.rope).blocked)nearbyRopeBlocked=true;});assert.notEqual(nearbyWin,null,`${level.name} nearby ${field} ${delta} must win`);assert.equal(nearbyRopeBlocked,false,`${level.name} nearby ${field} ${delta} must preserve its rope route`);}
     const reset=new Workshop(solved),first=solveTime(reset.world,test.seconds);assert.equal(first,test.wonAt);reset.reset();assert.equal(reset.world.bodies.find(body=>body.id===test.ball).material,test.original);assert.equal(solveTime(reset.world,test.seconds),first,`${level.name} reset must preserve solve time`);
   }
   if(level.id==='rocket-bank-shot'){
@@ -146,4 +166,4 @@ for(const [i,level] of pack.levels.entries()){
   }
   console.log(`PASS ${level.name}`);
 }
-console.log('PASS gravity, stacks, thin collisions, belt chains, ropes, material zones, switches, strict imports, undo, puzzle solutions and JSON round trips');
+console.log('PASS gravity, stacks, thin collisions, belt chains, ropes, material zones, switches, fixed-size inventory, strict imports, undo, puzzle solutions and JSON round trips');

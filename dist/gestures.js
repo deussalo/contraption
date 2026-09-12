@@ -24,7 +24,7 @@ export class Gestures{
       try{const ghost=this.workshop.newPart(this.tool,this.snapped(point.x),this.snapped(point.y),{},this.stock);this.ghost=ghost;this.drag={mode:['box','circle'].includes(this.tool)?'draw':'stamp',start:point,before:this.workshop.capture()};}catch(error){this.view.toast(error.message);this.pointers.delete(e.pointerId);}return;
     }
     const selected=this.workshop.body();let handle=null;
-    if(selected&&this.workshop.editable(selected)){const handles=selectionHandles(selected,this.view.camera.scale);if(distance(point,handles.rotate)<14/this.view.camera.scale)handle='rotate';else if(handles.corners.some(p=>distance(point,p)<13/this.view.camera.scale))handle='scale';}
+    if(selected&&this.workshop.editable(selected)){const handles=selectionHandles(selected,this.view.camera.scale);if(distance(point,handles.rotate)<14/this.view.camera.scale)handle='rotate';else if(this.workshop.canResize(selected)&&handles.corners.some(p=>distance(point,p)<13/this.view.camera.scale))handle='scale';}
     const b=handle?selected:this.hit(point);this.workshop.selected=b?.id??null;this.workshop.changed=true;
     if(!b){for(const joint of this.workshop.world.connections){const points=connectionPoints(this.workshop.world,joint);for(let i=1;i<points.length;i++){const a=points[i-1],b=points[i],dx=b.x-a.x,dy=b.y-a.y,t=clamp(((point.x-a.x)*dx+(point.y-a.y)*dy)/(dx*dx+dy*dy||1),0,1);if(distance(point,{x:a.x+t*dx,y:a.y+t*dy})<8/this.view.camera.scale){this.workshop.selected=joint.id;break;}}}return;}
     if(!this.workshop.editable(b)){this.view.toast('Locked');return;}
@@ -33,7 +33,7 @@ export class Gestures{
   }
   beginTransform(){
     const points=[...this.pointers.values()];
-    if(this.drag?.body){const b=this.drag.body;this.drag.mode='transform';this.drag.gesture={center:mid(...points),distance:Math.max(5,distance(...points)),angle:angle(...points),body:{x:b.x,y:b.y,w:b.w,h:b.h,angle:b.angle}};}
+    if(this.drag?.body){const b=this.drag.body;this.drag.mode='transform';this.drag.gesture={center:mid(...points),distance:Math.max(5,distance(...points)),angle:angle(...points),resizable:this.workshop.canResize(b),body:{x:b.x,y:b.y,w:b.w,h:b.h,angle:b.angle}};}
     else{this.ghost=null;this.region=null;const screen=points.map(p=>({x:p.sx,y:p.sy}));this.drag={mode:'pinch',anchor:mid(...points),distance:Math.max(5,distance(...screen)),camera:{...this.view.camera}};}
   }
   move(e){
@@ -47,8 +47,8 @@ export class Gestures{
     if(!b)return;
     let change={};
     if(d.mode==='transform'){
-      const points=[...this.pointers.values()];if(points.length<2)return;const g=d.gesture,center=mid(...points),ratio=clamp(distance(...points)/g.distance,.1,10),rotation=angle(...points)-g.angle,dx=g.body.x-g.center.x,dy=g.body.y-g.center.y;
-      change={x:center.x+(dx*Math.cos(rotation)-dy*Math.sin(rotation))*ratio,y:center.y+(dx*Math.sin(rotation)+dy*Math.cos(rotation))*ratio,w:clamp(g.body.w*ratio,12,1200),h:clamp(g.body.h*ratio,12,1200),angle:g.body.angle+rotation};
+      const points=[...this.pointers.values()];if(points.length<2)return;const g=d.gesture,center=mid(...points),ratio=g.resizable?clamp(distance(...points)/g.distance,.1,10):1,rotation=angle(...points)-g.angle,dx=g.body.x-g.center.x,dy=g.body.y-g.center.y;
+      change={x:center.x+(dx*Math.cos(rotation)-dy*Math.sin(rotation))*ratio,y:center.y+(dx*Math.sin(rotation)+dy*Math.cos(rotation))*ratio,angle:g.body.angle+rotation};if(g.resizable)Object.assign(change,{w:clamp(g.body.w*ratio,12,1200),h:clamp(g.body.h*ratio,12,1200)});
     }else if(d.mode==='rotate'){const a=angle(b,point)-angle(d.base,d.start);change.angle=d.base.angle+a;if(e.shiftKey)change.angle=Math.round(change.angle/(Math.PI/12))*Math.PI/12;}
     else if(d.mode==='scale'){const local=localPoint({...b,angle:d.base.angle},point.x,point.y);change={w:clamp(Math.abs(local.x)*2,12,1200),h:clamp(Math.abs(local.y)*2,12,1200)};if(PARTS[b.kind].shape==='circle'||e.shiftKey){const ratio=Math.max(change.w/d.base.w,change.h/d.base.h);change.w=clamp(d.base.w*ratio,12,1200);change.h=clamp(d.base.h*ratio,12,1200);}}
     else change={x:this.snapped(point.x-d.offset.x),y:this.snapped(point.y-d.offset.y)};

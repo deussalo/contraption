@@ -2089,6 +2089,109 @@
         "edge": "right",
         "state": "rung"
       }
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "id": "upward-mobility",
+      "name": "Upward Mobility",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 1.4,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "freight-belt",
+          "kind": "conveyor",
+          "x": 800,
+          "y": 760,
+          "w": 900,
+          "h": 24,
+          "angle": 0,
+          "material": "rubber",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1.2,
+          "direction": -1,
+          "on": true
+        },
+        {
+          "id": "freight-parcel",
+          "kind": "bowling",
+          "x": 400,
+          "y": 720,
+          "w": 54,
+          "h": 54,
+          "angle": 0,
+          "material": "steel",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "air-bell",
+          "kind": "bell",
+          "x": 635,
+          "y": 390,
+          "w": 76,
+          "h": 76,
+          "angle": 0,
+          "material": "steel",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        }
+      ],
+      "connections": [],
+      "inventory": [
+        {
+          "id": "helium-zone",
+          "part": {
+            "kind": "material-zone",
+            "x": 0,
+            "y": 0,
+            "w": 180,
+            "h": 150,
+            "angle": 0,
+            "material": "steel",
+            "outputMaterial": "helium",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "state",
+        "target": "air-bell",
+        "count": 1,
+        "delay": 0,
+        "x": 635,
+        "y": 390,
+        "w": 130,
+        "h": 130,
+        "edge": "right",
+        "state": "rung"
+      }
     }
   ]
 }
