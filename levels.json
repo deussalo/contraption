@@ -3305,6 +3305,462 @@
         "state": "rung"
       },
       "id": "lever-action-air-mail"
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "name": "Express Elevator Ejection",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 0.3,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "lift-car",
+          "kind": "box",
+          "x": 500,
+          "y": 700,
+          "w": 140,
+          "h": 20,
+          "angle": 0,
+          "material": "steel",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "express-ball",
+          "kind": "basketball",
+          "x": 500,
+          "y": 661,
+          "w": 58,
+          "h": 58,
+          "angle": 0,
+          "material": "rubber",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "lift-pulley",
+          "kind": "pulley",
+          "x": 500,
+          "y": 180,
+          "w": 72,
+          "h": 72,
+          "angle": 0,
+          "material": "wood",
+          "fixed": false,
+          "pinned": true,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "weight-pulley",
+          "kind": "pulley",
+          "x": 1100,
+          "y": 180,
+          "w": 72,
+          "h": 72,
+          "angle": 0,
+          "material": "wood",
+          "fixed": false,
+          "pinned": true,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "drop-weight",
+          "kind": "box",
+          "x": 1100,
+          "y": 500,
+          "w": 70,
+          "h": 70,
+          "angle": 0,
+          "material": "steel",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "lift-rail-left",
+          "kind": "ramp",
+          "x": 400,
+          "y": 745,
+          "w": 390,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "material": "wood",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "lift-rail-right",
+          "kind": "ramp",
+          "x": 600,
+          "y": 745,
+          "w": 390,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "material": "wood",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "weight-rail-left",
+          "kind": "ramp",
+          "x": 985,
+          "y": 650,
+          "w": 580,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "material": "wood",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "weight-rail-right",
+          "kind": "ramp",
+          "x": 1215,
+          "y": 650,
+          "w": 580,
+          "h": 18,
+          "angle": 1.5707963267948966,
+          "material": "wood",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        }
+      ],
+      "connections": [
+        {
+          "id": "elevator-rope",
+          "kind": "rope",
+          "a": "lift-car",
+          "b": "drop-weight",
+          "length": 1563.028513935223,
+          "via": [
+            "lift-pulley",
+            "weight-pulley"
+          ],
+          "ax": 0,
+          "ay": 0,
+          "bx": 0,
+          "by": 0,
+          "wrap": [
+            1,
+            1
+          ]
+        }
+      ],
+      "inventory": [
+        {
+          "id": "weight-stop",
+          "part": {
+            "kind": "box",
+            "x": 0,
+            "y": 0,
+            "w": 180,
+            "h": 140,
+            "angle": 0,
+            "material": "wood",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        },
+        {
+          "id": "ejection-ramp",
+          "part": {
+            "kind": "ramp",
+            "x": 0,
+            "y": 0,
+            "w": 240,
+            "h": 16,
+            "angle": 0,
+            "material": "wood",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        },
+        {
+          "id": "catch-spring",
+          "part": {
+            "kind": "trampoline",
+            "x": 0,
+            "y": 0,
+            "w": 170,
+            "h": 20,
+            "angle": 0,
+            "material": "rubber",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 2.1,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "region",
+        "target": "express-ball",
+        "count": 1,
+        "delay": 0,
+        "x": 800,
+        "y": 100,
+        "w": 1500,
+        "h": 300,
+        "edge": "top",
+        "state": "rung"
+      },
+      "id": "express-elevator-ejection"
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "name": "Rocket Canopy Relay",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 0.3,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "starter-ball",
+          "kind": "bowling",
+          "x": 250,
+          "y": 100,
+          "w": 54,
+          "h": 54,
+          "angle": 0,
+          "material": "steel",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "launch-switch",
+          "kind": "switch",
+          "x": 500,
+          "y": 895,
+          "w": 70,
+          "h": 30,
+          "angle": 0,
+          "material": "rubber",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": false
+        },
+        {
+          "id": "courier-rocket",
+          "kind": "rocket",
+          "x": 800,
+          "y": 875,
+          "w": 32,
+          "h": 72,
+          "angle": 0,
+          "material": "wood",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1.4,
+          "direction": 1,
+          "on": false
+        },
+        {
+          "id": "canopy",
+          "kind": "ramp",
+          "x": 800,
+          "y": 490,
+          "w": 700,
+          "h": 34,
+          "angle": 0,
+          "material": "steel",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "delivery-balloon",
+          "kind": "balloon",
+          "x": 1350,
+          "y": 390,
+          "w": 60,
+          "h": 60,
+          "angle": 0,
+          "material": "helium",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        }
+      ],
+      "connections": [
+        {
+          "id": "launch-wire",
+          "kind": "wire",
+          "a": "launch-switch",
+          "b": "courier-rocket",
+          "length": 1,
+          "via": [],
+          "ax": 0,
+          "ay": 0,
+          "bx": 0,
+          "by": 0
+        }
+      ],
+      "inventory": [
+        {
+          "id": "trigger-ramp",
+          "part": {
+            "kind": "ramp",
+            "x": 0,
+            "y": 0,
+            "w": 300,
+            "h": 16,
+            "angle": 0,
+            "material": "wood",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        },
+        {
+          "id": "crosswind-fan",
+          "part": {
+            "kind": "fan",
+            "x": 0,
+            "y": 0,
+            "w": 70,
+            "h": 70,
+            "angle": 0,
+            "material": "steel",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 2.2,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        },
+        {
+          "id": "corner-spring",
+          "part": {
+            "kind": "trampoline",
+            "x": 0,
+            "y": 0,
+            "w": 170,
+            "h": 20,
+            "angle": 0,
+            "material": "rubber",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 2.2,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "state",
+        "target": "delivery-balloon",
+        "count": 1,
+        "delay": 0,
+        "x": 1200,
+        "y": 700,
+        "w": 180,
+        "h": 180,
+        "edge": "right",
+        "state": "popped",
+        "hitBy": [
+          "courier-rocket"
+        ]
+      },
+      "id": "rocket-canopy-relay"
     }
   ]
 }
