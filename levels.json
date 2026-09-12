@@ -3983,6 +3983,167 @@
         ]
       },
       "id": "pendulum-bank-exchange"
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "name": "Cloudstone Customs",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 1.4,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "feed-belt",
+          "kind": "conveyor",
+          "x": 420,
+          "y": 850,
+          "w": 700,
+          "h": 22,
+          "angle": 0,
+          "material": "rubber",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1.4,
+          "direction": -1,
+          "on": true
+        },
+        {
+          "id": "customs-parcel",
+          "kind": "bowling",
+          "x": 180,
+          "y": 800,
+          "w": 54,
+          "h": 54,
+          "angle": 0,
+          "material": "steel",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "customs-wall",
+          "kind": "ramp",
+          "x": 800,
+          "y": 650,
+          "w": 600,
+          "h": 16,
+          "angle": 1.5707963267948966,
+          "material": "steel",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "delivery-floor",
+          "kind": "ramp",
+          "x": 1180,
+          "y": 850,
+          "w": 500,
+          "h": 16,
+          "angle": 0,
+          "material": "wood",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        }
+      ],
+      "connections": [],
+      "inventory": [
+        {
+          "id": "helium-zone",
+          "part": {
+            "kind": "material-zone",
+            "x": 0,
+            "y": 0,
+            "w": 200,
+            "h": 180,
+            "angle": 0,
+            "material": "steel",
+            "outputMaterial": "helium",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        },
+        {
+          "id": "crossing-ramp",
+          "part": {
+            "kind": "ramp",
+            "x": 0,
+            "y": 0,
+            "w": 280,
+            "h": 16,
+            "angle": 0,
+            "material": "wood",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        },
+        {
+          "id": "stone-zone",
+          "part": {
+            "kind": "material-zone",
+            "x": 0,
+            "y": 0,
+            "w": 200,
+            "h": 180,
+            "angle": 0,
+            "material": "steel",
+            "outputMaterial": "steel",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "region",
+        "target": "customs-parcel",
+        "count": 1,
+        "delay": 1.5,
+        "x": 825,
+        "y": 800,
+        "w": 20,
+        "h": 300,
+        "edge": "right",
+        "state": "rung"
+      },
+      "id": "cloudstone-customs"
     }
   ]
 }
