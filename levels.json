@@ -3761,6 +3761,228 @@
         ]
       },
       "id": "rocket-canopy-relay"
+    },
+    {
+      "format": "contraption",
+      "version": 3,
+      "name": "Pendulum Bank Exchange",
+      "mode": "puzzle",
+      "environment": {
+        "width": 1600,
+        "height": 1000,
+        "gravity": 850,
+        "pressure": 0.4,
+        "floor": true
+      },
+      "bodies": [
+        {
+          "id": "starter-ball",
+          "kind": "bowling",
+          "x": 180,
+          "y": 100,
+          "w": 54,
+          "h": 54,
+          "angle": 0,
+          "material": "steel",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "fan-switch",
+          "kind": "switch",
+          "x": 460,
+          "y": 895,
+          "w": 70,
+          "h": 30,
+          "angle": 0,
+          "material": "rubber",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": false
+        },
+        {
+          "id": "pendulum-fan",
+          "kind": "fan",
+          "x": 500,
+          "y": 600,
+          "w": 70,
+          "h": 70,
+          "angle": 0,
+          "material": "steel",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 5,
+          "direction": 1,
+          "on": false
+        },
+        {
+          "id": "swing-anchor",
+          "kind": "anchor",
+          "x": 800,
+          "y": 130,
+          "w": 24,
+          "h": 24,
+          "angle": 0,
+          "material": "steel",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "wrecking-ball",
+          "kind": "bowling",
+          "x": 800,
+          "y": 600,
+          "w": 54,
+          "h": 54,
+          "angle": 0,
+          "material": "steel",
+          "fixed": false,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        },
+        {
+          "id": "return-bell",
+          "kind": "bell",
+          "x": 1004,
+          "y": 72,
+          "w": 76,
+          "h": 76,
+          "angle": 0,
+          "material": "steel",
+          "fixed": true,
+          "pinned": false,
+          "locked": true,
+          "resizable": false,
+          "power": 1,
+          "direction": 1,
+          "on": true
+        }
+      ],
+      "connections": [
+        {
+          "id": "fan-wire",
+          "kind": "wire",
+          "a": "fan-switch",
+          "b": "pendulum-fan",
+          "length": 1,
+          "via": [],
+          "ax": 0,
+          "ay": 0,
+          "bx": 0,
+          "by": 0
+        },
+        {
+          "id": "swing-rope",
+          "kind": "rope",
+          "a": "swing-anchor",
+          "b": "wrecking-ball",
+          "length": 470,
+          "via": [],
+          "ax": 0,
+          "ay": 0,
+          "bx": 0,
+          "by": 0,
+          "wrap": []
+        }
+      ],
+      "inventory": [
+        {
+          "id": "trigger-ramp",
+          "part": {
+            "kind": "ramp",
+            "x": 0,
+            "y": 0,
+            "w": 300,
+            "h": 16,
+            "angle": 0,
+            "material": "wood",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 1,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        },
+        {
+          "id": "kick-spring",
+          "part": {
+            "kind": "trampoline",
+            "x": 0,
+            "y": 0,
+            "w": 150,
+            "h": 20,
+            "angle": 0,
+            "material": "rubber",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 2.2,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        },
+        {
+          "id": "return-spring",
+          "part": {
+            "kind": "trampoline",
+            "x": 0,
+            "y": 0,
+            "w": 150,
+            "h": 20,
+            "angle": 0,
+            "material": "rubber",
+            "fixed": true,
+            "pinned": false,
+            "locked": false,
+            "resizable": false,
+            "power": 2.2,
+            "direction": 1,
+            "on": true
+          },
+          "quantity": 1
+        }
+      ],
+      "goal": {
+        "kind": "state",
+        "target": "return-bell",
+        "count": 1,
+        "delay": 0,
+        "x": 1200,
+        "y": 700,
+        "w": 180,
+        "h": 180,
+        "edge": "right",
+        "state": "rung",
+        "hitBy": [
+          "wrecking-ball"
+        ]
+      },
+      "id": "pendulum-bank-exchange"
     }
   ]
 }
