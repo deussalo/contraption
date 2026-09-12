@@ -39,7 +39,7 @@ const effectiveMass=terms=>terms.reduce((sum,{body,g,angular})=>sum+body.invMass
 function routeUsable(connection,geometry){
   const sweeps=geometry.arcs.map(arc=>arc.delta);
   if(geometry.valid&&connection.arcSweeps?.some((angle,i)=>Math.abs(angle-sweeps[i])>Math.PI))connection.routeCrossed=true;
-  connection.blocked=!geometry.valid||!!connection.routeCrossed;
+  connection.blocked=!geometry.valid;
   if(!connection.blocked)connection.arcSweeps=sweeps;
   return !connection.blocked;
 }
@@ -51,7 +51,7 @@ export function solveRopeVelocity(ropes){
   }
 }
 export function solveRopePosition(world){
-  for(const c of world.connections){if(c.kind!=='rope')continue;const geometry=ropeGeometry(world.bodies,c),k=effectiveMass(geometry.terms);if(!routeUsable(c,geometry)||k<1e-9)continue;const correction=Math.min(30,Math.max(0,geometry.length-c.length-.015))*.8/k;
+  for(const c of world.connections){if(c.kind!=='rope')continue;const geometry=ropeGeometry(world.bodies,c),k=effectiveMass(geometry.terms);if(!routeUsable(c,geometry)||k<1e-9)continue;const error=Math.max(0,geometry.length-c.length-.015),correction=(c.routeCrossed?error*(error>.1?.99:.8):Math.min(30,error)*.8)/k;
     for(const {body,g,angular} of geometry.terms){body.x-=correction*g.x*body.invMass;body.y-=correction*g.y*body.invMass;body.angle-=Math.max(-.08,Math.min(.08,correction*angular*body.invI));}
   }
 }

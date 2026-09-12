@@ -37,8 +37,13 @@ const movable=()=>routed([part('anchor','a',400,100),part('pulley','p',450,400,{
 }
 {
   const level=routed([part('anchor','a',400,550),part('pulley','p',600,500,{w:96,h:96}),part('box','b',800,549)],['p'],[-1]);
-  const world=createWorld(level);world.bodies.at(-1).vy=240;stepWorld(world);assert.equal(world.connections[0].routeCrossed,true);assert.equal(world.connections[0].blocked,true);assert.equal(world.connections[0].tension,0);assert.equal(world.bodies.at(-1).vy,240);
+  const world=createWorld(level),rope=world.connections[0];world.bodies.at(-1).vy=240;stepWorld(world);assert.equal(rope.routeCrossed,true);assert.equal(rope.blocked,false);assert.ok(rope.tension>0);assert.ok(ropeGeometry(world.bodies,rope).length-rope.length<.05,'A crossed wrap must remain inextensible');
+  for(let i=0;i<1200;i++){stepWorld(world);assert.ok(ropeGeometry(world.bodies,rope).length-rope.length<.05,'A crossed wrap must never disable the length constraint');}
   assert.equal(createWorld(level).connections[0].routeCrossed,false);
+}
+{
+  const tether=(kind,anchorY,loadY,extra,environment)=>{const bodies=[part('anchor','fixed',400,anchorY),part(kind,'load',400,loadY,{fixed:false,pinned:false,...extra})],level=routed(bodies,[],[]);level.environment={width:1600,height:3000,floor:false,...environment};return createWorld(level);};
+  for(const [kind,world] of [['balloon',tether('balloon',500,200,{material:'helium'},{gravity:850,pressure:1})],['rocket',tether('rocket',100,400,{angle:Math.PI,on:true,power:5},{gravity:0,pressure:0})]]){const rope=world.connections[0];for(let i=0;i<2400;i++){stepWorld(world);assert.ok(ropeGeometry(world.bodies,rope).length-rope.length<.05,`${kind} thrust must not stretch its rope`);}assert.equal(rope.blocked,false);}
 }
 {
   for(const kind of Object.keys(PARTS).filter(kind=>kind!=='pulley')){
